@@ -1,0 +1,64 @@
+body
+{
+   background-color: #6495ED;
+}
+
+#content
+{
+   display: block;
+   text-align: center;
+   background-color: #DCDCDC;
+   border-style: solid;
+   border-width: 2px;
+   margin-left: auto;
+   margin-right: auto;
+   word-wrap: break-word;
+   padding: 15px;
+}
+
+#content a
+{
+   text-decoration: none;
+   color: #00008B;
+}
+
+#content a:visited
+{
+   text-decoration: none;
+   color: #00008B;
+}
+
+#content a:hover
+{
+   text-decoration: underline;
+}
+
+#states ul
+{
+   margin: 0;
+   padding: 0;
+   list-style-type: none;
+}
+
+#states ul li
+{
+   display: inline;
+}
+
+#access-table
+{
+   background-color: #D0D0D0;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+#access-table th
+{
+   background-color: #A8A8A8;
+   text-align: center;
+}
+
+#access-table td
+{
+   text-align: center;
+}

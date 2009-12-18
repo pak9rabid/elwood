@@ -1,0 +1,4 @@
+AuthName "Web-Interface"
+AuthType Basic
+AuthUserFile /etc/elwood/httpd/users
+require valid-user

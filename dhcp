@@ -1,0 +1,16 @@
+# Defaults for dhcp initscript
+# sourced by /etc/init.d/dhcp
+# installed at /etc/default/dhcp by the maintainer scripts
+
+#
+# This is a POSIX shell fragment
+#
+
+# On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
+#	Separate multiple interfaces with spaces, e.g. "eth0 eth1".
+if [ -e /etc/elwood/elwood.conf ] ; then
+   INTERFACES=`cat /etc/elwood/elwood.conf | grep INTIF | cut -f2 -d'='`
+   read INTERFACES <<< "$INTERFACES"
+else
+   INTERFACES="eth1"
+fi

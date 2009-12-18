@@ -1,0 +1,276 @@
+body
+{
+   font-family:      Arial, sans-serif;
+   background-color: #888888;
+   text-align:       center;
+}
+
+#container
+{
+   background-color: #6495ED;
+   border-style:     solid;
+   border-width:     2px;
+   width:            800px;
+   margin-left:      auto;
+   margin-right:     auto;
+   padding-bottom:   16px;
+   text-align:       center;
+}
+
+#title
+{
+   background-color: #00008B;
+   color:            #FFF;
+   font-size:        35px;
+   font-weight:      bold;
+   padding-top:      5px;
+   padding-bottom:   30px;
+   padding-right:    10px;
+   padding-left:     10px;
+   border-bottom:    solid #000;
+   border-width:     2px;
+}
+
+#navigation
+{
+   position:         relative;
+   text-align:       center;
+   display:          block;
+   background-color: #6495ED;
+}
+
+#navigation a
+{
+   border-top:      solid #000;
+   border-bottom:   solid #000;
+   border-width:    1px;
+   background:      #707070;
+   text-decoration: none;
+   color:           #FFF;
+   padding:         5px;
+   margin:          5px;
+}
+
+#navigation a:visited
+{
+   text-decoration: none;
+   color:           #FFF;
+   background:      #707070;
+}
+
+#navigation a:hover
+{
+   text-decoration: none;
+   color:           #000;
+   background:      #FFF;
+}
+
+#content
+{
+   display: block;
+   text-align:       center;
+   background-color: #DCDCDC;
+   width:            700px;
+   border-style:     solid;
+   border-width:     2px;
+   margin-left:      auto;
+   margin-right:     auto;
+   word-wrap:        break-word;
+   padding:          15px;
+}
+
+#content a
+{
+   text-decoration: none;
+   color:           #00008B;
+}
+
+#content a:visited
+{
+   text-decoration: none;
+   color:           #00008B;
+}
+
+#content a:hover
+{
+   text-decoration: underline;
+}
+
+#content h4
+{
+   font-size:     15px;
+   margin-top:    0px;
+   margin-bottom: 0px;
+}
+
+#status-table
+{
+   background-color: #D0D0D0;
+   margin-left:      auto;
+   margin-right:     auto;
+   border:           0px;
+   border-collapse:  collapse;
+}
+
+#status-table th
+{
+   background-color: #A8A8A8;
+   text-align:       right;
+}
+
+#status-table td
+{
+   text-align: center;
+}
+
+#access-table
+{
+   background-color: #D0D0D0;
+   margin-left:      auto;
+   margin-right:     auto;
+}
+
+#access-table th
+{
+   background-color: #A8A8A8;
+   text-align:       center;
+}
+
+#access-table td
+{
+   text-align: center;
+}
+
+#ip-table
+{
+   background-color: #D0D0D0;
+   border:           0px;
+   border-collapse:  collapse;  
+   margin-left:      auto;
+   margin-right:     auto;
+}
+
+
+#ip-table th
+{
+   background-color: #A8A8A8;
+   text-align:       center;
+}
+
+
+#firewall-table
+{
+   margin-left:  auto;
+   margin-right: auto;
+   width:        275px;
+   border:       0px;
+}
+
+#firewall-table th
+{
+   text-align: center;
+   width:      50%;
+}
+
+#firewall-table td
+{
+   text-align: center;
+   width:      50%;
+}
+
+#port-forward-table
+{
+   width:        500px;
+   margin-left:  auto;
+   margin-right: auto;
+}
+
+#port-forward-table th
+{
+   background-color: #A8A8A8;
+   text-align:       center;
+}
+
+#port-forward-table td
+{
+   text-align:       center;
+   background-color: #D0D0D0;
+}
+
+#cmd-output
+{
+   background-color: #A8A8A8;
+   text-align:       left;
+   text-size:        10px;
+   width:            655px;
+   border-style:     solid;
+   border-width:     1px;
+   margin-left:      auto;
+   margin-right:     auto;
+   word-wrap:        break-word;
+   padding:          15px;
+}
+
+#cmd-input
+{
+   width:            100%;
+   background-color: #A8A8A8;
+   border-style:     solid;
+   border-width:     1px;
+   margin-top:       5px;
+}
+
+#cmd-input form
+{
+   text-align: center;
+   padding:    0px;
+}
+
+#cmd-list
+{
+   width: 236px;
+}
+
+textarea
+{
+   width:     100%;
+   height:    350px;
+   border:    #000000 1px solid;
+   padding:   3px;
+   font-size: 11px;
+}
+
+#textfield
+{
+   border:  #C0C0C0 1px solid;
+   padding: 1px;
+}
+
+#smalllink
+{
+   font-size: 10px;
+}
+
+#error-font
+{
+   display:     block;
+   color:       red;
+   font-size:   11px;
+   font-weight: bold;
+}
+
+#success-font
+{
+   display      block;
+   color:       green;
+   font-size:   11px;
+   font-weight: bold;
+}
+
+#usertxt
+{
+   font-size: 12px;
+   color: #6495ED;
+   display: block;
+   text-align: right;
+}

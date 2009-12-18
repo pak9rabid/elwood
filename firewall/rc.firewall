@@ -1,0 +1,59 @@
+#!/bin/bash
+
+echo -e "Starting rc.firewall"
+
+# Top-level firewall script.  Defines local variables 
+# Calls files that execute the actual iptables commands
+# Feel free to edit this file, as well as the others that this file calls. Just be careful
+# about what you give people access to or deny yourself access from..
+
+# Path to elwood.conf
+ELWOOD_CONFIG="/etc/elwood/elwood.conf"
+
+# Get directory containing firewall scripts from elwood.conf
+FW_PREFIX=`cat ${ELWOOD_CONFIG} | grep FIREWALL_DIR | cut -f2 -d'='`
+
+# Strip off whitespaces
+read FW_PREFIX <<< "$FW_PREFIX"
+
+# Directory containing bin files
+BIN_PREFIX=`cat ${ELWOOD_CONFIG} | grep ELWOOD_WEBROOT | cut -f2 -d'='`
+read BIN_PREFIX <<< "$BIN_PREFIX"
+BIN_PREFIX="${BIN_PREFIX}/bin"
+
+# CD to the firewall directory
+cd $FW_PREFIX
+
+# Common shell commands
+IP_FWD_ON="sudo ${BIN_PREFIX}/ip_forward_on"
+IP_DYNADDR_ON="sudo ${BIN_PREFIX}/ip_dynaddr_on"
+MASQUERADE="sudo ${BIN_PREFIX}/masquerade"
+SETPOLICY="sudo ${BIN_PREFIX}/setpolicy"
+FLUSHCHAIN="sudo ${BIN_PREFIX}/flushchain"
+FORWARDING="sudo ${BIN_PREFIX}/forwarding"
+SETACCESS="sudo ${BIN_PREFIX}/setaccess"
+SETFIREWALL="sudo ${BIN_PREFIX}/setfirewall"
+SETFIREWALL2=" sudo ${BIN_PREFIX}/setfirewall2"
+SETPFORWARDING="sudo ${BIN_PREFIX}/setpforwarding"
+
+# Get network interfaces
+EXTIF=`cat ${ELWOOD_CONFIG} | grep EXTIF | cut -f2 -d'='`
+INTIF=`cat ${ELWOOD_CONFIG} | grep INTIF | cut -f2 -d'='`
+
+# Remove whitespaces
+read EXTIF <<< "$EXTIF"
+read INTIF <<< "$INTIF"
+
+# Enable kernel options
+$IP_FWD_ON
+$IP_DYNADDR_ON
+
+# Call sub-firewall files
+. ${FW_PREFIX}/firewall.general
+. ${FW_PREFIX}/firewall.nat
+. ${FW_PREFIX}/firewall.access
+. ${FW_PREFIX}/firewall.other
+. ${FW_PREFIX}/firewall.portforward
+. ${FW_PREFIX}/firewall.input
+
+echo -e "Completed rc.firewall"

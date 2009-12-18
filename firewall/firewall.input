@@ -1,0 +1,6 @@
+# Firewall rules for INPUT chain
+$SETFIREWALL INPUT icmp -1 ACCEPT 0.0.0.0/0 0.0.0.0/0
+$SETFIREWALL INPUT all -1 ACCEPT 127.0.0.1 127.0.0.1 lo
+$SETFIREWALL2 INPUT all -1 ACCEPT 0.0.0.0/0 0.0.0.0/0 ESTABLISHED,RELATED
+
+echo -e "Completed firewall.input\n"

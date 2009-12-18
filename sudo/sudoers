@@ -1,0 +1,52 @@
+# sudoers file.
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# See the sudoers man page for the details on how to write a sudoers file.
+#
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# Defaults specification
+
+# User privilege specification
+root	ALL=(ALL) ALL
+
+# Commands executed by the webserver
+www-data	ALL=(root)	NOPASSWD:/var/www/bin/show_iwconfig, \
+                                 /var/www/bin/show_dhclient_pid, \
+                                 /var/www/bin/show_dhcpd_pid, \
+                                 /var/www/bin/show_input_table, \
+                                 /var/www/bin/show_output_table, \
+                                 /var/www/bin/show_forward_table, \
+                                 /var/www/bin/show_forward_table_2, \
+                                 /var/www/bin/show_port_forwarding, \
+                                 /var/www/bin/ip_forward_on, \
+                                 /var/www/bin/ip_dynaddr_on, \
+                                 /var/www/bin/masquerade, \
+				 /var/www/bin/merge_net_configs, \
+                                 /var/www/bin/setpolicy, \
+                                 /var/www/bin/flushchain, \
+                                 /var/www/bin/forwarding, \
+                                 /var/www/bin/setaccess, \
+                                 /var/www/bin/setpforwarding, \
+                                 /var/www/bin/setfirewall, \
+                                 /var/www/bin/setfirewall2, \
+                                 /var/www/bin/user_htaccess, \
+                                 /var/www/bin/user_htpasswd, \
+				 /var/www/bin/braddint, \
+				 /var/www/bin/brcreate, \
+				 /var/www/bin/brdel, \
+				 /var/www/bin/dhcpcctrl, \
+				 /var/www/bin/dhcpdctrl, \
+				 /var/www/bin/gwadd, \
+				 /var/www/bin/intconfig, \
+				 /var/www/bin/intdown, \
+				 /var/www/bin/intup, \
+                                 /var/www/bin/network, \
+				 /var/www/bin/routeadd, \
+				 /var/www/bin/wificonfig
