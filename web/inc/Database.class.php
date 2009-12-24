@@ -19,11 +19,10 @@
 				throw new Exception("Failed to open database");
 			
 			$result = @sqlite_query($dbHandle, $query, $placeholder, $error);
+			@sqlite_close($dbHandle);
 
 			if (!empty($error))
 				throw new Exception($error);
-
-			@sqlite_close($dbHandle);
 
 			return $result ? sqlite_fetch_all($result) : $result;
 		}
