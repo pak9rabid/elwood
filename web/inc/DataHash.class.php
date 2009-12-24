@@ -2,9 +2,9 @@
 	class DataHash
 	{
 		// Attributes
-		private $table = "";
-		private $primaryKey = "";
-		private $hashMap = array();
+		protected $table = "";
+		protected $primaryKey = "";
+		protected $hashMap = array();
 
 		// Constructors
 		public function __construct($table)
