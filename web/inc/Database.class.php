@@ -24,7 +24,7 @@
 			if (!empty($error))
 				throw new Exception($error);
 
-			return $result ? sqlite_fetch_all($result) : $result;
+			return $result;
 		}
 
 		public static function executeInsert(DataHash $data)
