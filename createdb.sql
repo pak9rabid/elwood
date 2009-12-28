@@ -1,3 +1,4 @@
+/* Create tables */
 DROP TABLE settings;
 
 CREATE TABLE settings
@@ -6,6 +7,17 @@ CREATE TABLE settings
 	value VARCHAR (128)
 );
 
+DROP TABLE webterm_history;
+
+CREATE TABLE webterm_history
+(
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	command VARCHAR (256) NOT NULL,
+	user VARCHAR (32) NOT NULL,
+	time TIMESTAMP NOT NULL
+);
+
+/* Initialize settings table */
 INSERT INTO settings VALUES ('IS_INITIALIZED', 'false');
 INSERT INTO settings VALUES ('LAN_ETH', 'eth1');
 INSERT INTO settings VALUES ('LAN_WLAN', null);
