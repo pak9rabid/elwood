@@ -1,7 +1,7 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 PACKAGE = elwood
-VERSION = 0.01
+VERSION = 2.0
 
 AC_PREREQ(2.61)
 AC_INIT($PACKAGE, $VERSION, [pak9rabid@yahoo.com])
