@@ -11,6 +11,11 @@ AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 AC_PROG_CXX
 AC_PROG_CC
 
+AC_CHECK_PROG(SQLITE, sqlite, yes, no)
+if test "x$SQLITE" = "xno"; then
+   echo "Error: sqlite is required" && exit
+fi
+
 AC_CHECK_PROG(WOL, wol, yes, no)
 if test "x$WOL" = "xno"; then
    echo "Error: wol is required" && exit
