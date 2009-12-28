@@ -9,13 +9,13 @@
    ################################################
 
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Path to htpasswd binary file to add users/change passwords
    $USER_HTPASSWD = "sudo ../../bin/user_htpasswd";
 
    # Path to htpasswd file
-   $HTPASSWD_FILE = getHttpdDir() . "/users";
+   $HTPASSWD_FILE = RouterSettings::getSettingValue("HTTPD_DIR") . "/users";
 
    # Known info from the form
    $username = $_GET['username'];

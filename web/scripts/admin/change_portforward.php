@@ -2,14 +2,14 @@
    # Include files to provide required classes and functions
    require_once "portforward.inc";
    require_once "routertools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
    require_once "usertools.inc";
 
    # Pull universal data from the calling page
    $action = $_GET['action'];
 
    # Get path to firewall script directory
-   $firewallDir = getFirewallDir();
+   $firewallDir = RouterSettings::getSettingValue("FIREWALL_DIR");
 
    # Get current user
    $currentUser = getUser();

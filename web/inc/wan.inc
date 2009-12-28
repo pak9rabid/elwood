@@ -1,7 +1,7 @@
 <?php
    # Include required files
    require_once "status.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    class wanConfig
    {
@@ -20,13 +20,13 @@
       # router WAN settings
       {
          # Get router needed router settings
-         $extIf = getExtIf();
-         $intIf = getIntIf();
+         $extIf = RouterSettings::getSettingValue("EXTIF");
+         $intIf = RouterSettings::getSettingValue("INTIF");
 
-         $BIN_PREFIX = getElwoodWebroot() . "/bin";
+         $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
          # Paths to files
-	 $dhclientPidFile = getDhclientPidPath();
+	 $dhclientPidFile = RouterSettings::getSettingValue("DHCLIENT_PID_PATH");
          
          # Check to see if the DHCP client is enalbed or disabled
          if (!file_exists($dhclientPidFile))

@@ -14,18 +14,18 @@
    require_once "routertools.inc";
    require_once "usertools.inc";
    require_once "iptools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Set paths
-   $INETD_DIR  = getInetdDir();
-   $BIN_PREFIX = getElwoodWebroot() . "/bin";
+   $INETD_DIR  = RouterSettings::getSettingValue("INETD_DIR");
+   $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
    $lanConfigFile   = "${INETD_DIR}/lan.conf";
    $dhcpdConfigFile = "${INETD_DIR}/dhcpd.conf";
 
    # Network commands to execute
-   $intIfRestart    = "sudo ${BIN_PREFIX}/intdown " . getIntIf() . " && " .
-                      "sudo ${BIN_PREFIX}/intup " . getIntIf() .
+   $intIfRestart    = "sudo ${BIN_PREFIX}/intdown " . RouterSettings::getSettingValue("INTIF") . " && " .
+                      "sudo ${BIN_PREFIX}/intup " . RouterSettings::getSettingValue("INTIF") .
 		      "> /dev/null &";
    $dhcpdStop       = "sudo ${BIN_PREFIX}/dhcpdctrl stop";
    $dhcpdStart      = "sudo ${BIN_PREFIX}/dhcpdctrl start";
@@ -65,9 +65,9 @@
       # Create lan.conf file based on input from form
 
       # Set internal interface settings
-      $outToFile = "# " . getIntIf() . "\n" .
-                   "auto " . getIntIf() . "\n" .
-                   "iface " . getIntIf() . " inet static\n" .
+      $outToFile = "# " . RouterSettings::getSettingValue("INTIF") . "\n" .
+                   "auto " . RouterSettings::getSettingValue("INTIF") . "\n" .
+                   "iface " . RouterSettings::getSettingValue("INTIF") . " inet static\n" .
                    "address $ipAddress\n" .
                    "netmask $netmask\n" .
                    "broadcast " . getBroadcast($ipAddress, $netmask) . "\n" .
@@ -76,11 +76,14 @@
 
       # Check to see which LAN interfaces are available and bridge
       # accordingly
-      if (getLanEthIf() != "none")
-         $outToFile .= " " . getLanEthIf();
+      $lanEth = RouterSettings::getSettingValue("LAN_ETH");
+      $wlanEth = RouterSettings::getSettingValue("LAN_WLAN");
 
-      if (getLanWlanIf() != "none")
-         $outToFile .= " " . getLanWlanIn();
+      if (!empty($lanEth))
+         $outToFile .= " " . RouterSettings::getSettingValue("LAN_ETH");
+
+      if (!empty($wlanEth))
+         $outToFile .= " " . RouterSettings::getSettingValue("LAN_WLAN");
 
       # lan.conf file creation completed
       ##########

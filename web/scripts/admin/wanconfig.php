@@ -14,18 +14,18 @@
    require_once "routertools.inc";
    require_once "usertools.inc";
    require_once "iptools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Files used for WAN configuration
-   $INETD_DIR  = getInetdDir();
-   $BIN_PREFIX = getElwoodWebroot() . "/bin";
+   $INETD_DIR  = RouterSettings::getSettingValue("INETD_DIR");
+   $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
    $wanConfigFile = "$INETD_DIR/wan.conf";
    $dnsConfigFile = "/etc/resolv.conf";
 
    # Network commands to be executed
-   $extIfDown       = "sudo ${BIN_PREFIX}/intdown " . getExtIf();
-   $extIfUp         = "sudo ${BIN_PREFIX}/intup " . getExtIf() .
+   $extIfDown       = "sudo ${BIN_PREFIX}/intdown " . RouterSettings::getSettingValue("EXTIF");
+   $extIfUp         = "sudo ${BIN_PREFIX}/intup " . RouterSettings::getSettingValue("EXTIF") .
                       " > /dev/null &";
    $mergeNetConfigs = "sudo ${BIN_PREFIX}/merge_net_configs";
 
@@ -55,10 +55,10 @@
 
       ##########
       # Create output for wan.conf
-      $outToFile = "# " . getExtIf() . "\n" .
-                   "auto " . getExtIf() . "\n" .
-		   "allow-hotplug " . getExtIf() . "\n" .
-		   "iface " . getExtIf() . " inet ";
+      $outToFile = "# " . RouterSettings::getSettingValue("EXTIF") . "\n" .
+                   "auto " . RouterSettings::getSettingValue("EXTIF") . "\n" .
+		   "allow-hotplug " . RouterSettings::getSettingValue("EXTIF") . "\n" .
+		   "iface " . RouterSettings::getSettingValue("EXTIF") . " inet ";
 
       # Determine which method to configure the WAN interface
       # (DHCP or static ip)

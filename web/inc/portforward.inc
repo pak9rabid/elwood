@@ -11,7 +11,7 @@
    ################################################
 
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    class portForwardRules
    # Provides an object to view the current port-forwarding rules on the system
@@ -27,7 +27,7 @@
       # the current port-forwarding rules
       {
          # Get elwood.conf settings
-         $BIN_PREFIX = getElwoodWebroot() . "/bin";
+         $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
          # Initialize arrays used to store port-forwarding rules info
          $portsList            = array();
@@ -39,10 +39,10 @@
          $SHOWPORTFORWARDING = "sudo $BIN_PREFIX/show_port_forwarding";
 
          # Current port-forwarding rules
-         $getPortsCmd            = "$SHOWPORTFORWARDING | grep to | cut -f2 -d':' | cut -f1 -d' '";
-         $getProtocolsCmd        = "$SHOWPORTFORWARDING | grep to | cut -b88-120 | cut -f1 -d' '";
-         $getDestinationIPsCmd   = "$SHOWPORTFORWARDING | grep to | cut -b88-150 | cut -f3 -d':'";
-         $getDestinationPortsCmd = "$SHOWPORTFORWARDING | grep to | cut -b88-150 | cut -f4 -d':'";
+         $getPortsCmd            = "$SHOWPORTFORWARDING | grep to | awk '{print $11}' | cut -f2 -d':'";
+         $getProtocolsCmd        = "$SHOWPORTFORWARDING | grep to | awk '{print $4}'";
+         $getDestinationIPsCmd   = "$SHOWPORTFORWARDING | grep to | awk '{print $12}' | cut -f2 -d':'";
+         $getDestinationPortsCmd = "$SHOWPORTFORWARDING | grep to | awk '{print $12}' | cut -f3 -d':'";
 
          # Clear arrays
          unset($this->portsList, $this->protocolsList, $this->destinationIPsList, $this->destinationPortsList);

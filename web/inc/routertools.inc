@@ -1,6 +1,6 @@
 <?php
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
    require_once "iptools.inc";
 
    function writeToFile($filename, $output)
@@ -77,7 +77,7 @@
    #                 entered is invalid
    {
       # Set the bin prefix
-      $BIN_PREFIX = getElwoodWebroot() . "/bin";
+      $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
       # Trim ip and netmask
       $ipAddressIn = trim($ipAddressIn);
@@ -100,7 +100,7 @@
    #                 entered is invalid
    {
       # Set the bin prefix
-      $BIN_PREFIX = getElwoodWebroot() . "/bin";
+      $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
       # Trim ip and netmask
       $ipAddressIn = trim($ipAddressIn);

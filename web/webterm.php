@@ -16,7 +16,7 @@
 
    # Include required files
    require_once "formatting.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Set the maximum number of commands stored in history file
    define("MAX_CMD_HISTORY", 50);
@@ -25,7 +25,7 @@
    $currentUser = getUser();
 
    # Path to webterm history file
-   $webtermHistoryFile = getHistoryDir() . "/$currentUser";
+   $webtermHistoryFile = RouterSettings::getSettingValue("ELWOOD_HISTORY") . "/$currentUser";
 
    # Pull commands from form
    $cmd     = $_POST['cmd'];

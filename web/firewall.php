@@ -16,11 +16,11 @@
    require_once "formatting.inc";
    require_once "firewall.inc";
    require_once "routertools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Get interfaces
-   $EXTIF = getExtIf();
-   $INTIF = getIntIf();
+   $EXTIF = RouterSettings::getSettingValue("EXTIF");
+   $INTIF = RouterSettings::getSettingValue("INTIF");
 
    # Create object to get current firewall rules
    $currentFwRules = new firewallRules;

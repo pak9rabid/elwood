@@ -10,13 +10,13 @@
    # Include files to provide required functions
    require_once "routertools.inc";
    require_once "usertools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Firewall file to modify controlling remote access
-   $fwFile = getFirewallDir() . "/firewall.access";
+   $fwFile = RouterSettings::getSettingValue("FIREWALL_DIR") . "/firewall.access";
 
    # Location of firewall script to be executed upon completion
-   $fwScript = getFirewallDir() . "/rc.firewall";
+   $fwScript = RouterSettings::getSettingValue("FIREWALL_DIR") . "/rc.firewall";
 
    # Get info passed from the calling form
    $httpwan   = $_POST[httpwan];
@@ -27,7 +27,7 @@
    $telnetlan = $_POST[telnetlan];
 
    # Process results and structure iptables commands
-   $httpFwCmds   = createFwRules($httpwan, $httplan, 8080);
+   $httpFwCmds   = createFwRules($httpwan, $httplan, 80);
    $sshFwCmds    = createFwRules($sshwan, $sshlan, 22);
    $telnetFwCmds = createFwRules($telnetwan, $telnetlan, 23);
 

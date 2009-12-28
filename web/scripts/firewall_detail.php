@@ -2,15 +2,15 @@
    # Include required files
    require_once "usertools.inc";
    require_once "routertools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Find what group the current user is associated with
    $currentUser = getUser();
    $userGroup   = getGroup($currentUser);
 
    # Get internal and external interfaces
-   $EXTIF = getExtIf();
-   $INTIF = getIntIf();
+   $EXTIF = RouterSettings::getSettingValue("EXTIF");
+   $INTIF = RouterSettings::getSettingValue("INTIF");
 ?>
 
 <html>

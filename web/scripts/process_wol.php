@@ -12,7 +12,7 @@
 
    # Include required files
    require_once "iptools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Set base redirect
    $redirect = "Location: ../wol.php";
@@ -33,7 +33,7 @@
    else
    {
       # Construct wol command to execute
-      $wolCmd = getWol();
+      $wolCmd = RouterSettings::getSettingValue("WOL");
 
       # Check to see if show options is checked
       if ($showOptions)

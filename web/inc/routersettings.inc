@@ -1,6 +1,6 @@
 <?
-   # Set path to elwood.conf file
-   define("ELWOOD_CONF", "/etc/elwood/elwood.conf");
+   # Set path to elwood.db file
+   define("ELWOOD_DB", "/etc/elwood/elwood.db");
 
    function getLanWlanIf()
    # Preconditions:  /etc/elwood/elwood.conf must be a valid elwood config file

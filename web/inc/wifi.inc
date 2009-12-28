@@ -1,6 +1,6 @@
 <?php
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    class wifiConfig
    {
@@ -17,8 +17,8 @@
       # router wifi settings
       {
          # Setting info from elwood.conf
-         $BIN_PREFIX = getElwoodWebroot() . "/bin";
-         $wlanIf     = getLanWlanIf();
+         $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
+         $wlanIf     = RouterSettings::getSettingValue("LAN_WLAN");
 
          # Check to see if wlan NIC is enabled
          $checkNicEnabledCmd = "ifconfig | grep $wlanIf";

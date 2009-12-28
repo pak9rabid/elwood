@@ -1,6 +1,6 @@
 <?php
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    class routerStatus
    # Provides an object to view the network status of the router
@@ -20,8 +20,8 @@
          $dnsFile = "/etc/resolv.conf";
 
          # Get interfaces
-         $EXTIF = getExtIf();
-         $INTIF = getIntIf();
+         $EXTIF = RouterSettings::getSettingValue("EXTIF");
+         $INTIF = RouterSettings::getSettingValue("INTIF");
 
          # Commands used to grab status data
          $getWanIPCmd        = "/sbin/ifconfig $EXTIF | grep inet\ addr | cut -f2 -d: | cut -f1 -d' '";

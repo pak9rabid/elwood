@@ -14,18 +14,18 @@
 
    # Include required files
    require_once "formatting.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    # Get interfaces
-   $EXTIF = getExtIf();
-   $INTIF = getIntIf();
+   $EXTIF = RouterSettings::getSettingValue("EXTIF");
+   $INTIF = RouterSettings::getSettingValue("INTIF");
 
    # Determine which group the current user belongs to
    $currentUser = getUser();
    $userGroup   = getGroup($currentUser);
 
    # Paths to files used
-   $HTTPD_DIR = getHttpdDir();
+   $HTTPD_DIR = RouterSettings::getSettingValue("HTTPD_DIR");
 
    # Paths to commonly used programs
    $SHOWINPUT  = "sudo bin/show_input_table";

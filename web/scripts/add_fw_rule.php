@@ -1,6 +1,6 @@
 <?php
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 ?>
 
 <html>
@@ -13,7 +13,7 @@
       <div id="content">
          <?php
             # Path to files
-            $protocolsFile = getProtocols();
+            $protocolsFile = RouterSettings::getSettingValue("PROTOCOLS");
 
             # Commonly used commands
             $SHOWINPUT          = "sudo ../bin/show_input_table";

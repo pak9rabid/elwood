@@ -13,7 +13,7 @@
 
    # Include required files
    require_once "usertools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
    
    # Get current user and group user is associated with
    $currentUser       = getUser();
@@ -32,7 +32,7 @@
       $USER_HTPASSWD = "sudo ../bin/user_htpasswd";
 
       # Path to htpasswd file
-      $HTPASSWD_FILE = getHttpdDir() . "/users";
+      $HTPASSWD_FILE = RouterSettings::getSettingValue("HTTPD_DIR") . "/users";
       
       # If $password matches $confirm, change the password
       if ($password == $confirm)

@@ -1,7 +1,7 @@
 <?php
    # Include required files
    require_once "status.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
    require_once "routertools.inc";
 
    class lanConfig
@@ -24,12 +24,12 @@
       # router LAN settings
       {
          # Get elwood.conf settings
-         $BIN_PREFIX         = getElwoodWebroot() . "/bin";
-         $extIf              = getExtIf();
-         $intIf              = getIntIf();
-         $inetdConfigDirPath = getInetdDir();
-         $dhcpdPidFile       = getDhcpdPidPath();
-         $dhcpdConfigFile    = getDhcpdConfig();
+         $BIN_PREFIX         = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
+         $extIf              = RouterSettings::getSettingValue("EXTIF");
+         $intIf              = RouterSettings::getSettingValue("INTIF");
+         $inetdConfigDirPath = RouterSettings::getSettingValue("INETD_DIR");
+         $dhcpdPidFile       = RouterSettings::getSettingValue("DHCPD_PID_PATH");
+         $dhcpdConfigFile    = RouterSettings::getSettingValue("DHCPD_CONF");
          
          # Check to see if the DHCP server is enabled or disabled
 	 if (!file_exists($dhcpdConfigFile))

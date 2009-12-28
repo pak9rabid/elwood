@@ -2,12 +2,12 @@
    # Include required files
    require_once "firewall.inc";
    require_once "routertools.inc";
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
    require_once "usertools.inc";
 
    # Get interfaces
-   $EXTIF = getExtIf();
-   $INTIF = getIntIf();
+   $EXTIF = RouterSettings::getSettingValue("EXTIF");
+   $INTIF = RouterSettings::getSettingValue("INTIF");
 
    # Pull universal data from the calling page
    $action = $_GET['action'];
@@ -16,7 +16,7 @@
    $currentUser = getUser();
 
    # Path to firewall files
-   $firewallDir = getFirewallDir();
+   $firewallDir = RouterSettings::getSettingValue("FIREWALL_DIR");
 
    $fwFile      = "$firewallDir/firewall.other";
    $fwPolicies  = "$firewallDir/firewall.general";

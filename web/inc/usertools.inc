@@ -11,7 +11,7 @@
    ################################################
 
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    function getUser()
    # Preconditions:  None
@@ -34,7 +34,7 @@
    #                 belongs to, or -1 if $user is not found
    {
       # Path to groups file
-      $groupsFile = getHttpdDir() . "/groups";
+      $groupsFile = RouterSettings::getSettingValue("HTTPD_DIR") . "/groups";
 
       # Command to find the group the user is associated with
       $getGroupCmd = "cat $groupsFile | grep $user | cut -f1 -d':'";

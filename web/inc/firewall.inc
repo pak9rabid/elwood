@@ -11,7 +11,7 @@
    ################################################
 
    # Include required files
-   require_once "routersettings.inc";
+   require_once "RouterSettings.class.php";
 
    class firewallRules
    # Provides an object to view the current firewall rules on the system
@@ -34,7 +34,7 @@
       # the current firewall rules
       {
          # Get elwood.conf settings
-         $BIN_PREFIX = getElwoodWebroot() . "/bin";
+         $BIN_PREFIX = RouterSettings::getSettingValue("ELWOOD_WEBROOT") . "/bin";
 
          # Initialize arrays used to store firewall rules info
          $this->inIfacesList  = array();
@@ -51,8 +51,8 @@
          $SHOWFORWARD2 = "sudo $BIN_PREFIX/show_forward_table_2";
 
          # Get interfaces
-         $EXTIF = getExtIf();
-         $INTIF = getIntIf();
+         $EXTIF = RouterSettings::getSettingValue("EXTIF");
+         $INTIF = RouterSettings::getSettingValue("INTIF");
 
          # Current filewall rules
          $getInIfacesCmd  = "$SHOWFORWARD | egrep '($EXTIF)|($INTIF)' | cut -b33-36";
