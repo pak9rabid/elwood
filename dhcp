@@ -8,9 +8,8 @@
 
 # On what interfaces should the DHCP server (dhcpd) serve DHCP requests?
 #	Separate multiple interfaces with spaces, e.g. "eth0 eth1".
-if [ -e /etc/elwood/elwood.conf ] ; then
-   INTERFACES=`cat /etc/elwood/elwood.conf | grep INTIF | cut -f2 -d'='`
-   read INTERFACES <<< "$INTERFACES"
+if [ -r /etc/elwood/elwood.db] ; then
+   INTERFACES=`/usr/bin/sqlite /etc/elwood/elwood.db "SELECT value FROM settings WHERE key = 'INTIF'"`
 else
    INTERFACES="eth1"
 fi
