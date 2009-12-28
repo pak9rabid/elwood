@@ -8,17 +8,14 @@ echo -e "Starting rc.firewall"
 # about what you give people access to or deny yourself access from..
 
 # Path to elwood.conf
-ELWOOD_CONFIG="/etc/elwood/elwood.conf"
+ELWOOD_DB="/etc/elwood/elwood.db"
+SQLITE="/usr/bin/sqlite"
 
 # Get directory containing firewall scripts from elwood.conf
-FW_PREFIX=`cat ${ELWOOD_CONFIG} | grep FIREWALL_DIR | cut -f2 -d'='`
-
-# Strip off whitespaces
-read FW_PREFIX <<< "$FW_PREFIX"
+FW_PREFIX=`$SQLITE $ELWOOD_DB "SELECT value FROM settings WHERE key = 'FIREWALL_DIR'"`
 
 # Directory containing bin files
-BIN_PREFIX=`cat ${ELWOOD_CONFIG} | grep ELWOOD_WEBROOT | cut -f2 -d'='`
-read BIN_PREFIX <<< "$BIN_PREFIX"
+BIN_PREFIX=`$SQLITE $ELWOOD_DB "SELECT value FROM settings WHERE key = 'ELWOOD_WEBROOT'"`
 BIN_PREFIX="${BIN_PREFIX}/bin"
 
 # CD to the firewall directory
@@ -37,12 +34,8 @@ SETFIREWALL2=" sudo ${BIN_PREFIX}/setfirewall2"
 SETPFORWARDING="sudo ${BIN_PREFIX}/setpforwarding"
 
 # Get network interfaces
-EXTIF=`cat ${ELWOOD_CONFIG} | grep EXTIF | cut -f2 -d'='`
-INTIF=`cat ${ELWOOD_CONFIG} | grep INTIF | cut -f2 -d'='`
-
-# Remove whitespaces
-read EXTIF <<< "$EXTIF"
-read INTIF <<< "$INTIF"
+EXTIF=`$SQLITE $ELWOOD_DB "SELECT value FROM settings WHERE key = 'EXTIF'"`
+INTIF=`$SQLITE $ELWOOD_DB "SELECT value FROM settings WHERE key = 'INTIF'"`
 
 # Enable kernel options
 $IP_FWD_ON
