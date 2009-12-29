@@ -16,16 +16,10 @@
 
    # Include required files
    require_once "formatting.inc";
-   require_once "RouterSettings.class.php";
-
-   # Set the maximum number of commands stored in history file
-   define("MAX_CMD_HISTORY", 50);
+   require_once "WebtermHistory.class.php";
 
    # Get the current user
    $currentUser = getUser();
-
-   # Path to webterm history file
-   $webtermHistoryFile = RouterSettings::getSettingValue("ELWOOD_HISTORY") . "/$currentUser";
 
    # Pull commands from form
    $cmd     = $_POST['cmd'];
@@ -35,12 +29,11 @@
    $cmd = preg_replace("/\'/", "\"", $cmd);
 
    # Create list of previously executed commands
-   $getPrevCmdsCmd = "cat $webtermHistoryFile";
-
+   $wtHistory = new WebtermHistory($currentUser);
    $prevCmdsList = array();
-   unset($prevCmdsList);
 
-   exec($getPrevCmdsCmd, $prevCmdsList);
+   foreach ($wtHistory->getHistory() as $dataHash)
+      $prevCmdsList[] = $dataHash->getAttribute("COMMAND");
 
    # Append last entered command to webterm history and execute command if entered
    if ($cmd != "" || $prevCmd != "")
@@ -52,7 +45,6 @@
       else
          $executeThis = $prevCmd;
 
-
       # Append executed command to the end of the previous commands list
       # if it does not contain any html tags
       $test = strip_tags($executeThis);
@@ -60,39 +52,19 @@
       $containsTags = false;
  
       if ($test == $executeThis)
-         $prevCmdsList[] = $executeThis;
-      else
-         $containsTags = true;
-
-
-      # Determine how many previous commands there are and determine if
-      # it exceeds the max number of commands allowed to be stored in the
-      # history file
-      $prevCmdsCount = count($prevCmdsList);
-
-      if ($prevCmdsCount > MAX_CMD_HISTORY)
-         $skipCmdsCount = $prevCmdsCount - MAX_CMD_HISTORY;
-      else
-         $skipCmdsCount = 0;
-
-      # Write previous commands to history file only if they are within the maximum 
-      # allowed range specified by MAX_CMD_HISTORY
-      $outToFile = "";
-       
-      foreach ($prevCmdsList as $key => $value)
       {
-         if ($key >= $skipCmdsCount)
+         try
          {
-            $outToFile .= "$value";
-
-            # If at the last element in the array, do not print a newline
-            if ($key != $prevCmdsCount-1)
-               $outToFile .= "\n";
+            $wtHistory->addEntry($executeThis);
+            $prevCmdsList[] = $executeThis;
+         }
+         catch (Exception $ex)
+         {
+            echo "Exception: " . $ex->getMessage();
          }
       }
-      
-      $writeToHistoryFileCmd = "echo '$outToFile' > $webtermHistoryFile";
-      shell_exec($writeToHistoryFileCmd);
+      else
+         $containsTags = true;
 
       $output = `$executeThis`;
 
