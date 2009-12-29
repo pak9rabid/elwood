@@ -57,7 +57,7 @@
 				throw $ex;
 			}
 
-			while (($row = sqlite_fetch_array($result)) == true)
+			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
 			{
 				$dataHash = new DataHash("settings");
 				$dataHash->setPrimaryKey("KEY");
