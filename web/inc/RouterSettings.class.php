@@ -60,6 +60,7 @@
 			while (($row = sqlite_fetch_array($result)) == true)
 			{
 				$dataHash = new DataHash("settings");
+				$dataHash->setPrimaryKey("KEY");
 				$dataHash->setAttribute("KEY", $row['key']);
 				$dataHash->setAttribute("VALUE", $row['value']);
 
