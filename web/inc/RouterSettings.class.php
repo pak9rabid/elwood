@@ -1,6 +1,6 @@
 <?php
-	require_once("Database.class.php");
-	require_once("DataHash.class.php");
+	require_once "Database.class.php";
+	require_once "DataHash.class.php";
 
 	class RouterSettings
 	{
