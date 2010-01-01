@@ -1,4 +1,6 @@
 <?php
+	require_once "Database.class.php";
+
 	class DataHash
 	{
 		// Attributes
@@ -71,6 +73,42 @@
 		public function clear()
 		{
 			$this->hashMap = array();
+		}
+
+		public function executeInsert()
+		{
+			try
+			{
+				Database::executeInsert($this);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
+		}
+
+		public function executeUpdate()
+		{
+			try
+			{
+				Database::executeUpdate($this);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
+		}
+
+		public function executeDelete()
+		{
+			try
+			{
+				Database::executeDelete($this);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
 		}
 	}
 ?>

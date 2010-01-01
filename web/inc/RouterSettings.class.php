@@ -76,7 +76,7 @@
 			{
 				$setting = self::getSetting($key);
 				$setting->setAttribute("value", $value);
-				Database::executeUpdate($setting);
+				$setting->executeUpdate();
 			}
 			catch (Exception $ex)
 			{
