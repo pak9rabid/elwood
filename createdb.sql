@@ -20,13 +20,6 @@ CREATE TABLE firewall_filter_chains
 	policy VARCHAR(32)
 );
 
-CREATE TABLE firewall_nat_chains
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	chain VARCHAR(32) NOT NULL,
-	policy VARCHAR(32)
-);
-
 CREATE TABLE firewall_filter_general
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
@@ -55,6 +48,14 @@ CREATE TABLE firewall_filter_forward_out
 	operation VARCHAR (1) NOT NULL,
 	options VARCHAR(512) NOT NULL
 );
+
+CREATE TABLE firewall_nat_chains
+(
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	chain VARCHAR(32) NOT NULL,
+	policy VARCHAR(32)
+);
+
 
 CREATE TABLE firewall_nat_general
 (
