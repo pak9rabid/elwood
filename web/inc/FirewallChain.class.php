@@ -4,13 +4,13 @@
 	class FirewallChain extends DataHash
 	{
 		// Methods
-		public function __toString()
+		public function commandOut()
 		{
 			$chain = $this->hashMap['CHAIN'];
 			$policy = $this->hashMap['POLICY'];
 
 			if (empty($chain))
-				throw new Exception("Required chain is empty");
+				throw new Exception("Required attribute 'CHAIN' is empty");
 
 			if (empty($policy))
 				$policy = "-";

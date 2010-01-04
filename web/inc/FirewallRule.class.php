@@ -4,7 +4,7 @@
 	class FirewallRule extends DataHash
 	{
 		// Methods
-		public function __toString()
+		public function commandOut()
 		{
 			$operation = $this->hashMap['OPERATION'];
 			$chain = $this->hashMap['CHAIN'];
@@ -12,13 +12,13 @@
 			$errors = array();
 
 			if (empty($operation))
-				$errors[] = "Required operation missing";
+				$errors[] = "Required attribute 'OPERATION' is empty";
 
 			if (empty($chain))
-				$errors[] = "Required chain missing";
+				$errors[] = "Required attribute 'CHAIN' is empty";
 
 			if (empty($options))
-				$errors[] = "Required options missing";
+				$errors[] = "Required attribute 'OPTIONS' is empty";
 
 			if (!empty($errors))
 				throw new Exception(implode(", ", $errors));
