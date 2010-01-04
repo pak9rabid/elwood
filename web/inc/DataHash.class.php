@@ -15,6 +15,16 @@
 		}
 
 		// Methods
+		public function __toString()
+		{
+			$elements = array();
+
+			foreach ($this->hashMap as $key => $value)
+				$elements[] = "$key=$value";
+
+			return "{" . implode(", ", $elements) . "}";
+		}
+
 		public function setTable($table)
 		{
 			$this->table = $table;
