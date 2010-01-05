@@ -7,7 +7,7 @@
 		public function commandOut()
 		{
 			$operation = $this->hashMap['OPERATION'];
-			$chain = $this->hashMap['CHAIN'];
+			$chain = $this->hashMap['CHAIN_NAME'];
 			$options = $this->hashMap['OPTIONS'];
 			$errors = array();
 
@@ -15,7 +15,7 @@
 				$errors[] = "Required attribute 'OPERATION' is empty";
 
 			if (empty($chain))
-				$errors[] = "Required attribute 'CHAIN' is empty";
+				$errors[] = "Required attribute 'CHAIN_NAME' is empty";
 
 			if (empty($options))
 				$errors[] = "Required attribute 'OPTIONS' is empty";

@@ -6,11 +6,11 @@
 		// Methods
 		public function commandOut()
 		{
-			$chain = $this->hashMap['CHAIN'];
+			$chain = $this->hashMap['CHAIN_NAME'];
 			$policy = $this->hashMap['POLICY'];
 
 			if (empty($chain))
-				throw new Exception("Required attribute 'CHAIN' is empty");
+				throw new Exception("Required attribute 'CHAIN_NAME' is empty");
 
 			if (empty($policy))
 				$policy = "-";
