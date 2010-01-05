@@ -13,68 +13,19 @@ CREATE TABLE webterm_history
 	time TIMESTAMP NOT NULL
 );
 
-CREATE TABLE firewall_filter_chains
+CREATE TABLE firewall_chains
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	chain VARCHAR(32) NOT NULL,
+	table_name VARCHAR(32) NOT NULL,
+	chain_name VARCHAR(32) NOT NULL,
 	policy VARCHAR(32)
 );
 
-CREATE TABLE firewall_filter_general
+CREATE TABLE firewall_rules
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	operation VARCHAR (1) NOT NULL,
-	chain VARCHAR(32) NOT NULL,
-	options VARCHAR(512) NOT NULL
-);
-
-CREATE TABLE firewall_filter_input
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	operation VARCHAR (1) NOT NULL,
-	options VARCHAR(512) NOT NULL
-);
-
-CREATE TABLE firewall_filter_forward_in
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	operation VARCHAR (1) NOT NULL,
-	options VARCHAR(512) NOT NULL
-);
-
-CREATE TABLE firewall_filter_forward_out
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	operation VARCHAR (1) NOT NULL,
-	options VARCHAR(512) NOT NULL
-);
-
-CREATE TABLE firewall_nat_chains
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	chain VARCHAR(32) NOT NULL,
-	policy VARCHAR(32)
-);
-
-
-CREATE TABLE firewall_nat_general
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	operation VARCHAR (1) NOT NULL,
-	chain VARCHAR(32) NOT NULL,
-	options VARCHAR(512) NOT NULL
-);
-
-CREATE TABLE firewall_nat_prerouting
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	operation VARCHAR (1) NOT NULL,
-	options VARCHAR(512) NOT NULL
-);
-
-CREATE TABLE firewall_nat_postrouting
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	table_name VARCHAR(32) NOT NULL,
+	chain_name VARCHAR(32) NOT NULL,
 	operation VARCHAR (1) NOT NULL,
 	options VARCHAR(512) NOT NULL
 );
@@ -106,18 +57,18 @@ INSERT INTO settings VALUES ('WOL', '/usr/bin/wol');
 INSERT INTO settings VALUES ('FIREWALL_DIR', '/etc/elwood/firewall');
 
 /* Initialize firewall tables */
-INSERT INTO firewall_filter_chains VALUES (null, 'INPUT', 'DROP');
-INSERT INTO firewall_filter_chains VALUES (null, 'FORWARD', 'DROP');
-INSERT INTO firewall_filter_chains VALUES (null, 'OUTPUT', 'ACCEPT');
-INSERT INTO firewall_filter_chains VALUES (null, 'forward_in', null);
-INSERT INTO firewall_filter_chains VALUES (null, 'forward_out', null);
-INSERT INTO firewall_filter_general VALUES (null, 'A', 'FORWARD', '-i ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -j forward_in');
-INSERT INTO firewall_filter_general VALUES (null, 'A', 'FORWARD', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -j forward_out');
-INSERT INTO firewall_filter_input VALUES (null, 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -p tcp --dport 80 -j ACCEPT');
-INSERT INTO firewall_filter_input VALUES (null, 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -p tcp --dport 22 -j ACCEPT');
-INSERT INTO firewall_filter_forward_in VALUES (null, 'A', '-m state --state RELATED,ESTABLISHED -j ACCEPT');
-INSERT INTO firewall_filter_forward_out VALUES (null, 'A', '-j ACCEPT');
-INSERT INTO firewall_nat_chains VALUES (null, 'PREROUTING' , 'ACCEPT');
-INSERT INTO firewall_nat_chains VALUES (null, 'POSTROUTING', 'ACCEPT');
-INSERT INTO firewall_nat_chains VALUES (null, 'OUTPUT', 'ACCEPT');
-INSERT INTO firewall_nat_postrouting VALUES (null, 'A', '-o ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -j MASQUERADE');
+INSERT INTO firewall_chains VALUES (null, 'filter', 'INPUT', 'DROP');
+INSERT INTO firewall_chains VALUES (null, 'filter', 'FORWARD', 'DROP');
+INSERT INTO firewall_chains VALUES (null, 'filter', 'OUTPUT', 'ACCEPT');
+INSERT INTO firewall_chains VALUES (null, 'filter', 'forward_in', null);
+INSERT INTO firewall_chains VALUES (null, 'filter', 'forward_out', null);
+INSERT INTO firewall_chains VALUES (null, 'nat', 'PREROUTING' , 'ACCEPT');
+INSERT INTO firewall_chains VALUES (null, 'nat', 'POSTROUTING', 'ACCEPT');
+INSERT INTO firewall_chains VALUES (null, 'nat', 'OUTPUT', 'ACCEPT');
+INSERT INTO firewall_rules VALUES (null, 'filter', 'FORWARD', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -j forward_in');
+INSERT INTO firewall_rules VALUES (null, 'filter', 'FORWARD', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -j forward_out');
+INSERT INTO firewall_rules VALUES (null, 'filter', 'INPUT', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -p tcp --dport 80 -j ACCEPT');
+INSERT INTO firewall_rules VALUES (null, 'filter', 'INPUT', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -p tcp --dport 22 -j ACCEPT');
+INSERT INTO firewall_rules VALUES (null, 'filter', 'forward_in', 'A', '-m state --state RELATED,ESTABLISHED -j ACCEPT');
+INSERT INTO firewall_rules VALUES (null, 'filter', 'forward_out', 'A', '-j ACCEPT');
+INSERT INTO firewall_rules VALUES (null, 'nat', 'POSTROUTING', 'A', '-o ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -j MASQUERADE');
