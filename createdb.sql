@@ -26,7 +26,7 @@ CREATE TABLE firewall_rules
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	table_name VARCHAR(32) NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
-	operation VARCHAR (1) NOT NULL,
+	operation VARCHAR (32) NOT NULL,
 	options VARCHAR(512) NOT NULL
 );
 
