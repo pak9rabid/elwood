@@ -161,12 +161,7 @@
 			}
 
 			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
-			{
-				// Testing
-				echo $row['table_name'] . "\n";
-				// End Testing
 				$tables[] = self::getTable($row['table_name']);
-			}
 
 			return $tables;
 		}
