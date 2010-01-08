@@ -141,5 +141,34 @@
 		{
 			return new FirewallTable($tableName);
 		}
+
+		public static function getTables()
+		{
+			// Returns an array of firewall tables
+			$tables = array();
+
+			$query = "SELECT DISTINCT table_name " .
+				 "FROM firewall_chains " .
+				 "ORDER BY id";
+
+			try
+			{
+				$result = Database::executeQuery($query);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
+
+			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
+			{
+				// Testing
+				echo $row['table_name'] . "\n";
+				// End Testing
+				$tables[] = self::getTable($row['table_name']);
+			}
+
+			return $tables;
+		}
 	}
 ?>
