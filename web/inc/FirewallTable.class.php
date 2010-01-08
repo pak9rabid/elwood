@@ -28,5 +28,21 @@
 				$this->firewallRules = array();
 			}
 		}
+
+		// Methods
+		public function getTableName()
+		{
+			return $this->tableName;
+		}
+
+		public function getFirewallChains()
+		{
+			return $this->firewallChains;
+		}
+
+		public function getFirewallRules()
+		{
+			return $this->firewallRules;
+		}
 	}
 ?>
