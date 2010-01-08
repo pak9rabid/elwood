@@ -13,7 +13,7 @@
 		{
 			$this->tableName = $tableName;
 
-			# Query database for existing rules for table $tableName
+			// Query database for existing rules for table $tableName
 			try
 			{
 				$this->firewallChains = FirewallSettings::getChains($this->tableName);
@@ -43,6 +43,24 @@
 		public function getFirewallRules()
 		{
 			return $this->firewallRules;
+		}
+
+		public function commandOut()
+		{
+			if (empty($this->firewallChains))
+				return "";
+
+			$out = "*" . $this->tableName . "\n";
+
+			foreach ($this->firewallChains as $chain)
+				$out .= $chain->commandOut() . "\n";
+
+			foreach ($this->firewallRules as $rule)
+				$out .= $rule->commandOut() . "\n";
+
+			$out .= "COMMIT";
+
+			return $out;
 		}
 	}
 ?>
