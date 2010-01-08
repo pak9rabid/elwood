@@ -2,6 +2,7 @@
 	require_once "Database.class.php";
 	require_once "FirewallChain.class.php";
 	require_once "FirewallRule.class.php";
+	require_once "FirewallTable.class.php";
 
 	class FirewallSettings
 	{
@@ -44,7 +45,8 @@
 
 			$query = "SELECT * " .
 				 "FROM firewall_rules " .
-				 "WHERE table_name = '$tableName' AND chain_name = '$chainName'";
+				 "WHERE table_name = '$tableName' AND chain_name = '$chainName' " .
+				 "ORDER BY id";
 
 			try
 			{
@@ -133,6 +135,11 @@
 			}
 
 			return $chains;
+		}
+
+		public static function getTable($tableName)
+		{
+			return new FirewallTable($tableName);
 		}
 	}
 ?>
