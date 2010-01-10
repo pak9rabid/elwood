@@ -9,24 +9,27 @@
 		private $firewallRules = array();
 
 		// Constructors
-		public function __construct($tableName)
+		public function __construct($tableName, $queryDb)
 		{
 			$this->tableName = $tableName;
 
-			// Query database for existing rules for table $tableName
-			try
+			if ($queryDb)
 			{
-				$this->firewallChains = FirewallSettings::getChains($this->tableName);
+				// Query database for existing rules for table $tableName
+				try
+				{
+					$this->firewallChains = FirewallSettings::getChains($this->tableName);
 
-				foreach ($this->firewallChains as $chain)
-					$this->firewallRules = array_merge($this->firewallRules, FirewallSettings::getRules($this->tableName, $chain->getAttribute("CHAIN_NAME")));
-			}
-			catch (Exception $ex)
-			{
-				// Clear chains and rules arrays
-				$this->firewallChyains = array();
-				$this->firewallRules = array();
-			}
+					foreach ($this->firewallChains as $chain)
+						$this->firewallRules = array_merge($this->firewallRules, FirewallSettings::getRules($this->tableName, $chain->getAttribute("CHAIN_NAME")));
+				}
+				catch (Exception $ex)
+				{
+					// Clear chains and rules arrays
+					$this->firewallChyains = array();
+					$this->firewallRules = array();
+				}
+			}	
 		}
 
 		// Methods
@@ -43,6 +46,16 @@
 		public function getFirewallRules()
 		{
 			return $this->firewallRules;
+		}
+
+		public function setFirewallChains(array $chains)
+		{
+			$this->firewallChains = $chains;
+		}
+
+		public function setFirewallRules(array $rules)
+		{
+			$this->firewallRules = $rules;
 		}
 
 		public function commandOut()
