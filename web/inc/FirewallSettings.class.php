@@ -165,5 +165,72 @@
 
 			return $tables;
 		}
+
+		public static function synchronizeSettings()
+		{
+			// Synchronize firewall settings stored in the database
+			// with the current active firewall rules
+			$queryies = array();
+
+			$queries[] = "DELETE FROM firewall_chains";
+			$queries[] = "DELETE FROM firewall_rules";
+
+			$cmdOutput = array();
+			$shellCmd = "sudo /sbin/iptables-save | egrep -v '^#'";
+			exec($shellCmd, $cmdOutput);
+
+			$chainInserts = array();
+			$ruleInserts = array();
+			$table = "";
+			$chain = "";
+
+			foreach ($cmdOutput as $line)
+			{
+				if (preg_match("/^\*/", $line))
+				{
+					// Table start
+					$table = trim($line, "*");
+				}
+				else if (preg_match("/^:/", $line))
+				{
+					// Chain entry
+					list($chain, $policy) = explode(" ", $line);
+
+					$chain = trim($chain, ":");
+
+					$chainInserts[] = "SELECT null, '$table', '$chain', '$policy'";
+				}
+				else if (preg_match("/^-/", $line))
+				{
+					// Rule entry
+					$ruleElements = explode(" ", $line);
+					list($operation, $chain) = $ruleElements;
+
+					$optionsList = array();
+
+					for ($i=2 ; $i<count($ruleElements) ; $i++)
+						$optionsList[] = $ruleElements[$i];
+
+					$options = implode(" ", $optionsList);
+
+					$ruleInserts[] = "SELECT null, '$table', '$chain', '$operation', '$options'";
+				}
+			}
+
+			$queries[] = "INSERT INTO firewall_chains " . implode(" UNION ALL ", $chainInserts);
+			$queries[] = "INSERT INTO firewall_rules " . implode(" UNION ALL ", $ruleInserts);
+
+			foreach ($queries as $query)
+			{
+				try
+				{
+					Database::executeQuery($query);
+				}
+				catch (Exception $ex)
+				{
+					throw $ex;
+				}
+			}
+		}
 	}
 ?>
