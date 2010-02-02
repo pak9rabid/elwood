@@ -23,11 +23,21 @@ CREATE TABLE firewall_chains
 
 CREATE TABLE firewall_rules
 (
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	id VARCHAR(13) PRIMARY KEY UNIQUE NOT NULL,
 	table_name VARCHAR(32) NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
-	operation VARCHAR (32) NOT NULL,
-	options VARCHAR(512) NOT NULL
+	rule_number INTEGER NOT NULL,
+	src_addr VARCHAR(64),
+	dst_addr VARCHAR(64),
+	state VARCHAR(32),
+	fragmented VARCHAR(1),
+	in_interface VARCHAR(16),
+	out_interface VARCHAR(16),
+	protocol VARCHAR(16),
+	dport VARCHAR(16) CHECK (protocol IN ('udp', 'tcp')),
+	sport VARCHAR(16) CHECK (protocol IN ('udp', 'tcp')),
+ 	icmp_type VARCHAR(16) CHECK (protocol = 'icmp'),
+	target VARCHAR(16)
 );
 
 /* Create triggers */
@@ -55,22 +65,3 @@ INSERT INTO settings VALUES ('HTTPD_DIR', '/etc/elwood/httpd');
 INSERT INTO settings VALUES ('PROTOCOLS', '/etc/protocols');
 INSERT INTO settings VALUES ('WOL', '/usr/bin/wol');
 INSERT INTO settings VALUES ('FIREWALL_DIR', '/etc/elwood/firewall');
-
-/* Initialize firewall tables */
-INSERT INTO firewall_chains VALUES (null, 'filter', 'INPUT', 'DROP');
-INSERT INTO firewall_chains VALUES (null, 'filter', 'FORWARD', 'DROP');
-INSERT INTO firewall_chains VALUES (null, 'filter', 'OUTPUT', 'ACCEPT');
-INSERT INTO firewall_chains VALUES (null, 'filter', 'forward_in', null);
-INSERT INTO firewall_chains VALUES (null, 'filter', 'forward_out', null);
-INSERT INTO firewall_chains VALUES (null, 'nat', 'PREROUTING' , 'ACCEPT');
-INSERT INTO firewall_chains VALUES (null, 'nat', 'POSTROUTING', 'ACCEPT');
-INSERT INTO firewall_chains VALUES (null, 'nat', 'OUTPUT', 'ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'FORWARD', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -j forward_in');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'FORWARD', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -j forward_out');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'INPUT', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -p tcp --dport 80 -j ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'INPUT', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -p tcp --dport 80 -j ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'INPUT', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -p tcp --dport 22 -j ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'INPUT', 'A', '-i ' || (SELECT value FROM settings WHERE key = 'INTIF') || ' -p tcp --dport 22 -j ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'forward_in', 'A', '-m state --state RELATED,ESTABLISHED -j ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'filter', 'forward_out', 'A', '-j ACCEPT');
-INSERT INTO firewall_rules VALUES (null, 'nat', 'POSTROUTING', 'A', '-o ' || (SELECT value FROM settings WHERE key = 'EXTIF') || ' -j MASQUERADE');
