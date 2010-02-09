@@ -21,10 +21,9 @@ CREATE TABLE firewall_chains
 	policy VARCHAR(32)
 );
 
-CREATE TABLE firewall_rules
+CREATE TABLE firewall_filter_rules
 (
 	id VARCHAR(13) PRIMARY KEY UNIQUE NOT NULL,
-	table_name VARCHAR(32) NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
 	rule_number INTEGER NOT NULL,
 	src_addr VARCHAR(64),
@@ -34,10 +33,17 @@ CREATE TABLE firewall_rules
 	in_interface VARCHAR(16),
 	out_interface VARCHAR(16),
 	protocol VARCHAR(16),
-	dport VARCHAR(16) CHECK (protocol IN ('udp', 'tcp')),
-	sport VARCHAR(16) CHECK (protocol IN ('udp', 'tcp')),
- 	icmp_type VARCHAR(16) CHECK (protocol = 'icmp'),
+	dport VARCHAR(16),
+	sport VARCHAR(16),
+ 	icmp_type VARCHAR(16),
 	target VARCHAR(16)
+);
+
+CREATE TABLE firewall_dnat_rules
+(
+	in_port VARCHAR(16) UNIQUE NOT NULL,
+	out_address VARCHAR(64) NOT NULL,
+	out_port VARCHAR(16)
 );
 
 /* Create triggers */
@@ -65,3 +71,4 @@ INSERT INTO settings VALUES ('HTTPD_DIR', '/etc/elwood/httpd');
 INSERT INTO settings VALUES ('PROTOCOLS', '/etc/protocols');
 INSERT INTO settings VALUES ('WOL', '/usr/bin/wol');
 INSERT INTO settings VALUES ('FIREWALL_DIR', '/etc/elwood/firewall');
+INSERT INTO settings VALUES ('ENABLE_IPMASQUERADE', 'true');
