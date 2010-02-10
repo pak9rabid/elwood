@@ -2,6 +2,6 @@
 	interface FwFilterTranslator
 	{
 		public function setDbFromSystem();
-		public function setSystemFromDb();
+		public function setSystemFromDb($writeChanges);
 	}
 ?>

@@ -130,7 +130,7 @@
 			}
 		}
 		
-		public function setSystemFromDb()
+		public function setSystemFromDb($writeChanges)
 		{
 			// Syncs the system filter firewall to what's specified in the
 			// database by generating and executing an iptables-restore script
@@ -292,9 +292,17 @@
 			
 			$iptablesRestore .= "COMMIT\n";
 			
-			// Testing
-			echo "\n$iptablesRestore\n\n";
-			// End Testing
+			// If specified, write changes to the active firewall
+			if ($writeChanges)
+			{
+				$shellCmd = "echo \"$iptablesRestore\" | /sbin/iptables-restore";
+				exec($shellCmd, $placeholder, $returnVal);
+				
+				if ($returnVal != 0)
+					throw new Exception("There was an error running iptables-restore");
+			}
+			
+			return $iptablesRestore;
 		}
 		
 		private static function beginsWith($str, $sub)
