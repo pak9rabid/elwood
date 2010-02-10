@@ -3,19 +3,10 @@
 
 	class FirewallChain extends DataHash
 	{
-		// Methods
-		public function commandOut()
+		// Constructors
+		public function __construct()
 		{
-			$chain = $this->hashMap['CHAIN_NAME'];
-			$policy = $this->hashMap['POLICY'];
-
-			if (empty($chain))
-				throw new Exception("Required attribute 'CHAIN_NAME' is empty");
-
-			if (empty($policy))
-				$policy = "-";
-
-			return ":$chain $policy";
+			parent::__construct("firewall_chains");
 		}
 	}
 ?>
