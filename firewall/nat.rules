@@ -1,0 +1,8 @@
+*nat
+:PREROUTING ACCEPT
+:POSTROUTING ACCEPT
+:OUTPUT ACCEPT
+:port_forward_wan -
+-A PREROUTING -i eth0 -j port_forward_wan
+-A POSTROUTING -s 10.0.0.0/24 -o eth0 -j MASQUERADE
+COMMIT

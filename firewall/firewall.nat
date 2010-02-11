@@ -1,5 +1,0 @@
-# This file controls NAT options
-
-# Enable IP Masquerading  (also referred to as SNAT)
-$MASQUERADE
-echo -e "Completed firewall.nat"

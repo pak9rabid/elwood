@@ -1,0 +1,109 @@
+#! /bin/sh
+# Author: Patrick Griffin <pak9rabid@yahoo.com>
+# Do NOT "set -e"
+
+# PATH should only include /usr/* if it runs after the mountnfs.sh script
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Elwood firewall script"
+NAME=elwood-firewall
+SCRIPTNAME=/etc/init.d/$NAME
+IPTABLES=`which iptables`
+IPTABLES_RESTORE=`which iptables-restore`
+
+# Check for dependencies
+[ -x "$IPTABLES" ] || exit 0
+[ -x "$IPTABLES_RESTORE" ] || exit 0
+
+# Load the VERBOSE setting and other rcS variables
+. /lib/init/vars.sh
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
+. /lib/lsb/init-functions
+
+#
+# Function that starts the daemon/service
+#
+do_start()
+{
+	# Return
+	#   0 firewall was initialized successfully
+	#   1 firewall failed to initialize
+
+	cat /etc/elwood/firewall/*.rules | $IPTABLES_RESTORE
+
+	if [ $? -ne 0 ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+#
+# Function that stops the daemon/service
+#
+do_stop() {
+	# Clears the filter and nat firewall tables and sets
+	# the build-in filter table chain policies to ACCEPT
+	# Return
+	#   0 if the firewall has been successfully cleared
+	#   1 if the firewall has failed to clear
+
+	RETVAL=0
+
+	$IPTABLES -t filter -F
+
+	if [ $? -ne 0 ]; then
+		RETVAL=1
+	fi
+
+	$IPTABLES -t nat -F
+
+	if [ $? -ne 0 ]; then
+		RETVAL=1
+	fi
+
+	$IPTABLES -P INPUT ACCEPT
+	if [ $? -ne 0 ]; then
+		RETVAL=1
+	fi
+
+	$IPTABLES -P OUTPUT ACCEPT
+
+	if [ $? -ne 0 ]; then
+		RETVAL=1
+	fi
+
+	$IPTABLES -P FORWARD ACCEPT
+
+	if [ $? -ne 0 ]; then
+		RETVAL=1
+	fi
+
+	return "$RETVAL"
+}
+
+case "$1" in
+  start)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$NAME"
+	do_start
+	case "$?" in
+		0) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+		1) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+	esac
+	;;
+  stop)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+	do_stop
+	case "$?" in
+		0) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+		1) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+	esac
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop}" >&2
+	exit 3
+	;;
+esac
+
+:

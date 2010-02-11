@@ -1,8 +1,0 @@
-# This file controls where the router can be accessed from
-
-$SETACCESS $EXTIF 80 ACCEPT
-$SETACCESS $INTIF 80 ACCEPT
-$SETACCESS $EXTIF 22 ACCEPT
-$SETACCESS $INTIF 22 ACCEPT
-
-echo -e "Completed firewall.access"

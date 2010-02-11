@@ -1,5 +1,0 @@
-# This file contains port forwarding options
-
-# Port forwarding rules
-
-echo -e "Completed firewall.portforward"

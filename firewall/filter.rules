@@ -1,0 +1,15 @@
+*filter
+:INPUT DROP
+:FORWARD DROP
+:OUTPUT ACCEPT
+:forward_in -
+:forward_out -
+-A INPUT -p tcp -m tcp --dport 22 -j ACCEPT
+-A INPUT -p tcp -m tcp --dport 80 -j ACCEPT
+-A INPUT -i br0 -j ACCEPT
+-A INPUT -i eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i eth0 -j forward_in
+-A FORWARD -i br0 -j forward_out
+-A forward_in -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A forward_out -j ACCEPT
+COMMIT

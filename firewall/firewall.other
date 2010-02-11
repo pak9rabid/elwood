@@ -1,7 +1,0 @@
-# This file contains other firewalling options that may be desired
-
-# Forwarding firewall rules
-$FORWARDING $INTIF $EXTIF all -1 0.0.0.0/0 0.0.0.0/0 ACCEPT 
-$FORWARDING $EXTIF $INTIF all -1 0.0.0.0/0 0.0.0.0/0 ACCEPT ESTABLISHED,RELATED
-
-echo -e "Completed firewall.other"
