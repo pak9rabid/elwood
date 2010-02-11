@@ -47,6 +47,8 @@ AC_CONFIG_FILES([Makefile
                  firewall/Makefile
                  httpd/Makefile
                  inet.d/Makefile
+		 init.d/Makefile
+		 init.d/Debian4/Makefile
                  src/Makefile
                  sudo/Makefile
                  web/Makefile

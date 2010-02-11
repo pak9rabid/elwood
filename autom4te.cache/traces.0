@@ -328,24 +328,26 @@ m4trace:configure.ac:46: -1- AC_CONFIG_FILES([Makefile
                  firewall/Makefile
                  httpd/Makefile
                  inet.d/Makefile
+		 init.d/Makefile
+		 init.d/Debian4/Makefile
                  src/Makefile
                  sudo/Makefile
                  web/Makefile
                  web/inc/Makefile
                  web/scripts/Makefile
                  web/scripts/admin/Makefile])
-m4trace:configure.ac:56: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([LIB@&t@OBJS])
-m4trace:configure.ac:56: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:56: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([LTLIBOBJS])
-m4trace:configure.ac:56: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([top_builddir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([srcdir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([abs_srcdir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([top_srcdir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([abs_top_srcdir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([builddir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([abs_builddir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([abs_top_builddir])
-m4trace:configure.ac:56: -1- AC_SUBST_TRACE([INSTALL])
+m4trace:configure.ac:58: -1- AC_SUBST([LIB@&t@OBJS], [$ac_libobjs])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([LIB@&t@OBJS])
+m4trace:configure.ac:58: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:58: -1- AC_SUBST([LTLIBOBJS], [$ac_ltlibobjs])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([LTLIBOBJS])
+m4trace:configure.ac:58: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([top_builddir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([srcdir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([abs_srcdir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([top_srcdir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([abs_top_srcdir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([builddir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([abs_builddir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([abs_top_builddir])
+m4trace:configure.ac:58: -1- AC_SUBST_TRACE([INSTALL])

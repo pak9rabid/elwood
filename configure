@@ -4546,7 +4546,7 @@ fi
 
 # Checks for library functions.
 
-ac_config_files="$ac_config_files Makefile firewall/Makefile httpd/Makefile inet.d/Makefile src/Makefile sudo/Makefile web/Makefile web/inc/Makefile web/scripts/Makefile web/scripts/admin/Makefile"
+ac_config_files="$ac_config_files Makefile firewall/Makefile httpd/Makefile inet.d/Makefile init.d/Makefile init.d/Debian4/Makefile src/Makefile sudo/Makefile web/Makefile web/inc/Makefile web/scripts/Makefile web/scripts/admin/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -5120,6 +5120,8 @@ do
     "firewall/Makefile") CONFIG_FILES="$CONFIG_FILES firewall/Makefile" ;;
     "httpd/Makefile") CONFIG_FILES="$CONFIG_FILES httpd/Makefile" ;;
     "inet.d/Makefile") CONFIG_FILES="$CONFIG_FILES inet.d/Makefile" ;;
+    "init.d/Makefile") CONFIG_FILES="$CONFIG_FILES init.d/Makefile" ;;
+    "init.d/Debian4/Makefile") CONFIG_FILES="$CONFIG_FILES init.d/Debian4/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "sudo/Makefile") CONFIG_FILES="$CONFIG_FILES sudo/Makefile" ;;
     "web/Makefile") CONFIG_FILES="$CONFIG_FILES web/Makefile" ;;
