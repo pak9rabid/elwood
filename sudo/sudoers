@@ -49,4 +49,6 @@ www-data	ALL=(root)	NOPASSWD:/var/www/bin/show_iwconfig, \
 				 /var/www/bin/intup, \
                                  /var/www/bin/network, \
 				 /var/www/bin/routeadd, \
-				 /var/www/bin/wificonfig
+				 /var/www/bin/wificonfig, \
+				 /sbin/iptables-save, \
+				 /sbin/iptables-restore
