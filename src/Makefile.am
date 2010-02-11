@@ -33,7 +33,3 @@ show_forward_table_SOURCES   = show_forward_table.c
 show_forward_table_2_SOURCES = show_forward_table_2.c
 show_port_forwarding_SOURCES = show_port_forwarding.c
 user_htpasswd_SOURCES        = user_htpasswd.cpp webusers.cpp
-
-ipmaskbindir = /bin
-ipmaskbin_PROGRAMS = ipmask
-ipmaskbin_SOURCES = ipmask.c

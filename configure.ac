@@ -16,9 +16,9 @@ if test "x$SQLITE" = "xno"; then
    echo "Error: sqlite is required" && exit
 fi
 
-AC_CHECK_PROG(WOL, wol, yes, no)
-if test "x$WOL" = "xno"; then
-   echo "Error: wol is required" && exit
+AC_CHECK_PROG(WAKEONLAN, wakeonlan, yes, no)
+if test "x$WAKEONLAN" = "xno"; then
+   echo "Error: wakeonlan is required" && exit
 fi
 
 AC_CHECK_PROG(SUDO, sudo, yes, no)
@@ -29,11 +29,6 @@ fi
 AC_CHECK_PROG(IPTABLES, iptables, yes, no)
 if test "x$IPTABLES" = "xno"; then
    echo "Error: iptables is required" && exit
-fi
-
-AC_CHECK_PROG(IFCONIFG, ifconfig, yes, no)
-if test "x$IFCONFIG" = "xno"; then
-   echo "Error: ifconfig is required" && exit
 fi
 
 # Checks for libraries.
