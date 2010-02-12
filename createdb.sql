@@ -5,6 +5,26 @@ CREATE TABLE settings
 	value VARCHAR (128)
 );
 
+CREATE TABLE users
+(
+	uid INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	username VARCHAR(32) NOT NULL,
+	passwd VARCHAR(40)  NOT NULL
+);
+
+CREATE TABLE groups
+(
+	gid INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	name VARCHAR(32) NOT NULL
+);
+
+CREATE TABLE user_groups
+(
+	uid INTEGER NOT NULL,
+	gid INTEGER NOT NULL,
+	CONSTRAINT u_user_group UNIQUE (uid, gid)
+);
+
 CREATE TABLE webterm_history
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
@@ -18,7 +38,8 @@ CREATE TABLE firewall_chains
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	table_name VARCHAR(32) NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
-	policy VARCHAR(32)
+	policy VARCHAR(32),
+	CONSTRAINT u_table_chain UNIQUE (table_name, chain_name)
 );
 
 CREATE TABLE firewall_filter_rules
@@ -73,3 +94,8 @@ INSERT INTO settings VALUES ('PROTOCOLS', '/etc/protocols');
 INSERT INTO settings VALUES ('WOL', '/usr/bin/wol');
 INSERT INTO settings VALUES ('FIREWALL_DIR', '/etc/elwood/firewall');
 INSERT INTO settings VALUES ('ENABLE_IPMASQUERADE', 'true');
+
+/* Initialize users and groups */
+INSERT INTO users VALUES (0, 'admin', '87a40f51477eb2699f8694e521b75405320cab21');
+INSERT INTO groups VALUES(0, 'admins');
+INSERT INTO user_groups VALUES (0, 0);
