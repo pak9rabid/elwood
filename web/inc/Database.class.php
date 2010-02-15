@@ -1,5 +1,6 @@
 <?php
 	require_once "DataHash.class.php";
+	require_once "DbQueryPreper.class.php";
 
 	class Database
 	{
@@ -7,36 +8,38 @@
 		const DB_FILE = "/etc/elwood/elwood.db";
 	
 		// Public methods
-		public static function executeQuery($query)
+		public static function executeQuery(DbQueryPreper $prep)
 		{
 			// Open database at DB_FILE, execute $query and return
-			// resultset as a 2D array, or false if any errors are
-			// encountered
+			// results
 			if (!file_exists(self::DB_FILE))
-				throw new Exception(self::DB_FILE . "doesn't exist");
+				throw new Exception(self::DB_FILE . "does not exist");
 
-			if (!$dbHandle = @sqlite_open(self::DB_FILE))
-				throw new Exception("Failed to open database");
-			
-			$result = @sqlite_query($dbHandle, $query, $placeholder, $error);
-			@sqlite_close($dbHandle);
-
-			if (!empty($error))
-				throw new Exception($error);
-
-			return $result;
+			try
+			{				
+				$conn = new PDO("sqlite:" . self::DB_FILE);
+				$conn->query("PRAGMA foreign_keys = ON");
+				
+				$stmt = $conn->prepare($prep->getQuery());
+				$stmt->execute($prep->getBindVars());
+				return $stmt->fetchAll(PDO::FETCH_ASSOC);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
 		}
 
 		public static function executeInsert(DataHash $data)
 		{
-			// Insert $data into the database
-			$query = "INSERT INTO " . $data->getTable() . " ('";
-			$query .= implode("', '", $data->getAttributeKeys()) . "') VALUES ('";
-			$query .= implode("', '", $data->getAttributeValues()) . "')";
-
+			$prep = new DbQueryPreper("INSERT INTO " . $data->getTable() . " (");
+			$prep->addSql(implode(",", $data->getAttributeKeys()) . ") VALUES (");
+			$prep->addVariables($data->getAttributeValues());
+			$prep->addSql(")");
+			
 			try
 			{
-				self::executeQuery($query);
+				self::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -53,20 +56,23 @@
 			if (empty($primaryKey) || empty($primaryKeyValue))
 				throw new Exception("Primary key not specified and/or set");
 
-			$query = "UPDATE " . $data->getTable() . " SET ";
-			$updateList = array();
-
+			$prep = new DbQueryPreper("UPDATE " . $data->getTable() . " SET");
+			
 			foreach ($data->getAttributeMap() as $key => $value)
 			{
 				if ($key != $primaryKey)
-					$updateList[] = "$key = '$value'";
+				{
+					$prep->addSql(" $key = ");
+					$prep->addVariable($value);
+				}
 			}
-
-			$query .= implode(", ", $updateList) . " WHERE $primaryKey = '$primaryKeyValue'";
-
+			
+			$prep->addSql(" WHERE $primaryKey = ");
+			$prep->addVariable($primaryKeyValue);
+			
 			try
 			{
-				self::executeQuery($query);
+				self::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -83,11 +89,12 @@
 			if (empty($primaryKey) || empty($primaryKeyValue))
 				throw new Exception("Primary key not specified and/or set");
 
-			$query= "DELETE FROM " . $data->getTable() . " WHERE $primaryKey = '$primaryKeyValue'";
-
+			$prep = new DbQueryPreper("DELETE FROM " . $data->getTable() . " WHERE $primaryKey = ");
+			$prep->addVariable($primaryKeyValue);
+			
 			try
 			{
-				self::executeQuery($query);
+				self::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{

@@ -1,6 +1,7 @@
 <?php
 	require_once "Database.class.php";
 	require_once "DataHash.class.php";
+	require_once "DbQueryPreper.class.php";
 
 	class WebtermHistory
 	{
@@ -20,40 +21,40 @@
 			// $user as an array of DataHashes
 			try
 			{
-				$query = "SELECT * " .
-					 "FROM webterm_history " .
-					 "WHERE user = '$this->user' " .
-					 "ORDER BY time";
-
-				$result = Database::executeQuery($query);
+				$prep = new DbQueryPreper("SELECT * FROM webterm_history " .
+										  "WHERE user = ");
+				$prep->addVariable($this->user);
+				$prep->addSql(" ORDER BY time");
+				
+				$results = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 
-			$results = array();
-
-			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
+			$history = array();
+			
+			foreach ($results as $row)
 			{
-				$dataHash = new DataHash("webterm_history");
+				$dataHash = new DataHash("Webterm_history");
 				$dataHash->setPrimaryKey("ID");
-				$dataHash->setAttribute("ID", $row['id']);
-				$dataHash->setAttribute("COMMAND", $row['command']);
-				$dataHash->setAttribute("USER", $row['user']);
-				$dataHash->setAttribute("TIME", $row['time']);
-
-				$results[] = $dataHash;
+				$dataHash->setAllAttributes($row);
+				$history[] = $dataHash;
 			}
-
-			return $results;
+			
+			return $history;
 		}
 
 		public function addEntry($command)
 		{
 			try
 			{
-				Database::executeQuery("INSERT INTO webterm_history VALUES (null, '$command', '$this->user', datetime('now'))");
+				$prep = new DbQueryPreper("INSERT INTO webterm_history VALUES (null, ");
+				$prep->addVariables(array($command, $this->user));
+				$prep->addSql(",datetime('now'))");
+				
+				Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{

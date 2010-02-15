@@ -33,7 +33,7 @@
    $prevCmdsList = array();
 
    foreach ($wtHistory->getHistory() as $dataHash)
-      $prevCmdsList[] = $dataHash->getAttribute("COMMAND");
+      $prevCmdsList[] = $dataHash->getAttribute("command");
 
    # Append last entered command to webterm history and execute command if entered
    if ($cmd != "" || $prevCmd != "")

@@ -4,6 +4,7 @@
 	require_once "FirewallChain.class.php";
 	require_once "FirewallFilterRule.class.php";
 	require_once "FwFilterTranslator.class.php";
+	require_once "DbQueryPreper.class.php";
 	
 	class IPTablesFwFilterTranslator implements FwFilterTranslator
 	{
@@ -17,8 +18,8 @@
 			exec($shellCmd, $output);
 			
 			// Clear chains and rules related to filtering
-			Database::executeQuery("DELETE FROM firewall_chains WHERE table_name = 'filter'");
-			Database::executeQuery("DELETE FROM firewall_filter_rules");
+			Database::executeQuery(new DbQueryPreper("DELETE FROM firewall_chains WHERE table_name = 'filter'"));
+			Database::executeQuery(new DbQueryPreper("DELETE FROM firewall_filter_rules"));
 			
 			$ruleCounters = array();
 			

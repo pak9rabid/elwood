@@ -2,31 +2,30 @@
 	require_once "Database.class.php";
 	require_once "FirewallChain.class.php";
 	require_once "FirewallFilterRule.class.php";
+	require_once "DbQueryPreper.class.php";
 	
 	class FirewallFilterSettings
 	{
 		public static function getChain($chainName)
 		{
 			// Returns specified chain
-			$query = "SELECT * " .
-					 "FROM firewall_chains " .
-					 "WHERE chain_name = '$chainName'";
+			$prep = new DbQueryPreper("SELECT * FROM firewall_chains WHERE chain_name = ");
+			$prep->addVariable($chainName);
 			
 			try
 			{
-				$result = Database::executeQuery($query);
+				$result = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 			
-			if (sqlite_num_rows($result) <= 0)
+			if (count($result) <= 0)
 				throw new Exception("Specified chain does not exist");
 				
-			$row = sqlite_fetch_array($result, SQLITE_ASSOC);
 			$chain = new FirewallChain();
-			$chain->setAllAttributes($row);
+			$chain->setAllAttributes($result[0]);
 			
 			return $chain;
 		}
@@ -35,20 +34,18 @@
 		{
 			// Returns an array of chains from the filter table
 			$chains = array();
-			
-			$query = "SELECT * " .
-					 "FROM firewall_chains";
+			$prep = new DbQueryPreper("SELECT * FROM firewall_chains");
 			
 			try
 			{
-				$result = Database::executeQuery($query);
+				$results = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 			
-			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
+			foreach ($results as $row)
 			{
 				$chain = new FirewallChain();
 				$chain->setAllAttributes($row);
@@ -61,27 +58,26 @@
 		public static function getRule($chain, $id)
 		{
 			// Returns the specified filter firewall rule
-			$query = "SELECT * " .
-			         "FROM firewall_filter_rules " .
-					 "WHERE chain_name = '$chain' AND id = '$id'";
-			
-			echo $query;
+			$prep = new DbQueryPreper("SELECT * FROM firewall_filter_rules " .
+									  "WHERE chain_name = ");
+			$prep->addVariable($chain);
+			$prep->addSql(" AND id = ");
+			$prep->addVariable($id);
 			
 			try
 			{
-				$result = Database::executeQuery($query);
+				$result = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 			
-			if (sqlite_num_rows($result) <= 0)
+			if (count($result) <= 0)
 				throw new Exception("Specified firewall rule does not exist");
 				
-			$row = sqlite_fetch_array($result, SQLITE_ASSOC);
 			$rule = new FirewallFilterRule();
-			$rule->setAllAttributes($row);
+			$rule->setAllAttributes($result[0]);
 			
 			return $rule;
 		}
@@ -90,22 +86,21 @@
 		{
 			// Returns an array of rules for the specified chain
 			$rules = array();
-			
-			$query = "SELECT * " .
-					 "FROM firewall_filter_rules " .
-					 "WHERE chain_name = '$chain' " .
-					 "ORDER BY rule_number";
+			$prep = new DbQueryPreper("SELECT * FROM firewall_filter_rules " .
+									  "WHERE chain_name = ");
+			$prep->addVariable($chain);
+			$prep->addSql(" ORDER BY rule_number");
 			
 			try
 			{
-				$result = Database::executeQuery($query);
+				$results = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 			
-			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
+			foreach ($results as $row)
 			{
 				$rule = new FirewallFilterRule();
 				$rule->setAllAttributes($row);

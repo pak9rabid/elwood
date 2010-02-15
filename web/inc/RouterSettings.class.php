@@ -1,6 +1,7 @@
 <?php
 	require_once "Database.class.php";
 	require_once "DataHash.class.php";
+	require_once "DbQueryPreper.class.php";
 
 	class RouterSettings
 	{
@@ -30,44 +31,44 @@
 		{
 			try
 			{
-				$result = Database::executeQuery("SELECT value FROM settings WHERE key = '$key'");
+				$prep = new DbQueryPreper("SELECT value FROM settings WHERE key = ");
+				$prep->addVariable($key);
+				
+				$result = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 
-			if (sqlite_num_rows($result) <= 0)
+			if (count($result) <= 0)
 				throw new Exception("Setting $key does not exist");
-
-			$row = sqlite_fetch_array($result, SQLITE_ASSOC);
-			return $row['value'];
+				
+			return $result[0]['value'];
 		}
 
 		public static function getAllSettings()
 		{
-			$results = array();
+			$settings = array();
 
 			try
 			{
-				$result = Database::executeQuery("SELECT * FROM settings");
+				$results = Database::executeQuery(new DbQueryPreper("SELECT * FROM settings"));
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
 
-			while (($row = sqlite_fetch_array($result, SQLITE_ASSOC)) == true)
+			foreach ($results as $row)
 			{
 				$dataHash = new DataHash("settings");
 				$dataHash->setPrimaryKey("KEY");
-				$dataHash->setAttribute("KEY", $row['key']);
-				$dataHash->setAttribute("VALUE", $row['value']);
-
-				$results[] = $dataHash;
+				$dataHash->setAllAttributes($row);
+				$settings[] = $dataHash;
 			}
-
-			return $results;
+			
+			return $settings;
 		}
 
 		public static function saveSetting($key, $value)
@@ -75,7 +76,7 @@
 			try
 			{
 				$setting = self::getSetting($key);
-				$setting->setAttribute("value", $value);
+				$setting->setAttribute("VALUE", $value);
 				$setting->executeUpdate();
 			}
 			catch (Exception $ex)
