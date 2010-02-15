@@ -1,28 +1,29 @@
 /* Create tables */
 CREATE TABLE settings
 (
-	key VARCHAR (128) NOT NULL,
+	key VARCHAR(32) PRIMARY KEY UNIQUE NOT NULL,
 	value VARCHAR (128)
 );
 
 CREATE TABLE users
 (
 	uid INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	username VARCHAR(32) NOT NULL,
+	username VARCHAR(32) UNIQUE NOT NULL,
 	passwd VARCHAR(40)  NOT NULL
 );
 
 CREATE TABLE groups
 (
 	gid INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	name VARCHAR(32) NOT NULL
+	name VARCHAR(32) UNIQUE NOT NULL
 );
 
 CREATE TABLE user_groups
 (
-	uid INTEGER NOT NULL,
+	uid INTEGER UNIQUE NOT NULL,
 	gid INTEGER NOT NULL,
-	CONSTRAINT u_user_group UNIQUE (uid, gid)
+	FOREIGN KEY (uid) REFERENCES users(uid),
+	FOREIGN KEY (gid) REFERENCES groups(gid)
 );
 
 CREATE TABLE webterm_history
@@ -57,14 +58,16 @@ CREATE TABLE firewall_filter_rules
 	dport VARCHAR(16),
 	sport VARCHAR(16),
  	icmp_type VARCHAR(16),
-	target VARCHAR(16)
+	target VARCHAR(16),
+	CONSTRAINT u_chain_rulenum UNIQUE (chain_name, rule_number)
 );
 
 CREATE TABLE firewall_dnat_rules
 (
 	in_port VARCHAR(16) UNIQUE NOT NULL,
 	out_address VARCHAR(64) NOT NULL,
-	out_port VARCHAR(16)
+	out_port VARCHAR(16),
+	CONSTRAINT u_forward_rule UNIQUE (in_port, out_address, out_port)
 );
 
 /* Create triggers */
@@ -97,5 +100,6 @@ INSERT INTO settings VALUES ('ENABLE_IPMASQUERADE', 'true');
 
 /* Initialize users and groups */
 INSERT INTO users VALUES (0, 'admin', '87a40f51477eb2699f8694e521b75405320cab21');
-INSERT INTO groups VALUES(0, 'admins');
+INSERT INTO groups VALUES (0, 'admins');
+INSERT INTO groups VALUES (1, 'users');
 INSERT INTO user_groups VALUES (0, 0);
