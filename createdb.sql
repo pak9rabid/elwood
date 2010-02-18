@@ -1,25 +1,29 @@
 /* Create tables */
 CREATE TABLE settings
 (
-	key VARCHAR(32) PRIMARY KEY UNIQUE NOT NULL,
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	key VARCHAR(32) UNIQUE NOT NULL,
 	value VARCHAR (128)
 );
 
 CREATE TABLE users
 (
-	uid INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	uid INTEGER UNIQUE NOT NULL,
 	username VARCHAR(32) UNIQUE NOT NULL,
 	passwd VARCHAR(40)  NOT NULL
 );
 
 CREATE TABLE groups
 (
-	gid INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	gid INTEGER UNIQUE NOT NULL,
 	name VARCHAR(32) UNIQUE NOT NULL
 );
 
 CREATE TABLE user_groups
 (
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	uid INTEGER UNIQUE NOT NULL,
 	gid INTEGER NOT NULL,
 	FOREIGN KEY (uid) REFERENCES users(uid),
@@ -45,7 +49,7 @@ CREATE TABLE firewall_chains
 
 CREATE TABLE firewall_filter_rules
 (
-	id VARCHAR(13) PRIMARY KEY UNIQUE NOT NULL,
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
 	rule_number INTEGER NOT NULL,
 	src_addr VARCHAR(64),
@@ -64,6 +68,7 @@ CREATE TABLE firewall_filter_rules
 
 CREATE TABLE firewall_dnat_rules
 (
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	in_port VARCHAR(16) UNIQUE NOT NULL,
 	out_address VARCHAR(64) NOT NULL,
 	out_port VARCHAR(16),
@@ -80,26 +85,26 @@ BEGIN
 END;
 
 /* Initialize settings table */
-INSERT INTO settings VALUES ('SYSTEM_PROFILE', 'Debian4');
-INSERT INTO settings VALUES ('IS_INITIALIZED', 'false');
-INSERT INTO settings VALUES ('LAN_ETH', 'eth1');
-INSERT INTO settings VALUES ('LAN_WLAN', null);
-INSERT INTO settings VALUES ('EXTIF', 'eth0');
-INSERT INTO settings VALUES ('INTIF', 'br0');
-INSERT INTO settings VALUES ('ELWOOD_WEBROOT', '/var/www');
-INSERT INTO settings VALUES ('DHCPD_CONF', '/etc/dhcp3/dhcpd.conf');
-INSERT INTO settings VALUES ('DHCPD_PID_PATH', '/var/run/dhcpd.pid');
-INSERT INTO settings VALUES ('DHCLIENT_PID_PATH', '/var/run/dhclient.' || (SELECT value FROM settings WHERE key = 'EXTIF') || '.pid');
-INSERT INTO settings VALUES ('DHCPCD_DIR', '/var/lib/dhcpc');
-INSERT INTO settings VALUES ('INETD_DIR', '/etc/elwood/inet.d');
-INSERT INTO settings VALUES ('HTTPD_DIR', '/etc/elwood/httpd');
-INSERT INTO settings VALUES ('PROTOCOLS', '/etc/protocols');
-INSERT INTO settings VALUES ('WOL', '/usr/bin/wol');
-INSERT INTO settings VALUES ('FIREWALL_DIR', '/etc/elwood/firewall');
-INSERT INTO settings VALUES ('ENABLE_IPMASQUERADE', 'true');
+INSERT INTO settings VALUES (null, 'SYSTEM_PROFILE', 'Debian4');
+INSERT INTO settings VALUES (null, 'IS_INITIALIZED', 'false');
+INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
+INSERT INTO settings VALUES (null, 'LAN_WLAN', null);
+INSERT INTO settings VALUES (null, 'EXTIF', 'eth0');
+INSERT INTO settings VALUES (null, 'INTIF', 'br0');
+INSERT INTO settings VALUES (null, 'ELWOOD_WEBROOT', '/var/www');
+INSERT INTO settings VALUES (null, 'DHCPD_CONF', '/etc/dhcp3/dhcpd.conf');
+INSERT INTO settings VALUES (null, 'DHCPD_PID_PATH', '/var/run/dhcpd.pid');
+INSERT INTO settings VALUES (null, 'DHCLIENT_PID_PATH', '/var/run/dhclient.' || (SELECT value FROM settings WHERE key = 'EXTIF') || '.pid');
+INSERT INTO settings VALUES (null, 'DHCPCD_DIR', '/var/lib/dhcpc');
+INSERT INTO settings VALUES (null, 'INETD_DIR', '/etc/elwood/inet.d');
+INSERT INTO settings VALUES (null, 'HTTPD_DIR', '/etc/elwood/httpd');
+INSERT INTO settings VALUES (null, 'PROTOCOLS', '/etc/protocols');
+INSERT INTO settings VALUES (null, 'WOL', '/usr/bin/wol');
+INSERT INTO settings VALUES (null, 'FIREWALL_DIR', '/etc/elwood/firewall');
+INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');
 
 /* Initialize users and groups */
-INSERT INTO users VALUES (0, 'admin', '87a40f51477eb2699f8694e521b75405320cab21');
-INSERT INTO groups VALUES (0, 'admins');
-INSERT INTO groups VALUES (1, 'users');
-INSERT INTO user_groups VALUES (0, 0);
+INSERT INTO users VALUES (null, 0, 'admin', '87a40f51477eb2699f8694e521b75405320cab21');
+INSERT INTO groups VALUES (null, 0, 'admins');
+INSERT INTO groups VALUES (null, 1, 'users');
+INSERT INTO user_groups VALUES (null, 0, 0);

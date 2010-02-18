@@ -43,7 +43,6 @@
 					case "-":
 						// Rule
 						$newRule = new FirewallFilterRule();
-						$newRule->setAttribute("id", FirewallFilterRule::generateUniqueID());
 						$newRule->setAttribute("chain_name", $lineElements[1]);
 						$newRule->setAttribute("rule_number", $ruleCounters[$lineElements[1]]++);
 						

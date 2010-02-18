@@ -32,6 +32,7 @@
 
 		public static function executeInsert(DataHash $data)
 		{
+			// Insert new row into the database
 			$prep = new DbQueryPreper("INSERT INTO " . $data->getTable() . " (");
 			$prep->addSql(implode(",", $data->getAttributeKeys()) . ") VALUES (");
 			$prep->addVariables($data->getAttributeValues());
@@ -62,6 +63,9 @@
 			{
 				if ($key != $primaryKey)
 				{
+					if (count($prep->getBindVars()) > 0)
+						$prep->addSql(",");
+					
 					$prep->addSql(" $key = ");
 					$prep->addVariable($value);
 				}
@@ -82,7 +86,7 @@
 
 		public static function executeDelete(DataHash $data)
 		{
-			# Delete row from the database
+			// Delete specified row in the database
 			$primaryKey = $data->getPrimaryKey();
 			$primaryKeyValue = $data->getAttribute($primaryKey);
 

@@ -38,7 +38,6 @@
 			foreach ($results as $row)
 			{
 				$dataHash = new DataHash("Webterm_history");
-				$dataHash->setPrimaryKey("ID");
 				$dataHash->setAllAttributes($row);
 				$history[] = $dataHash;
 			}

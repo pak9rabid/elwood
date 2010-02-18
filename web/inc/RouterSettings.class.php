@@ -7,23 +7,21 @@
 	{
 		public static function getSetting($key)
 		{
-			// Query database for specified setting
-			// Throws exception on database error or
-			// if specified setting doesn't exist
+			$prep = new DbQueryPreper("SELECT * FROM settings where key = ");
+			$prep->addVariable($key);
+			
 			try
 			{
-				$value = self::getSettingValue($key);
+				$result = Database::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
-
+			
 			$resultHash = new DataHash("settings");
-			$resultHash->setPrimaryKey("KEY");
-			$resultHash->setAttribute("KEY", $key);
-			$resultHash->setAttribute("VALUE", $value);
-
+			$resultHash->setAllAttributes($result[0]);
+			
 			return $resultHash;
 		}
 
@@ -31,20 +29,14 @@
 		{
 			try
 			{
-				$prep = new DbQueryPreper("SELECT value FROM settings WHERE key = ");
-				$prep->addVariable($key);
-				
-				$result = Database::executeQuery($prep);
+				$setting = self::getSetting($key);
 			}
 			catch (Exception $ex)
 			{
 				throw $ex;
 			}
-
-			if (count($result) <= 0)
-				throw new Exception("Setting $key does not exist");
-				
-			return $result[0]['value'];
+			
+			return $setting->getAttribute("value");
 		}
 
 		public static function getAllSettings()
@@ -63,7 +55,6 @@
 			foreach ($results as $row)
 			{
 				$dataHash = new DataHash("settings");
-				$dataHash->setPrimaryKey("KEY");
 				$dataHash->setAllAttributes($row);
 				$settings[] = $dataHash;
 			}
@@ -76,7 +67,7 @@
 			try
 			{
 				$setting = self::getSetting($key);
-				$setting->setAttribute("VALUE", $value);
+				$setting->setAttribute("value", $value);
 				$setting->executeUpdate();
 			}
 			catch (Exception $ex)

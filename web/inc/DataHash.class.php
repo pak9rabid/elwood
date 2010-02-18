@@ -5,7 +5,7 @@
 	{
 		// Attributes
 		protected $table = "";
-		protected $primaryKey = "";
+		protected $primaryKey = "id";
 		protected $hashMap = array();
 
 		// Constructors
