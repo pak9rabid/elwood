@@ -13,11 +13,12 @@
 			// Open database at DB_FILE, execute $query and return
 			// results
 			if (!file_exists(self::DB_FILE))
-				throw new Exception(self::DB_FILE . "does not exist");
+				throw new Exception(self::DB_FILE . " does not exist");
 
 			try
 			{				
 				$conn = new PDO("sqlite:" . self::DB_FILE);
+				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 				$conn->query("PRAGMA foreign_keys = ON");
 				
 				$stmt = $conn->prepare($prep->getQuery());
@@ -26,7 +27,7 @@
 			}
 			catch (Exception $ex)
 			{
-				throw $ex;
+				throw new Exception("Error executing SQL query: '" . $prep->getQuery() . "'");
 			}
 		}
 
