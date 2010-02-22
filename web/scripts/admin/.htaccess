@@ -1,6 +1,0 @@
-AuthName "Admin scripts"
-AuthType Basic
-AuthUserFile /etc/elwood/httpd/users
-AuthGroupFile /etc/elwood/httpd/groups
-
-require group admins
