@@ -9,8 +9,8 @@
    # Description:   Provides functions to   #
    #                format each router page #
    ##########################################
-
-   require_once "usertools.inc";
+   
+   require_once "User.class.php";
 
    function printNavigation()
    # Preconditions:  Function is called from within the navigation div tag
@@ -35,15 +35,16 @@ END;
    # Preconditions:  Function is called from within the title div tag
    # Postconditions: Prints the page title for the site
    {
-      $currentUser = getUser();
-
-        echo "<font id='usertxt'>";
-
-      if ($currentUser != -1)
-      	echo "Logged in: $currentUser";
+      $user = User::getUser();
+      
+      echo "<font id='usertxt'>";
+      
+      if (!empty($user))
+         echo "Logged in: " . $user->getAttribute("username") . "<br />" .
+              "<a href='inc/accessControl.php?logout=true'>Logout</a>";
       else
-	echo "&nbsp;";
-
+         echo "&nbsp;";
+         
       echo "</font>";
       echo "$title";
    }

@@ -11,6 +11,7 @@
    ################################################
 
    # Include required files
+   require_once "accessControl.php";
    require_once "formatting.inc";
    require_once "status.inc";
 ?>

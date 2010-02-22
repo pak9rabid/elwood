@@ -1,6 +1,5 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-
 <?php 
+	require_once "accessControl.php";
 	require_once "RouterSettings.class.php";
 	require_once "ClassFactory.class.php";
 	require_once "FirewallFilterTable.class.php";
@@ -13,8 +12,6 @@
 	$fwTranslator->setDbFromSystem();
 	$fwFilter = new FirewallFilterTable();
 	$policy = $fwFilter->getChain("FORWARD")->getAttribute("policy");
-	$user = getUser();
-	$group = getGroup($user);
 ?>
 
 <html>
