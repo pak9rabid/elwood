@@ -106,5 +106,10 @@
 				throw $ex;
 			}
 		}
+		
+		public static function getDbPath()
+		{
+			return self::DB_FILE;
+		}
 	}
 ?>
