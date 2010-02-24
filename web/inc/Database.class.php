@@ -31,7 +31,7 @@
 			}
 		}
 
-		public static function executeInsert(DataHash $data)
+		public static function executeInsert(DataHash $data, $isTemp = false)
 		{
 			// Insert new row into the database
 			$prep = new DbQueryPreper("INSERT INTO " . $data->getTable() . " (");
@@ -41,7 +41,10 @@
 			
 			try
 			{
-				self::executeQuery($prep);
+				if ($isTemp)
+					TempDatabase::executeQuery($prep);
+				else
+					self::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -49,7 +52,7 @@
 			}
 		}
 
-		public static function executeUpdate(DataHash $data)
+		public static function executeUpdate(DataHash $data, $isTemp = false)
 		{
 			// Update row in the database
 			$primaryKey = $data->getPrimaryKey();
@@ -77,7 +80,10 @@
 			
 			try
 			{
-				self::executeQuery($prep);
+				if ($isTemp)
+					TempDatabase::executeQuery($prep);
+				else
+					self::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -85,7 +91,7 @@
 			}
 		}
 
-		public static function executeDelete(DataHash $data)
+		public static function executeDelete(DataHash $data, $isTemp = false)
 		{
 			// Delete specified row in the database
 			$primaryKey = $data->getPrimaryKey();
@@ -99,7 +105,10 @@
 			
 			try
 			{
-				self::executeQuery($prep);
+				if ($isTemp)
+					TempDatabase::executeQuery($prep);
+				else
+					self::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{

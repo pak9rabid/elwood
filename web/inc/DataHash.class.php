@@ -85,11 +85,14 @@
 			$this->hashMap = array();
 		}
 
-		public function executeInsert()
+		public function executeInsert($isTemp = false)
 		{
 			try
 			{
-				Database::executeInsert($this);
+				if ($isTemp)
+					TempDatabase::executeInsert($this);
+				else
+					Database::executeInsert($this);
 			}
 			catch (Exception $ex)
 			{
@@ -97,11 +100,14 @@
 			}
 		}
 
-		public function executeUpdate()
+		public function executeUpdate($isTemp = false)
 		{
 			try
 			{
-				Database::executeUpdate($this);
+				if ($isTemp)
+					TempDatabase::executeUpdate($this);
+				else
+					Database::executeUpdate($this);
 			}
 			catch (Exception $ex)
 			{
@@ -109,11 +115,14 @@
 			}
 		}
 
-		public function executeDelete()
+		public function executeDelete($isTemp = false)
 		{
 			try
 			{
-				Database::executeDelete($this);
+				if ($isTemp)
+					TempDatabase::executeDelete($this);
+				else
+					Database::executeDelete($this);
 			}
 			catch (Exception $ex)
 			{

@@ -6,10 +6,7 @@
 	{
 		// Override
 		public static function executeQuery(DbQueryPreper $prep)
-		{
-			// Open database at /tmp/${username}.db execute $query and return
-			// results
-			
+		{			
 			if (!file_exists(self::getDbPath()))
 			{
 				if (!copy(parent::getDbPath(), self::getDbPath()))
@@ -30,6 +27,24 @@
 			{
 				throw new Exception("Error executing SQL query: '" . $prep->getQuery() . "'");
 			}
+		}
+		
+		// Override
+		public static function executeInsert(DataHash $data)
+		{
+			Database::executeInsert($data, true);
+		}
+
+		// Override
+		public static function executeUpdate(DataHash $data)
+		{
+			Database::executeUpdate($data, true);
+		}
+
+		// Override
+		public static function executeDelete(DataHash $data)
+		{
+			Database::executeDelete($data, true);
 		}
 		
 		// Override

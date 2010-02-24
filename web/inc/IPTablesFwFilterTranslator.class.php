@@ -18,8 +18,8 @@
 			exec($shellCmd, $output);
 			
 			// Clear chains and rules related to filtering
-			Database::executeQuery(new DbQueryPreper("DELETE FROM firewall_chains WHERE table_name = 'filter'"));
-			Database::executeQuery(new DbQueryPreper("DELETE FROM firewall_filter_rules"));
+			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_chains WHERE table_name = 'filter'"));
+			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_filter_rules"));
 			
 			$ruleCounters = array();
 			
@@ -35,7 +35,7 @@
 						$newChain->setAttribute("table_name", "filter");
 						$newChain->setAttribute("chain_name", trim($lineElements[0], ":"));
 						$newChain->setAttribute("policy", $lineElements[1]);
-						$newChain->executeInsert();
+						$newChain->executeInsert(true);
 						
 						// Add entry into the counters array
 						$ruleCounters[$newChain->getAttribute("chain_name")] = 0;
@@ -124,7 +124,7 @@
 							}
 						}
 						
-						$newRule->executeInsert();
+						$newRule->executeInsert(true);
 						break;
 				}
 			}

@@ -1,5 +1,5 @@
 <?php
-	require_once "Database.class.php";
+	require_once "TempDatabase.class.php";
 	require_once "FirewallChain.class.php";
 	require_once "FirewallFilterRule.class.php";
 	require_once "DbQueryPreper.class.php";
@@ -14,7 +14,7 @@
 			
 			try
 			{
-				$result = Database::executeQuery($prep);
+				$result = TempDatabase::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -38,7 +38,7 @@
 			
 			try
 			{
-				$results = Database::executeQuery($prep);
+				$results = TempDatabase::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -66,7 +66,7 @@
 			
 			try
 			{
-				$result = Database::executeQuery($prep);
+				$result = TempDatabase::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
@@ -93,7 +93,7 @@
 			
 			try
 			{
-				$results = Database::executeQuery($prep);
+				$results = TempDatabase::executeQuery($prep);
 			}
 			catch (Exception $ex)
 			{
