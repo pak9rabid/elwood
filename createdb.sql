@@ -56,8 +56,6 @@ CREATE TABLE firewall_filter_rules
 	dst_addr VARCHAR(64),
 	state VARCHAR(32),
 	fragmented VARCHAR(1),
-	in_interface VARCHAR(16),
-	out_interface VARCHAR(16),
 	protocol VARCHAR(16),
 	dport VARCHAR(16),
 	sport VARCHAR(16),
@@ -104,7 +102,7 @@ INSERT INTO settings VALUES (null, 'FIREWALL_DIR', '/etc/elwood/firewall');
 INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');
 
 /* Initialize users and groups */
-INSERT INTO users VALUES (null, 0, 'admin', '87a40f51477eb2699f8694e521b75405320cab21');
+INSERT INTO users VALUES (null, 0, 'admin', 'da942a52feff28ee63725f388318641d67a4dbe4');
 INSERT INTO groups VALUES (null, 0, 'admins');
 INSERT INTO groups VALUES (null, 1, 'users');
 INSERT INTO user_groups VALUES (null, 0, 0);

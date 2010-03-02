@@ -75,20 +75,6 @@
 									else
 										$newRule->setAttribute("fragmented", "Y");
 									break;
-								case "-i":
-									// Input interface
-									if ($lineElements[$i + 1] == "!")
-										$newRule->setAttribute("in_interface", "!" . $lineElements[$i + 2]);
-									else
-										$newRule->setAttribute("in_interface", $lineElements[$i + 1]);
-									break;
-								case "-o":
-									// Output interface
-									if ($lineElements[$i + 1] == "!")
-										$newRule->setAttribute("out_interface", "!" . $lineElements[$i + 2]);
-									else
-										$newRule->setAttribute("out_interface", $lineElements[$i + 1]);
-									break;
 								case "-p":
 									// Protocol
 									if ($lineElements[$i + 1] == "!")
