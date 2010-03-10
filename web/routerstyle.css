@@ -13,6 +13,7 @@ body
    width:            800px;
    margin-left:      auto;
    margin-right:     auto;
+   margin-bottom:    200px;
    padding-bottom:   16px;
    text-align:       center;
 }
@@ -67,6 +68,7 @@ body
 
 #content
 {
+   z-index:          0;
    display: block;
    text-align:       center;
    background-color: #DCDCDC;
@@ -163,6 +165,7 @@ body
    margin-left:  auto;
    margin-right: auto;
    width:        80%;
+   border-style: solid;
    border:       0px;
 }
 
@@ -275,4 +278,50 @@ textarea
    color: #6495ED;
    display: block;
    text-align: right;
+}
+
+.fwRuleDetails
+{
+	background-color: #FFFF00;
+	padding: 16px;
+	border-style: solid;
+	border-width: 1px;
+	font-size: 12px;
+	display: none;
+	z-index: 1;
+}
+
+.fwDetailsTable
+{
+	border: 0px;
+}
+
+.label
+{
+	text-align: right;
+}
+
+.value
+{
+	text-align: middle;
+}
+
+.fwPolicyDrop
+{
+	background-color: #FF0000;
+}
+
+.fwPolicyAccept
+{
+	background-color: #00FF00;
+}
+
+.fwRuleDrop
+{
+	background-color: #FFAAAA;
+}
+
+.fwRuleAccept
+{
+	background-color: #99FF99;
 }

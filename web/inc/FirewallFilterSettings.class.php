@@ -55,13 +55,11 @@
 			return $chains;
 		}
 		
-		public static function getRule($chain, $id)
+		public static function getRule($id)
 		{
 			// Returns the specified filter firewall rule
 			$prep = new DbQueryPreper("SELECT * FROM firewall_filter_rules " .
-									  "WHERE chain_name = ");
-			$prep->addVariable($chain);
-			$prep->addSql(" AND id = ");
+									  "WHERE id = ");
 			$prep->addVariable($id);
 			
 			try

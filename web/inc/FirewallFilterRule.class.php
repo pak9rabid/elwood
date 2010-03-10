@@ -8,9 +8,9 @@
 			parent::__construct("firewall_filter_rules");
 		}
 		
-		public static function generateUniqueID()
+		public function toJson($isDetail = false)
 		{
-			return uniqid();
+			return json_encode($this->hashMap);
 		}
 	}
 ?>
