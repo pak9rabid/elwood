@@ -121,94 +121,94 @@
 			// Syncs the system filter firewall to what's specified in the
 			// database by generating and executing an iptables-restore script
 			$rules = array();
-			$iptablesRestore = "*filter\n";
+			$iptablesRestore = array("*filter");
 			
 			foreach (FirewallFilterSettings::getChains() as $chain)
 			{
 				$chainName = $chain->getAttribute("chain_name");
 				$rules[$chainName] = FirewallFilterSettings::getRules($chainName);
-				$iptablesRestore .= ":$chainName " . $chain->getAttribute("policy") . "\n";
+				$iptablesRestore[] = ":$chainName " . $chain->getAttribute("policy");
 			}
 			
 			foreach ($rules as $chainName => $chainRules)
 			{
 				foreach ($chainRules as $rule)
 				{
-					$iptablesRestore .= "-A $chainName ";
+					$iptablesRule = "-A $chainName ";
 					
 					if ($rule->getAttribute("src_addr") != null)
 					{
 						// Source address
 						$srcAddr = $rule->getAttribute("src_addr");
-						$iptablesRestore .= "-s ";
+						$iptablesRule .= "-s ";
 						
 						if (self::beginsWith($srcAddr, "!"))
-							$iptablesRestore .= "! ";
+							$iptablesRule .= "! ";
 							
-						$iptablesRestore .= trim($srcAddr, "!") . " ";
+						$iptablesRule .= trim($srcAddr, "!") . " ";
 					}
 					
 					if ($rule->getAttribute("dst_addr") != null)
 					{
 						// Destination address
 						$dstAddr = $rule->getAttribute("dst_addr");
-						$iptablesRestore .= "-d ";
+						$iptablesRule .= "-d ";
 						
 						if (self::beginsWith($dstAddr, "!"))
-							$iptablesRestore .= "! ";
+							$iptablesRule .= "! ";
 							
-						$iptablesRestore .= trim($dstAddr, "!") . " ";
+						$iptablesRule .= trim($dstAddr, "!") . " ";
 					}
 					
 					if ($rule->getAttribute("state") != null)
 					{
 						// State
-						$iptablesRestore .= "-m state --state " . $rule->getAttribute("state") . " ";
+						$iptablesRule .= "-m state --state " . $rule->getAttribute("state") . " ";
 					}
 					
 					if ($rule->getAttribute("fragmented") != null)
 					{
 						// Fragmented
 						if ($rule->getAttribute("fragmented") == "Y")
-							$iptablesRestore .= "-f ";
+							$iptablesRule .= "-f ";
 						else
-							$iptablesRestore .= "! -f ";
+							$iptablesRule .= "! -f ";
 					}
 					
 					if ($rule->getAttribute("in_interface") != null)
 					{
 						// In interface
 						$inIface = $rule->getAttribute("in_interface");
-						$iptablesRestore .= "-i ";
+						$iptablesRule .= "-i ";
 						
 						if (self::beginsWith($inIface, "!"))
-							$iptablesRestore .= "! ";
+							$iptablesRule .= "! ";
 							
-						$iptablesRestore .= trim($inIface, "!") . " ";
+						$iptablesRule .= trim($inIface, "!") . " ";
 					}
 					
 					if ($rule->getAttribute("out_interface") != null)
 					{
 						// Out interface
 						$outIface = $rule->getAttribute("out_interface");
-						$iptablesRestore .= "-o ";
+						$iptablesRule .= "-o ";
 						
 						if (self::beginsWith($outIface, "!"))
-							$iptablesRestore .= "! ";
+							$iptablesRule .= "! ";
 							
-						$iptablesRestore .= trim($outIface, "!") . " ";
+						$iptablesRule .= trim($outIface, "!") . " ";
 					}
 					
 					if ($rule->getAttribute("protocol") != null)
 					{
 						// Protocol
 						$protocol = $rule->getAttribute("protocol");
-						$iptablesRestore .= "-p ";
+						$iptablesRule .= "-p ";
 						
 						if (self::beginsWith($protocol, "!"))
-							$iptablesRestore .= "! ";
+							$iptablesRule .= "! ";
 							
-						$iptablesRestore .= trim($protocol, "!") . " ";
+						$iptablesRule .= trim($protocol, "!") . " ";
 					}
 					
 					// Implement protocol-specific (aka '-m' option)
@@ -220,13 +220,13 @@
 						
 						if ($protocol == "tcp" || $protocol == "udp")
 						{
-							$iptablesRestore .= "-m $protocol ";
+							$iptablesRule .= "-m $protocol ";
 							$sport = $rule->getAttribute("sport");
 						
 							if (self::beginsWith($sport, "!"))
-								$iptablesRestore .= "! ";
+								$iptablesRule .= "! ";
 								
-							$iptablesRestore .= "--sport " . trim($sport, "!") . " ";
+							$iptablesRule .= "--sport " . trim($sport, "!") . " ";
 						}
 					}
 					
@@ -238,14 +238,14 @@
 						if ($protocol == "tcp" || $protocol == "udp")
 						{
 							if (empty($sport))
-								$iptablesRestore .= "-m $protocol ";
+								$iptablesRule .= "-m $protocol ";
 								
 							$dport = $rule->getAttribute("dport");
 						
 							if (self::beginsWith($dport, "!"))
-								$iptablesRestore .= "! ";
+								$iptablesRule .= "! ";
 								
-							$iptablesRestore .= "--dport " . trim($dport, "!") . " ";
+							$iptablesRule .= "--dport " . trim($dport, "!") . " ";
 						}
 					}
 										
@@ -256,33 +256,32 @@
 						
 						if ($protocol == "icmp")
 						{
-							$iptablesRestore .= "-m icmp ";
+							$iptablesRule .= "-m icmp ";
 							$icmpType = $rule->getAttribute("icmp_type");
 							
 							if (self::beginsWith($icmpType, "!"))
-								$iptablesRestore .= "! ";
+								$iptablesRule .= "! ";
 								
-							$iptablesRestore .= "--icmp-type " . trim($icmpType, "!") . " ";
+							$iptablesRule .= "--icmp-type " . trim($icmpType, "!") . " ";
 						}
 					}
 					
 					if ($rule->getAttribute("target") != null)
 					{
 						// Rule target
-						$iptablesRestore .= "-j " . $rule->getAttribute("target") . " ";
+						$iptablesRule .= "-j " . $rule->getAttribute("target") . " ";
 					}
 					
-					$iptablesRestore .= "\n";
+					$iptablesRestore[] = $iptablesRule;
 				}
 			}
 			
-			$iptablesRestore .= "COMMIT\n";
+			$iptablesRestore[] = "COMMIT";
 			
 			// If specified, write changes to the active firewall
 			if ($writeChanges)
 			{
-				$shellCmd = "echo \"$iptablesRestore\" | /sbin/iptables-restore";
-				exec($shellCmd, $placeholder, $returnVal);
+				exec("echo \"" . implode("\n", $iptablesRestore) . "\" | sudo /sbin/iptables-restore", $placeholder, $returnVal);
 				
 				if ($returnVal != 0)
 					throw new Exception("There was an error running iptables-restore");

@@ -280,6 +280,16 @@ textarea
    text-align: right;
 }
 
+#fwTable
+{
+	margin-top: 10px;
+}
+
+#fwActions
+{
+	margin-top: 15px;
+}
+
 .fwRuleDetails
 {
 	background-color: #FFFF00;
@@ -324,4 +334,9 @@ textarea
 .fwRuleAccept
 {
 	background-color: #99FF99;
+}
+
+.tableRowMove
+{
+	background-color: #EEE;
 }

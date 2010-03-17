@@ -107,5 +107,29 @@
 			
 			return $rules;
 		}
+		
+		public static function orderRules(Array $ruleIds)
+		{
+			// Orders the firewall rules by the given order specified in
+			// the $ruleIds list
+			
+			$rules = array();
+			
+			// Clear existing rules from the temp database
+			foreach ($ruleIds as $ruleId)
+			{
+				$rule = self::getRule($ruleId);
+				$rule->executeDelete(true);
+				$rules[] = $rule;
+			}
+			
+			// Set the rule number attribute to match the order in which
+			// the rules were specified
+			foreach ($rules as $key => $rule)
+			{
+				$rule->setAttribute("rule_number", $key);
+				$rule->executeInsert(true);
+			}
+		}
 	}
 ?>

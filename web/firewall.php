@@ -24,43 +24,57 @@
 	<script language="JavaScript" src="inc/ajax.js" type="text/javascript"></script>
 	<script language="JavaScript" src="inc/firewall.js" type="text/javascript"></script>
 	<script language="JavaScript" type="text/javascript">
-		function showRule(row, ruleId)
+	function saveRules()
+	{
+		var xhr = getXmlHttpRequest();
+
+		if (!xhr)
+			return;
+
+		// Get order of the firewall rules
+		var table = document.getElementById("firewall-table");
+		var rules = new Array();
+		    	
+		for (i=0 ; i<table.rows.length ; i++)
 		{
-			var ruleDetails = document.getElementById(ruleId + "details");
-			var pos = getElementPosition(row);
-			var posLeft = pos[0];
-			var posTop = pos[1] + 25;
-			
-			ruleDetails.style.position = "absolute";
-			ruleDetails.style.left = posLeft + "px";
-			ruleDetails.style.top = posTop + "px";
-			ruleDetails.style.display = "inline";
+			if (table.rows[i].id)
+			rules.push(table.rows[i].id);
 		}
 
-		function hideRule(ruleId)
+		xhr.onreadystatechange = function()
 		{
-			document.getElementById(ruleId + "details").style.display = "none";
-		}
+			if (xhr.readyState != 4)
+				return;
 
-		function getElementPosition(element)
-		{
-			var curleft = curtop = 0;
+			if (xhr.status != 200)
+				return;
 
-			if (element.offsetParent)
+			var response;
+
+			if (JSON.parse)
+				// Use the secure method of parsing JSON response, if available
+				response = JSON.parse(xhr.responseText);
+			else
+				// Less secure, but compatible
+				response = eval("(" + xhr.responseText + ")");
+
+			if (response.result)
 			{
-				do
-				{
-					curleft += element.offsetLeft;
-					curtop += element.offsetTop;
-				} while (element = element.offsetParent);
+				document.getElementById("fwActions").innerHTML = "Changes saved successfully";
 			}
+			else
+			{
+				document.getElementById("fwActions").innerHTML = "Unable to save changes";
+			}
+		};
 
-			return [curleft, curtop];
-		}
+		xhr.open("GET", "ajax/editFwFilterRules.php?dir=<?=$direction?>&order=" + rules, true);
+		xhr.send();
+	}
 	</script>
 </head>
 
-<body>
+<body onLoad="dndInit()">
 	<div id="container">
 		<div id="title">
 			<?php echo printTitle("Firewall"); ?>
@@ -70,70 +84,11 @@
 			<a href="firewall.php?dir=in">Incoming</a>
 			&nbsp;
 			<a href="firewall.php?dir=out">Outgoing</a>
-			<br /><br />
-			<?php printFwTable($direction, $fwFilter); ?>
+			<div id="fwTable">
+				<?php $fwFilter->out($direction); ?>
+			</div>
+			<div id="fwActions">&nbsp;</div>
 		</div>
 	</div>
 </body>
 </html>
-
-<?php
-	function printFwTable($direction, FirewallFilterTable $filter)
-	{
-		$policy = $filter->getChain("FORWARD")->getAttribute("policy");
-		$rules = $direction == "in" ? $filter->getRules("forward_in") : $filter->getRules("forward_out");		
-		$policyClass = $policy == "ACCEPT" ? "fwPolicyAccept" : "fwPolicyDrop";
-		$ruleDivs = "";
-		
-		echo "<table id=\"firewall-table\">\n" .
-			 "	<tr class=\"$policyClass\"><th colspan=\"5\">" . ($direction == "in" ? "Incoming" : "Outgoing") . "Traffic</th></tr>\n" .
-			 "	<tr class=\"$policyClass\"><th>Proto</th><th>Source</th><th>Port</th><th>Destination</th><th>Port</th></tr>\n";
-		
-		if (!empty($rules))
-		{
-			foreach ($rules as $rule)
-			{
-				$rowClass = $rule->getAttribute("target") == "ACCEPT" ? "fwRuleAccept" : "fwRuleDrop";
-				$proto = getRuleAttr($rule, "protocol");
-				$srcAddr = getRuleAttr($rule, "src_addr") != "*" ? NetUtils::net2CIDR(getRuleAttr($rule, "src_addr")) : "*";
-				$srcPort = getRuleAttr($rule, "sport");
-				$dstAddr = getRuleAttr($rule, "dst_addr") != "*" ? NetUtils::net2CIDR(getRuleAttr($rule, "dst_addr")) : "*";
-				$dstPort = getRuleAttr($rule, "dport");
-				$ruleId = getRuleAttr($rule, "id");
-				
-				echo "<tr id=\"rowid$ruleId\" class=\"$rowClass\" onMouseOver=\"showRule(this, $ruleId)\" " .
-					 "onMouseOut=\"hideRule($ruleId)\"><td>$proto</td><td>$srcAddr</td><td>$srcPort</td>" .
-					 "<td>$dstAddr</td><td>$dstPort</td></tr>\n";
-				
-				// Create div to store rule details
-				$ruleDivs .= "<div id=\"" . $ruleId . "details\" class=\"fwRuleDetails\">\n" .
-							 "	<table class=\"fwDetailsTable\">\n" .
-							 "		<tr><td class=\"label\">Protocol:</td><td>$proto</td></tr>\n" .
-							 "		<tr><td class=\"label\">Source Address:</td><td>$srcAddr</td></tr>\n" .
-							 "		<tr><td class=\"label\">Source Port:</td><td>$srcPort</td></tr>\n" .
-							 "		<tr><td class=\"label\">Destination Address:</td><td>$dstAddr</td></tr>\n" .
-							 "		<tr><td class=\"label\">Destination Port:</td><td>$dstPort</td></tr>\n" .
-							 "		<tr><td class=\"label\">States:</td><td>" . getRuleAttr($rule, "state") . "</td></tr>\n" .
-							 "		<tr><td class=\"label\">Fragmented:</td><td>" . getRuleAttr($rule, "fragmented") . "</td></tr>\n";
-				
-				if ($proto == "icmp")
-					$ruleDivs .= "		<tr><td class=\"label\">ICMP Type:</td><td>" . getRuleAttr($rule, "icmp_type") . "</td></tr>\n";
-					
-				$ruleDivs .= "		<tr><td class=\"label\">Target:</td><td>" . getRuleAttr($rule, "target") . "</td></tr>\n" .
-							 "	</table>\n" .
-							 "</div>\n";
-			}
-		}
-		else
-			echo "	<tr><td colspan=\"5\">None</td><tr>\n";
-		
-		echo "</table>\n";
-		echo $ruleDivs;
-		
-	}
-	
-	function getRuleAttr(FirewallFilterRule $rule, $attribute)
-	{
-		return $rule->getAttribute($attribute) == null ? "*" : $rule->getAttribute($attribute);
-	}
-?>
