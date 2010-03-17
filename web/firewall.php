@@ -60,11 +60,13 @@
 
 			if (response.result)
 			{
-				document.getElementById("fwActions").innerHTML = "Changes saved successfully";
+				document.getElementById("fwActions").innerHTML = "<span style=\"color: green;\">Changes saved successfully</span>";
+				fade(document.getElementById("fwActions"));
 			}
 			else
 			{
-				document.getElementById("fwActions").innerHTML = "Unable to save changes";
+				document.getElementById("fwActions").innerHTML = "<span style=\"color: red;\">Unable to save changes</span>";
+				fade(document.getElementById("fwActions"));
 			}
 		};
 

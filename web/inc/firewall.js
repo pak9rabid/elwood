@@ -183,7 +183,13 @@ function TableDnD()
 
 		// Display buttons to save or restore settings
 		if (!document.getElementById("saveBtn"))
-			document.getElementById("fwActions").innerHTML = "<input id=\"saveBtn\" type=\"button\" value=\"Save Changes\" onClick=\"saveRules()\"/>&nbsp;<input id=\"resetBtn\" type=\"button\" value=\"Reset\" onClick=\"resetRules()\" />";
+		{
+			var element = document.getElementById("fwActions");
+			element.innerHTML = "<input id=\"saveBtn\" type=\"button\" value=\"Save Changes\" onClick=\"saveRules()\"/>&nbsp;<input id=\"resetBtn\" type=\"button\" value=\"Reset\" onClick=\"resetRules()\" />";
+			
+			if (element.style.opacity != null && element.style.opacity != "undefined")
+				element.style.opacity = 1;
+		}
 	};
 
 	/** Get the position of an element by going up the DOM tree and adding up all the offsets */
@@ -338,4 +344,30 @@ function isLeftMouseButton(event)
 		return true;
 
 	return false;
+}
+
+function fade(element, opacity)
+{
+	if (element.style.opacity == null || element.style.opacity == "undefined")
+		// We're not dealing with any browser that doesn't support
+		// the CSS3 standard of opacity (IE, I'm looking at you)
+		return;
+		
+	if (opacity == null || opacity == "undefined")
+		opacity = 10;
+	
+	if (opacity > 0)
+	{
+		opacity -= 1;
+		element.style.opacity = opacity / 10;
+		
+		var recurse = function()
+		{
+			fade(element, opacity);
+		};
+		
+		setTimeout(recurse, 70);
+	}
+	else
+		opacity = 10;
 }
