@@ -11,17 +11,18 @@
 			return 32-log(($long ^ $base)+1, 2);
 		}
 		
-		public static function net2CIDR($ip)
+		public static function net2CIDR($fullAddress)
 		{
-			$ipElements = preg_split("/\//", $ip);
+			list($ip, $netmask) = preg_split("/\//", $fullAddress);
 			
-			if (!self::isValidIp($ipElements[0]))
+			if (!self::isValidIp($ip))
 				throw new Exception("Error: Invalid IP to convert");
 			
-			if (count($ipElements) == 1 || preg_match("/^[0-9]{1,2}$/", $ipElements[1]))
-				return $ip;
+			//if (count($ipElements) == 1 || preg_match("/^[0-9]{1,2}$/", $ipElements[1]))
+			if ($netmask == null || preg_match("/^[0-9]{1,2}$/", $netmask))
+				return $fullAddress;
 				
-			return $ipElements[0] . "/" . self::mask2CIDR($ipElements[1]);
+			return $ip . "/" . self::mask2CIDR($netmask);
 		}
 		
 		public static function isValidIp($ip)
@@ -29,18 +30,73 @@
 			return $ip == long2ip(ip2long($ip));
 		}
 		
-		public static function isValidNetmask($netmask)
+		public static function isValidNetwork($network)
 		{
-			if (!self::isValidIp($netmask))
+			// Network in forms 'xxx.xxx.xxx.xxx/xxx.xxx.xxx.xxx'
+			// and 'xxx.xxx.xxx.xxx/xx' are valid
+			list($ip, $netmask) = preg_split("/\//", $network);
+			
+			if (!self::isValidIp($ip) || !self::isValidNetmask($netmask))
 				return false;
 				
- 			if(strlen(decbin(ip2long($netmask))) != 32 && ip2long($netmask) != 0)
-  				return false;
+			return true;
+		}
+		
+		public static function isValidNetmask($netmask)
+		{
+			if (self::isValidIp($netmask))
+			{	
+				// IP notation (xxx.xxx.xxx.xxx)
+ 				if(strlen(decbin(ip2long($netmask))) != 32 && ip2long($netmask) != 0)
+  					return false;
   				
-			if(preg_match("/01/", decbin(ip2long($netmask))) || (!preg_match("/0/", decbin(ip2long($netmask))) && $netmask != "255.255.255.255"))
-  				return false;
-  				
-  			return true;
+				if(preg_match("/01/", decbin(ip2long($netmask))) || (!preg_match("/0/", decbin(ip2long($netmask))) && $netmask != "255.255.255.255"))
+  					return false;
+			}
+			else
+			{
+				// CIDR notation (/xx)
+				if (!preg_match("/^[0-9]{1,2}$/", $netmask))
+					return false;
+					
+				if ($netmask < 0 || $netmask > 32)
+					return false;
+			}
+			
+			return true;
+		}
+		
+		public static function isValidIanaPortNumber($port)
+		{
+			if (!preg_match("/^[0-9]{1,5}$/", $port))
+				return false;
+				
+			if ($port < 1 || $port > 65535)
+				return false;
+				
+			return true;
+		}
+		
+		public static function isValidProtocol($protocol)
+		{
+			foreach (self::getNetworkProtocols() as $validProtocol)
+			{
+				if ($protocol == $validProtocol)
+					return true;
+			}
+			
+			return false;
+		}
+		
+		public static function isValidIcmpType($icmpType)
+		{
+			foreach (self::getIcmpTypes() as $validIcmpType)
+			{
+				if ($icmpType == $validIcmpType)
+					return true;
+			}
+			
+			return false;
 		}
 		
 		public static function isValidMac($mac)
@@ -63,6 +119,30 @@
 			$mac = str_split($mac, 2);
 			
 			return implode(":", $mac);
+		}
+		
+		public static function getNetworkProtocols()
+		{
+			return array("ip", "tcp", "udp", "icmp", "gre", "esp", "ah");
+		}
+		
+		public static function getIcmpTypes()
+		{
+			return array	(
+								"echo-request",
+								"echo-reply",
+								"destination-unreachable",
+								"source-quench",
+								"redirect",
+								"router-advertisement",
+								"router-solicitation",
+								"time-exceeded",
+								"parameter-problem",
+								"timestamp-request",
+								"timestamp-reply",
+								"address-mask-request",
+								"address-mask-reply"
+							);
 		}
 	}
 ?>
