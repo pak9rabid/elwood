@@ -144,5 +144,15 @@
 								"address-mask-reply"
 							);
 		}
+		
+		public static function getConnectionStates()
+		{
+			return array	(
+								"ESTABLISHED",
+								"INVALID",
+								"NEW",
+								"RELATED"
+							);
+		}
 	}
 ?>
