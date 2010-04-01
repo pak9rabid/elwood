@@ -79,24 +79,24 @@
 		
 		public static function isValidProtocol($protocol)
 		{
-			foreach (self::getNetworkProtocols() as $validProtocol)
-			{
-				if ($protocol == $validProtocol)
-					return true;
-			}
-			
-			return false;
+			return in_array($protocol, self::getNetworkProtocols());
 		}
 		
 		public static function isValidIcmpType($icmpType)
+		{	
+			return in_array($icmpType, self::getIcmpTypes());
+		}
+
+
+		public static function isValidConnectionStates(Array $connStates)
 		{
-			foreach (self::getIcmpTypes() as $validIcmpType)
+			foreach ($connStates as $connState)
 			{
-				if ($icmpType == $validIcmpType)
-					return true;
+				if (!in_array($connState, self::getConnectionStates()))
+					return false;
+					
+				return true;
 			}
-			
-			return false;
 		}
 		
 		public static function isValidMac($mac)
