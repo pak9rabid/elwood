@@ -108,7 +108,7 @@
 			return $rules;
 		}
 		
-		public static function orderRules(Array $ruleIds)
+		public static function orderRules(Array $ruleIds, $chainName)
 		{
 			// Orders the firewall rules by the given order specified in
 			// the $ruleIds list
@@ -119,8 +119,12 @@
 			foreach ($ruleIds as $ruleId)
 			{
 				$rule = self::getRule($ruleId);
-				$rule->executeDelete(true);
-				$rules[] = $rule;
+				
+				if ($chainName == $rule->getAttribute("chain_name"))
+				{
+					$rule->executeDelete(true);
+					$rules[] = $rule;
+				}
 			}
 			
 			// Set the rule number attribute to match the order in which

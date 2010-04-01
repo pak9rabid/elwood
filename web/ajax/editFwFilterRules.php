@@ -9,14 +9,20 @@
 	
 	try
 	{
-		FirewallFilterSettings::orderRules($rulesOrder);
+		if ($direction == "in")
+			$chainName = "forward_in";
+		else if ($direction == "out")
+			$chainName = "forward_out";
+		else
+			throw new Exception("Invalid direction specified");
+			
+		FirewallFilterSettings::orderRules($rulesOrder, $chainName);
 		$fwTranslator = ClassFactory::getFwFilterTranslator();
 		$fwTranslator->setSystemFromDb(true);
 		$json = "{\"result\":true}";
 	}
 	catch (Exception $ex)
 	{
-		$temp = $ex->getMessage();
 		$json = "{\"result\":false}";
 	}
 	
