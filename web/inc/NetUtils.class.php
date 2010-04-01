@@ -87,16 +87,15 @@
 			return in_array($icmpType, self::getIcmpTypes());
 		}
 
-
 		public static function isValidConnectionStates(Array $connStates)
 		{
 			foreach ($connStates as $connState)
 			{
 				if (!in_array($connState, self::getConnectionStates()))
 					return false;
-					
-				return true;
 			}
+			
+			return true;
 		}
 		
 		public static function isValidMac($mac)
