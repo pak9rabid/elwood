@@ -290,6 +290,41 @@ textarea
 	margin-top: 15px;
 }
 
+#hideshow
+{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+#fade
+{
+	background: #000;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	filter: alpha(opacity=80);
+	opacity: .80;
+	left: 0;
+	top: 0;
+	z-index: 2;
+}
+
+.popup_block
+{
+	background: #ddd;
+	padding: 10px 20px;
+	border: 10px solid #fff;
+	float: left;
+	position: fixed;
+	top: 20%;
+	left: 50%;
+	margin: 0 0 0 -250px;
+	z-index: 100;
+}
+
 .fwRuleDetails
 {
 	background-color: #FFFF00;
@@ -339,4 +374,14 @@ textarea
 .tableRowMove
 {
 	background-color: #EEE;
+}
+
+.tabInputLabel
+{
+	text-align: right;
+}
+
+.tabInputValue
+{
+	text-align: left;
 }

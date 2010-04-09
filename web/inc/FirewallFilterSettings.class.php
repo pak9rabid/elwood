@@ -131,7 +131,7 @@
 			// the rules were specified
 			foreach ($rules as $key => $rule)
 			{
-				$rule->setAttribute("rule_number", $key);
+				$rule->removeAttribute("rule_number");
 				$rule->executeInsert(true);
 			}
 		}

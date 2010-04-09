@@ -21,8 +21,6 @@
 			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_chains WHERE table_name = 'filter'"));
 			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_filter_rules"));
 			
-			$ruleCounters = array();
-			
 			foreach ($output as $line)
 			{
 				$lineElements = explode(" ", $line);
@@ -38,13 +36,11 @@
 						$newChain->executeInsert(true);
 						
 						// Add entry into the counters array
-						$ruleCounters[$newChain->getAttribute("chain_name")] = 0;
 						break;
 					case "-":
 						// Rule
 						$newRule = new FirewallFilterRule();
 						$newRule->setAttribute("chain_name", $lineElements[1]);
-						$newRule->setAttribute("rule_number", $ruleCounters[$lineElements[1]]++);
 						
 						for ($i = 2 ; $i<count($lineElements) ; $i++)
 						{

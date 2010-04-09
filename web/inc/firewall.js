@@ -1,6 +1,4 @@
-var xhr;
 var dndTable;
-var origFwTable;
 		
 function showRule(event, row, ruleId)
 {			
@@ -44,13 +42,6 @@ function getElementPosition(element)
 function dndInit()
 {
 	dndTable = new TableDnD();
-	dndTable.init(document.getElementById("firewall-table"));
-	origFwTable = document.getElementById("fwTable").innerHTML;
-}
-
-function resetRules()
-{
-	document.getElementById("fwTable").innerHTML = origFwTable;
 	dndTable.init(document.getElementById("firewall-table"));
 }
 
@@ -181,15 +172,8 @@ function TableDnD()
 	this.onDrop = function(table, droppedRow)
 	{
 
-		// Display buttons to save or restore settings
-		if (!document.getElementById("saveBtn"))
-		{
-			var element = document.getElementById("fwActions");
-			element.innerHTML = "<input id=\"saveBtn\" type=\"button\" value=\"Save Changes\" onClick=\"saveRules()\"/>&nbsp;<input id=\"resetBtn\" type=\"button\" value=\"Reset\" onClick=\"resetRules()\" />";
-			
-			if (element.style.opacity != null && element.style.opacity != "undefined")
-				element.style.opacity = 1;
-		}
+		// Display buttons to save rule settings
+		showSaveButton();
 	};
 
 	/** Get the position of an element by going up the DOM tree and adding up all the offsets */
@@ -370,4 +354,104 @@ function fade(element, opacity)
 	}
 	else
 		opacity = 10;
+}
+
+function addFilterRuleDlg(direction)
+{
+	document.getElementById("hideshow").style.visibility = "visible";
+}
+
+function closeAddEditRule()
+{
+	document.getElementById("hideshow").style.visibility = "hidden";
+}
+
+function getPageHeight()
+{
+	var body = document.body;
+	var html = document.documentElement;
+
+	return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+}
+
+function submitAddEditRule()
+{
+	var params = new Array();
+	
+	if (document.addEditRuleForm.ruleId)
+		params.push("ruleId=" + document.addEditRuleForm.ruleId.value);
+	
+	params.push("dir=" + document.addEditRuleForm.dir.value);
+	params.push("protocol=" + document.addEditRuleForm.protocol.value);
+	params.push("srcAddr=" + document.addEditRuleForm.srcAddr.value);
+	params.push("srcPort=" + document.addEditRuleForm.srcPort.value);
+	params.push("dstAddr=" + document.addEditRuleForm.dstAddr.value);
+	params.push("dstPort=" + document.addEditRuleForm.dstPort.value);
+	
+	for (i=0 ; i<document.addEditRuleForm.connState.length; i++)
+	{
+		if (document.addEditRuleForm.connState[i].checked)
+			params.push("connState[]=" + document.addEditRuleForm.connState[i].value);
+	}
+	
+	params.push("fragmented=" + document.addEditRuleForm.fragmented.value);
+	params.push("icmpType=" + document.addEditRuleForm.icmpType.value);
+	params.push("target=" + document.addEditRuleForm.target.value);
+	
+	var postStr = params.join("&");
+	
+	stateChangeFunc = function()
+	{
+		if (xhr.readyState != 4)
+			return;
+		
+		if (xhr.status != 200)
+			return;
+		
+		var response;
+		
+		if (JSON.parse)
+			response = JSON.parse(xhr.responseText);
+		else
+			response = eval("(" + xhr.responseText + ")");
+		
+		if (response.result)
+		{
+			// Add/edit was successful
+			document.getElementById("fwTable").innerHTML = response.fwFilterTableHtml;
+			dndInit();
+			showSaveButton();
+			closeAddEditRule();
+		}
+		else
+		{
+			// Add/edit was unsuccessful
+			var msgsPanel = document.getElementById("fwAddEditFilterRuleMsgs");
+			msgsPanel.style.color = "red";
+			
+			var html =	"The following errors occured:" +
+						"<ul>";
+			
+			for (i=0 ; i<response.errors.length ; i++)
+				html += "<li>" + response.errors[i] + "</li>";
+			
+			html += "</ul>";
+			
+			msgsPanel.innerHTML = html;
+		}
+	};
+	
+	sendAjaxRequest("ajax/addEditFwFilterRule.php", stateChangeFunc, "POST", postStr);
+}
+
+function showSaveButton()
+{
+	if (!document.getElementById("saveBtn"))
+	{
+		var element = document.getElementById("fwActions");
+		element.innerHTML = "<input id=\"saveBtn\" type=\"button\" value=\"Save Changes\" onClick=\"saveRules()\" />";
+		
+		if (element.style.opacity != null && element.style.opacity != "undefined")
+			element.style.opacity = 1;
+	}
 }

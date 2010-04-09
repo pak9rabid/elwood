@@ -26,12 +26,6 @@
 	<script language="JavaScript" type="text/javascript">
 	function saveRules()
 	{
-		var xhr = getXmlHttpRequest();
-
-		if (!xhr)
-			return;
-
-		// Get order of the firewall rules
 		var table = document.getElementById("firewall-table");
 		var rules = new Array();
 		    	
@@ -41,7 +35,7 @@
 			rules.push(table.rows[i].id);
 		}
 
-		xhr.onreadystatechange = function()
+		stateChangeFunc = function()
 		{
 			if (xhr.readyState != 4)
 				return;
@@ -70,8 +64,7 @@
 			}
 		};
 
-		xhr.open("GET", "ajax/editFwFilterRules.php?dir=<?=$direction?>&order=" + rules, true);
-		xhr.send();
+		sendAjaxRequest("ajax/editFwFilterRules.php?dir=<?=$direction?>&order=" + rules, stateChangeFunc, "GET");
 	}
 	</script>
 </head>
@@ -86,10 +79,98 @@
 			<a href="firewall.php?dir=in">Incoming</a>
 			&nbsp;
 			<a href="firewall.php?dir=out">Outgoing</a>
+			<br /><br />
+			<input type="button" value="Add Rule" onClick="addFilterRuleDlg('<?=$direction?>')" />
 			<div id="fwTable">
-				<?php $fwFilter->out($direction); ?>
+				<?=$fwFilter->out($direction)?>
 			</div>
 			<div id="fwActions">&nbsp;</div>
+		</div>
+	</div>
+	<div id="hideshow" style="visibility: hidden;">
+		<div id="fade"></div>
+		<div class="popup_block">
+			<div id="fwAddEditFilterRuleMsgs"></div>
+			<form name="addEditRuleForm" action="javascript:submitAddEditRule(this)">
+				<input type="hidden" name="ruleId" />
+				<input type="hidden" name="dir" value="<?=$direction?>" />
+				<table>
+					<tr>
+						<td class="tabInputLabel">Protocol:</td>
+						<td class="tabInputValue">
+							<select name="protocol">
+								<option value="any">any</option>
+							<?php
+								foreach (NetUtils::getNetworkProtocols() as $protocol)
+									echo "<option value=\"$protocol\">$protocol</option>\n";
+							?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Source Address:</td>
+						<td class="tabInputValue"><input type="text" name="srcAddr" size="20" maxlength="20" /></td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Source Port:</td>
+						<td class="tabInputValue"><input type="text" name="srcPort" size="20" maxlength="5" /></td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Destination Address:</td>
+						<td class="tabInputValue"><input type="text" name="dstAddr" size="20" maxlength="20" /></td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Destination Port:</td>
+						<td class="tabInputValue"><input type="text" name="dstPort" size="20" maxlength="5" /></td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Connection State:</td>
+						<td class="tabInputValue">
+							<?php 
+								foreach (NetUtils::getConnectionStates() as $connState)
+									echo "<input type=\"checkbox\" name=\"connState\" value=\"$connState\" />$connState&nbsp;\n";
+							?>
+						</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Fragmented:</td>
+						<td class="tabInputValue">
+							<select name="fragmented">
+								<option value="any">any</option>
+								<option value="Y">Yes</option>
+								<option value="N">No</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">ICMP Type:</td>
+						<td class="tabInputValue">
+							<select name="icmpType">
+								<option value="any">any</option>
+							<?php 
+								foreach (NetUtils::getIcmpTypes() as $icmpType)
+									echo "<option value=\"$icmpType\">$icmpType</option>\n";
+							?>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Target:</td>
+						<td class="tabInputValue">
+							<select name="target">
+								<option value="DROP">DROP</option>
+								<option value="ACCEPT">ACCEPT</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="2" align="center"><input type="submit" value="Save" />&nbsp;<input type="button" value="Cancel" onClick="closeAddEditRule()" /></td>
+					</tr>
+				</table>
+			</form>
 		</div>
 	</div>
 </body>

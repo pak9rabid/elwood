@@ -1,3 +1,5 @@
+var xhr;
+
 function getXmlHttpRequest()
 {
 	xmlhttp = false;
@@ -26,4 +28,31 @@ function getXmlHttpRequest()
 	}
 	
 	return xmlhttp;
+}
+
+function sendAjaxRequest(url, stateChangeFunc, method, postParameters)
+{
+	if (!xhr)
+		xhr = getXmlHttpRequest();
+	
+	if (!xhr)
+		return false;
+	
+	xhr.onreadystatechange = stateChangeFunc;
+	xhr.open(method, url, true);
+	
+	if (method == "POST")
+	{
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		
+		if (postParameters != null && postParameters != "undefined")
+			xhr.setRequestHeader("Content-length", postParameters.lenbth);
+	}
+	
+	if (postParameters != null && postParameters != "undefined")
+		xhr.send(postParameters);
+	else
+		xhr.send();
+	
+	return true;
 }

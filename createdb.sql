@@ -51,7 +51,7 @@ CREATE TABLE firewall_filter_rules
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
-	rule_number INTEGER NOT NULL,
+	rule_number INTEGER,
 	src_addr VARCHAR(64),
 	dst_addr VARCHAR(64),
 	state VARCHAR(32),
@@ -80,6 +80,20 @@ BEGIN
 		(SELECT id FROM webterm_history WHERE user =
 			(SELECT user from webterm_history WHERE rowid = last_insert_rowid())
 		ORDER BY time DESC LIMIT 50 OFFSET 50);
+END;
+
+CREATE TRIGGER set_filter_rule_num AFTER INSERT ON firewall_filter_rules
+BEGIN
+	UPDATE firewall_filter_rules
+	SET rule_number =	CASE (SELECT count(*) FROM firewall_filter_rules WHERE chain_name = new.chain_name)
+				WHEN 1 THEN 1
+				ELSE	(
+						SELECT max(rule_number)
+						FROM firewall_filter_rules
+						WHERE chain_name = new.chain_name
+					) + 1
+				END
+	WHERE rowid = new.rowid;
 END;
 
 /* Initialize settings table */
