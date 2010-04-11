@@ -122,28 +122,50 @@
 		
 		public static function getNetworkProtocols()
 		{
-			return array("ip", "tcp", "udp", "icmp", "gre", "esp", "ah");
+			return array("tcp", "udp", "icmp", "gre", "esp", "ah");
 		}
 		
 		public static function getIcmpTypes()
 		{
 			return array	(
-								"echo-request",
-								"echo-reply",
-								"destination-unreachable",
-								"source-quench",
-								"redirect",
-								"router-advertisement",
-								"router-solicitation",
-								"time-exceeded",
-								"parameter-problem",
-								"timestamp-request",
-								"timestamp-reply",
-								"address-mask-request",
-								"address-mask-reply"
+								"any" => "any",
+								"0" => "echo-reply",
+								"3" => "destination-unreachable",
+								"3/0" => "network-unreachable",
+								"3/1" => "host-unreachable",
+								"3/2" => "protocol-unreachable",
+								"3/3" => "port-unreachable",
+								"3/4" => "fragmentation-needed",
+								"3/5" => "source-route-failed",
+								"3/6" => "network-unknown",
+								"3/7" => "host-unknown",
+								"3/9" => "network-prohibited",
+								"3/10" => "host-prohibited",
+								"3/11" => "TOS-network-unreachable",
+								"3/12" => "TOS-host-unreachable",
+								"3/13" => "communication-prohibited",
+								"3/14" => "host-precedence-violation",
+								"3/15" => "precedence-cutoff",
+								"4" => "source-quench",
+								"5" => "redirect",
+								"5/0" => "network-redirect",
+								"5/1" => "host-redirect",
+								"5/2" => "TOS-network-redirect",
+								"5/3" => "TOS-host-redirect",
+								"8" => "echo-request",
+								"9" => "router-advertisement",
+								"10" => "router-solicitation",
+								"11" => "time-exceeded",
+								"11/0" => "ttl-zero-during-transit",
+								"11/1" => "ttl-zero-during-reassembly",
+								"12" => "parameter-problem",
+								"12/0" => "ip-header-bad",
+								"12/1" => "required-option-missing",
+								"17" => "address-mask-request",
+								"18" => "address-mask-reply"
 							);
 		}
-		
+				
 		public static function getConnectionStates()
 		{
 			return array	(
@@ -152,6 +174,12 @@
 								"NEW",
 								"RELATED"
 							);
+		}
+		
+		public static function icmpCode2Text($icmpCode)
+		{
+			$icmpTypes = self::getIcmpTypes();
+			return $icmpTypes[$icmpCode];
 		}
 	}
 ?>

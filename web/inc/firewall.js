@@ -356,8 +356,105 @@ function fade(element, opacity)
 		opacity = 10;
 }
 
-function addFilterRuleDlg(direction)
+function addEditFilterRuleDlg(ruleId)
 {
+	document.addEditRuleForm.reset();
+	
+	if (ruleId)
+	{
+		// Get and set rule info in popup
+		stateChangeFunc = function()
+		{
+			if (xhr.readyState != 4)
+				return;
+			
+			if (xhr.status != 200)
+				return;
+			
+			var response;
+			
+			if (JSON.parse)
+				response = JSON.parse(xhr.responseText);
+			else
+				response = eval("(" + xhr.responseText + ")");
+			
+			if (response)
+			{
+				document.addEditRuleForm.ruleId.value = ruleId;
+				
+				var formProtocol = document.addEditRuleForm.protocol;
+				var formSrcAddr = document.addEditRuleForm.srcAddr;
+				var formSrcPort = document.addEditRuleForm.srcPort;
+				var formDstAddr = document.addEditRuleForm.dstAddr;
+				var formDstPort = document.addEditRuleForm.dstPort;
+				var formConnStates = document.addEditRuleForm.connState;
+				var formFragmented = document.addEditRuleForm.fragmented;
+				var formIcmpType = document.addEditRuleForm.icmpType;
+				var formTarget = document.addEditRuleForm.target;
+				
+				// Set protocol
+				for (i=0 ; i<formProtocol.options.length ; i++)
+				{
+					if (formProtocol.options[i].value == response.protocol)
+					{
+						formProtocol.options[i].selected = true;
+						break;
+					}
+				}
+				
+				// Set source address
+				formSrcAddr.value = response.src_addr;
+				
+				// Set source port
+				formSrcPort.value = response.sport;
+				
+				// Set destination address
+				formDstAddr.value = response.dst_addr;
+				
+				// Set destination port
+				formDstPort.value = response.dport;
+				
+				// Set connection state(s)
+				if (response.state)
+				{
+					var connStates = response.state.split(",");
+				
+					for (i=0 ; i<formConnStates.length ; i++)
+					{
+						for (j=0 ; j<connStates.length ; j++)
+						{
+							if (formConnStates[i].value == connStates[j])
+								formConnStates[i].checked = true;
+						}
+					}
+				}
+				
+				// Set fragmented
+				if (response.fragmented == "Y")
+					formFragmented.options[1].selected = true;
+				else if (response.fragmented == "N")
+					formFragmented.options[2].selected = true;
+				
+				// Set ICMP type
+				for (i=0 ; i<formIcmpType.options.length ; i++)
+				{
+					if (formIcmpType.options[i].value == response.icmp_type)
+					{
+						formIcmpType.options[i].selected = true;
+						break;
+					}
+				}
+				
+				// Set target
+				formTarget.value = response.target;
+			}
+		};
+		
+		sendAjaxRequest("ajax/getFilterRule.php?id=" + ruleId, stateChangeFunc, "GET");
+	}
+	else
+		document.addEditRuleForm.ruleId.value = null;
+	
 	document.getElementById("hideshow").style.visibility = "visible";
 }
 
@@ -388,10 +485,13 @@ function submitAddEditRule()
 	params.push("dstAddr=" + document.addEditRuleForm.dstAddr.value);
 	params.push("dstPort=" + document.addEditRuleForm.dstPort.value);
 	
-	for (i=0 ; i<document.addEditRuleForm.connState.length; i++)
+	if (document.addEditRuleForm.connState)
 	{
-		if (document.addEditRuleForm.connState[i].checked)
-			params.push("connState[]=" + document.addEditRuleForm.connState[i].value);
+		for (i=0 ; i<document.addEditRuleForm.connState.length; i++)
+		{
+			if (document.addEditRuleForm.connState[i].checked)
+				params.push("connState[]=" + document.addEditRuleForm.connState[i].value);
+		}
 	}
 	
 	params.push("fragmented=" + document.addEditRuleForm.fragmented.value);

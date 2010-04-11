@@ -50,12 +50,6 @@
 	if ($protocol != "any" && !NetUtils::isValidProtocol($protocol))
 		$errors[] = "Invalid network protocol specified";
 		
-	// Testing
-	$temp1 = !empty($srcAddr);
-	$temp2 = !NetUtils::isValidIp($srcAddr);
-	$temp3 = !NetUtils::isValidNetwork($srcAddr);
-	// End Testing
-		
 	// Source address
 	if (!empty($srcAddr) && !NetUtils::isValidIp($srcAddr) && !NetUtils::isValidNetwork($srcAddr))
 		$errors[] = "Invalid source address specified";
@@ -100,47 +94,27 @@
 			$isNewRule = false;
 		
 		$rule->setAttribute("chain_name", $chainName);
-	
-		if ($protocol != "any")
-			$rule->setAttribute("protocol", $protocol);
-		else
-			$rule->removeAttribute("protocol");
-			
-		if (($protocol == "tcp" || $protocol == "udp") && !empty($srcPort))
-			$rule->setAttribute("sport", $srcPort);
+		setRuleAttribute($rule, "protocol", $protocol, $isNewRule);
+		
+		if ($protocol == "tcp" || $protocol == "udp")
+			setRuleAttribute($rule, "sport", $srcPort, $isNewRule);
 		else
 			$rule->removeAttribute("sport");
 			
-		if (($protocol == "tcp" || $protocol == "udp") && !empty($dstPort))
-			$rule->setAttribute("dport", $dstPort);
+		if ($protocol == "tcp" || $protocol == "udp")
+			setRuleAttribute($rule, "dport", $dstPort, $isNewRule);
 		else
 			$rule->removeAttribute("dport");
 			
-		if ($protocol == "icmp" && $icmpType != "any")
-			$rule->setAttribute("icmp_type", $icmpType);
+		if ($protocol == "icmp")
+			setRuleAttribute($rule, "icmp_type", $icmpType, $isNewRule);
 		else
 			$rule->removeAttribute("icmp_type");
 			
-		if (!empty($srcAddr))
-			$rule->setAttribute("src_addr", $srcAddr);
-		else
-			$rule->removeAttribute("src_addr");
-			
-		if (!empty($dstAddr))
-			$rule->setAttribute("dst_addr", $dstAddr);
-		else
-			$rule->removeAttribute("dst_addr");
-			
-		if (!empty($connStates))
-			$rule->setAttribute("state", implode(",", $connStates));
-		else
-			$rule->removeAttribute("state");
-			
-		if ($fragmented != "any")
-			$rule->setAttribute("fragmented", $fragmented);
-		else
-			$rule->removeAttribute("fragmented");
-			
+		setRuleAttribute($rule, "src_addr", $srcAddr, $isNewRule);
+		setRuleAttribute($rule, "dst_addr", $dstAddr, $isNewRule);
+		setRuleAttribute($rule, "state", @implode(",", $connStates), $isNewRule);
+		setRuleAttribute($rule, "fragmented", $fragmented, $isNewRule);				
 		$rule->setAttribute("target", $target);
 		
 		try
@@ -162,4 +136,16 @@
 		$result = (object) array("result" => false, "errors" => $errors);
 		
 	echo json_encode($result);
+	
+	function setRuleAttribute(FirewallFilterRule &$rule, $key, $value, $isNewRule)
+	{
+		if ($value == "any")
+			$value = null;
+			
+		if (($isNewRule && !empty($value)) || (!$isNewRule && !empty($value)))
+			$rule->setAttribute($key, $value);
+		else
+			//$rule->removeAttribute($key);
+			$rule->setAttribute($key, null);
+	}
 ?>

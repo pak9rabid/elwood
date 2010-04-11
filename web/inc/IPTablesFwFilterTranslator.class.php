@@ -5,6 +5,7 @@
 	require_once "FirewallFilterRule.class.php";
 	require_once "FwFilterTranslator.class.php";
 	require_once "DbQueryPreper.class.php";
+	require_once "NetUtils.class.php";
 	
 	class IPTablesFwFilterTranslator implements FwFilterTranslator
 	{
@@ -49,16 +50,16 @@
 								case "-s":
 									// Source address
 									if ($lineElements[$i + 1] == "!")
-										$newRule->setAttribute("src_addr", "!" . $lineElements[$i + 2]);
+										$newRule->setAttribute("src_addr", "!" . NetUtils::net2CIDR($lineElements[$i + 2]));
 									else
-										$newRule->setAttribute("src_addr", $lineElements[$i + 1]);
+										$newRule->setAttribute("src_addr", NetUtils::net2CIDR($lineElements[$i + 1]));
 									break;
 								case "-d":
 									// Destination address
 									if ($lineElements[$i + 1] == "!")
-										$newRule->setAttribute("dst_addr", "!" . $lineElements[$i + 2]);
+										$newRule->setAttribute("dst_addr", "!" . NetUtils::net2CIDR($lineElements[$i + 2]));
 									else
-										$newRule->setAttribute("dst_addr", $lineElements[$i + 1]);
+										$newRule->setAttribute("dst_addr", NetUtils::net2CIDR($lineElements[$i + 1]));
 									break;
 								case "--state":
 									// State
@@ -95,9 +96,9 @@
 								case "--icmp-type":
 									// ICMP packet type
 									if ($lineElements[$i - 1] == "!")
-										$newRule->setAttribute("icmp_type", "!" . $lineElements[$i + 1]);
+										$newRule->setAttribute("icmp_type", "!" . NetUtils::icmpCode2Text($lineElements[$i + 1]));
 									else
-										$newRule->setAttribute("icmp_type", $lineElements[$i + 1]);
+										$newRule->setAttribute("icmp_type", NetUtils::icmpCode2Text($lineElements[$i + 1]));
 									break;
 								case "-j":
 									// Target

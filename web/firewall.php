@@ -80,7 +80,7 @@
 			&nbsp;
 			<a href="firewall.php?dir=out">Outgoing</a>
 			<br /><br />
-			<input type="button" value="Add Rule" onClick="addFilterRuleDlg('<?=$direction?>')" />
+			<input type="button" value="Add Rule" onClick="addEditFilterRuleDlg()" />
 			<div id="fwTable">
 				<?=$fwFilter->out($direction)?>
 			</div>
@@ -91,7 +91,7 @@
 		<div id="fade"></div>
 		<div class="popup_block">
 			<div id="fwAddEditFilterRuleMsgs"></div>
-			<form name="addEditRuleForm" action="javascript:submitAddEditRule(this)">
+			<form name="addEditRuleForm" action="javascript:submitAddEditRule()">
 				<input type="hidden" name="ruleId" />
 				<input type="hidden" name="dir" value="<?=$direction?>" />
 				<table>
@@ -146,9 +146,8 @@
 						<td class="tabInputLabel">ICMP Type:</td>
 						<td class="tabInputValue">
 							<select name="icmpType">
-								<option value="any">any</option>
 							<?php 
-								foreach (NetUtils::getIcmpTypes() as $icmpType)
+								foreach (array_values(NetUtils::getIcmpTypes()) as $icmpType)
 									echo "<option value=\"$icmpType\">$icmpType</option>\n";
 							?>
 							</select>

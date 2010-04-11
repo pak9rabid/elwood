@@ -41,11 +41,11 @@
 			$policy = $this->getChain("FORWARD")->getAttribute("policy");
 			$rules = $direction == "in" ? $this->getRules("forward_in") : $this->getRules("forward_out");		
 			$policyClass = $policy == "ACCEPT" ? "fwPolicyAccept" : "fwPolicyDrop";
+			$out = "";
 			$ruleDivs = "";
-		
-			echo "<table id=\"firewall-table\">\n" .
-			 	"	<tr class=\"$policyClass\" nodrag nodrop><th colspan=\"5\">" . ($direction == "in" ? "Incoming" : "Outgoing") . "Traffic</th></tr>\n" .
-				 "	<tr class=\"$policyClass\" nodrag nodrop><th>Proto</th><th>Source</th><th>Port</th><th>Destination</th><th>Port</th></tr>\n";
+			$out =  "<table id=\"firewall-table\">\n" .
+			 		"	<tr class=\"$policyClass\" nodrag nodrop><th colspan=\"5\">" . ($direction == "in" ? "Incoming" : "Outgoing") . "Traffic</th></tr>\n" .
+				 	"	<tr class=\"$policyClass\" nodrag nodrop><th>Proto</th><th>Source</th><th>Port</th><th>Destination</th><th>Port</th></tr>\n";
 		
 			if (!empty($rules))
 			{
@@ -53,15 +53,15 @@
 				{
 					$rowClass = $rule->getAttribute("target") == "ACCEPT" ? "fwRuleAccept" : "fwRuleDrop";
 					$proto = $this->getRuleAttrDisp($rule, "protocol");
-					$srcAddr = $this->getRuleAttrDisp($rule, "src_addr") != "*" ? NetUtils::net2CIDR($this->getRuleAttrDisp($rule, "src_addr")) : "*";
+					$srcAddr = $this->getRuleAttrDisp($rule, "src_addr") != "*" ? $this->getRuleAttrDisp($rule, "src_addr") : "*";
 					$srcPort = $this->getRuleAttrDisp($rule, "sport");
-					$dstAddr = $this->getRuleAttrDisp($rule, "dst_addr") != "*" ? NetUtils::net2CIDR($this->getRuleAttrDisp($rule, "dst_addr")) : "*";
+					$dstAddr = $this->getRuleAttrDisp($rule, "dst_addr") != "*" ? $this->getRuleAttrDisp($rule, "dst_addr") : "*";
 					$dstPort = $this->getRuleAttrDisp($rule, "dport");
 					$ruleId = $this->getRuleAttrDisp($rule, "id");
 				
-					echo "<tr id=\"$ruleId\" class=\"$rowClass\" onMouseOver=\"showRule(event, this, $ruleId)\" " .
-						 "onMouseOut=\"hideRule($ruleId)\"><td>$proto</td><td>$srcAddr</td><td>$srcPort</td>" .
-						 "<td>$dstAddr</td><td>$dstPort</td></tr>\n";
+					$out .=	"<tr id=\"$ruleId\" class=\"$rowClass\" onMouseOver=\"showRule(event, this, $ruleId)\" " .
+							"onMouseOut=\"hideRule($ruleId)\" onDblClick=\"addEditFilterRuleDlg($ruleId)\"><td>$proto</td><td>$srcAddr</td><td>$srcPort</td>" .
+							"<td>$dstAddr</td><td>$dstPort</td></tr>\n";
 				
 					// Create div to store rule details
 					$ruleDivs .= "<div id=\"" . $ruleId . "details\" class=\"fwRuleDetails\">\n" .
@@ -83,10 +83,12 @@
 				}
 			}
 			else
-				echo "	<tr><td colspan=\"5\">None</td><tr>\n";
+				$out .= "	<tr><td colspan=\"5\">None</td><tr>\n";
 		
-			echo "</table>\n";
-			echo $ruleDivs;
+			$out .= "</table>\n";
+			$out .= $ruleDivs;
+			
+			return $out;
 		}
 		
 		private function getRuleAttrDisp(FirewallFilterRule $rule, $attribute)
