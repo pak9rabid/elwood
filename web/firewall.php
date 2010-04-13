@@ -35,7 +35,7 @@
 			rules.push(table.rows[i].id);
 		}
 
-		stateChangeFunc = function()
+		var stateChangeFunc = function()
 		{
 			if (xhr.readyState != 4)
 				return;
@@ -108,6 +108,17 @@
 						</td>
 					</tr>
 					<tr>
+						<td class="tabInputLabel">ICMP Type:</td>
+						<td class="tabInputValue">
+							<select name="icmpType">
+							<?php 
+								foreach (array_values(NetUtils::getIcmpTypes()) as $icmpType)
+									echo "<option value=\"$icmpType\">$icmpType</option>\n";
+							?>
+							</select>
+						</td>
+					</tr>
+					<tr>
 						<td class="tabInputLabel">Source Address:</td>
 						<td class="tabInputValue"><input type="text" name="srcAddr" size="20" maxlength="20" /></td>
 					</tr>
@@ -143,17 +154,6 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="tabInputLabel">ICMP Type:</td>
-						<td class="tabInputValue">
-							<select name="icmpType">
-							<?php 
-								foreach (array_values(NetUtils::getIcmpTypes()) as $icmpType)
-									echo "<option value=\"$icmpType\">$icmpType</option>\n";
-							?>
-							</select>
-						</td>
-					</tr>
-					<tr>
 						<td class="tabInputLabel">Target:</td>
 						<td class="tabInputValue">
 							<select name="target">
@@ -166,7 +166,11 @@
 						<td colspan="2">&nbsp;</td>
 					</tr>
 					<tr>
-						<td colspan="2" align="center"><input type="submit" value="Save" />&nbsp;<input type="button" value="Cancel" onClick="closeAddEditRule()" /></td>
+						<td colspan="2" align="center">
+							<input type="submit" value="Save" />&nbsp;
+							<input id="saveAsNewBtn" disabled type="submit" value="Save As New" onClick="document.addEditRuleForm.ruleId.value = null; return true;" />&nbsp;
+							<input id="deleteBtn" disabled type="submit" value="Delete" onClick="deleteRule(document.addEditRuleForm.ruleId.value); return false;" />&nbsp;
+							<input type="button" value="Cancel" onClick="closeAddEditRule()" /></td>
 					</tr>
 				</table>
 			</form>

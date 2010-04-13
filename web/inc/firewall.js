@@ -362,8 +362,11 @@ function addEditFilterRuleDlg(ruleId)
 	
 	if (ruleId)
 	{
-		// Get and set rule info in popup
-		stateChangeFunc = function()
+		// Editing an existing rule
+		document.getElementById("saveAsNewBtn").disabled = false;
+		document.getElementById("deleteBtn").disabled = false;
+		
+		var stateChangeFunc = function()
 		{
 			if (xhr.readyState != 4)
 				return;
@@ -461,6 +464,8 @@ function addEditFilterRuleDlg(ruleId)
 function closeAddEditRule()
 {
 	document.getElementById("hideshow").style.visibility = "hidden";
+	document.getElementById("saveAsNewBtn").disabled = true;
+	document.getElementById("deleteBtn").disabled = true;
 }
 
 function getPageHeight()
@@ -500,7 +505,7 @@ function submitAddEditRule()
 	
 	var postStr = params.join("&");
 	
-	stateChangeFunc = function()
+	var stateChangeFunc = function()
 	{
 		if (xhr.readyState != 4)
 			return;
@@ -518,8 +523,7 @@ function submitAddEditRule()
 		if (response.result)
 		{
 			// Add/edit was successful
-			document.getElementById("fwTable").innerHTML = response.fwFilterTableHtml;
-			dndInit();
+			updateFilterTable(response.fwFilterTableHtml);
 			showSaveButton();
 			closeAddEditRule();
 		}
@@ -542,6 +546,41 @@ function submitAddEditRule()
 	};
 	
 	sendAjaxRequest("ajax/addEditFwFilterRule.php", stateChangeFunc, "POST", postStr);
+}
+
+function deleteRule(ruleId)
+{
+	var stateChangeFunc = function()
+	{
+		if (xhr.readyState != 4)
+			return;
+		
+		if (xhr.status != 200)
+			return;
+		
+		var response;
+		
+		if (JSON.parse)
+			response = JSON.parse(xhr.responseText);
+		else
+			response = eval("(" + xhr.responseText + ")");
+		
+		if (response.result)
+		{
+			updateFilterTable(response.fwFilterTableHtml);
+			showSaveButton();
+		}
+		
+		closeAddEditRule();
+	};
+	
+	sendAjaxRequest("ajax/deleteFwFilterRule.php?ruleId=" + ruleId, stateChangeFunc, "GET");
+}
+
+function updateFilterTable(html)
+{
+	document.getElementById("fwTable").innerHTML = html;
+	dndInit();
 }
 
 function showSaveButton()

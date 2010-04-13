@@ -5,8 +5,11 @@
 	
 	header("Content-Type: application/json");
 	$direction = trim($_REQUEST['dir']);
-	$rulesOrder = explode(",", trim($_REQUEST['order']));
+	$order = $_REQUEST['order'];
 	
+	if (!empty($order))
+		$order = explode(",", $order);
+		
 	try
 	{
 		if ($direction == "in")
@@ -16,13 +19,16 @@
 		else
 			throw new Exception("Invalid direction specified");
 			
-		FirewallFilterSettings::orderRules($rulesOrder, $chainName);
+		if (!empty($order))
+			FirewallFilterSettings::orderRules($order, $chainName);
+			
 		$fwTranslator = ClassFactory::getFwFilterTranslator();
 		$fwTranslator->setSystemFromDb(true);
 		$json = "{\"result\":true}";
 	}
 	catch (Exception $ex)
 	{
+		$temp = $ex->getMessage();
 		$json = "{\"result\":false}";
 	}
 	

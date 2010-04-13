@@ -145,7 +145,6 @@
 		if (($isNewRule && !empty($value)) || (!$isNewRule && !empty($value)))
 			$rule->setAttribute($key, $value);
 		else
-			//$rule->removeAttribute($key);
 			$rule->setAttribute($key, null);
 	}
 ?>
