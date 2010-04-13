@@ -162,25 +162,12 @@ body
 
 #firewall-table
 {
-   margin-left:  auto;
-   margin-right: auto;
-   width:        80%;
-   border-style: solid;
-   border:       0px;
-}
-
-#firewall-table th
-{
-   text-align: center;
-   width:      50%;
-}
-
-#firewall-table td
-{
-   text-align: center;
-   width:      50%;
-   padding-left: 5px;
-   padding-right: 5px;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+	width: 90%;
+	border-style: solid;
+	border: 0px;
 }
 
 #port-forward-table
@@ -323,6 +310,21 @@ textarea
 	left: 50%;
 	margin: 0 0 0 -310px;
 	z-index: 100;
+}
+
+.firewall-table-protocol-col
+{
+	width: 17%;
+}
+
+.firewall-table-address-col
+{
+	width: 25%;
+}
+
+.firewall-table-port-col
+{
+	width: 16%;
 }
 
 .fwRuleDetails
