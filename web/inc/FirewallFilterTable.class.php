@@ -83,7 +83,7 @@
 				}
 			}
 			else
-				$out .= "	<tr><td colspan=\"5\">None</td><tr>\n";
+				$out .= "	<tr nodrag nodrop><td colspan=\"5\">None</td><tr>\n";
 		
 			$out .= "</table>\n";
 			$out .= $ruleDivs;
