@@ -358,6 +358,7 @@ function fade(element, opacity)
 
 function addEditFilterRuleDlg(ruleId)
 {
+	document.getElementById("fwAddEditFilterRuleMsgs").innerHTML = "";
 	document.addEditRuleForm.reset();
 	
 	if (ruleId)
@@ -376,7 +377,7 @@ function addEditFilterRuleDlg(ruleId)
 			
 			var response;
 			
-			if (JSON.parse)
+			if (window.JSON)
 				response = JSON.parse(xhr.responseText);
 			else
 				response = eval("(" + xhr.responseText + ")");
@@ -406,16 +407,16 @@ function addEditFilterRuleDlg(ruleId)
 				}
 				
 				// Set source address
-				formSrcAddr.value = response.src_addr;
+				formSrcAddr.value = response.src_addr == null ? "" : response.src_addr;
 				
 				// Set source port
-				formSrcPort.value = response.sport;
+				formSrcPort.value = response.sport == null ? "" : response.sport;
 				
 				// Set destination address
-				formDstAddr.value = response.dst_addr;
+				formDstAddr.value = response.dst_addr == null ? "" : response.dst_addr;
 				
 				// Set destination port
-				formDstPort.value = response.dport;
+				formDstPort.value = response.dport == null ? "" : response.dport;
 				
 				// Set connection state(s)
 				if (response.state)
@@ -480,7 +481,7 @@ function submitAddEditRule()
 {
 	var params = new Array();
 	
-	if (document.addEditRuleForm.ruleId)
+	if (document.addEditRuleForm.ruleId.value && document.addEditRuleForm.ruleId.value != "null")
 		params.push("ruleId=" + document.addEditRuleForm.ruleId.value);
 	
 	params.push("dir=" + document.addEditRuleForm.dir.value);
@@ -515,7 +516,7 @@ function submitAddEditRule()
 		
 		var response;
 		
-		if (JSON.parse)
+		if (window.JSON)
 			response = JSON.parse(xhr.responseText);
 		else
 			response = eval("(" + xhr.responseText + ")");
@@ -560,7 +561,7 @@ function deleteRule(ruleId)
 		
 		var response;
 		
-		if (JSON.parse)
+		if (window.JSON)
 			response = JSON.parse(xhr.responseText);
 		else
 			response = eval("(" + xhr.responseText + ")");

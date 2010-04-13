@@ -45,7 +45,7 @@
 
 			var response;
 
-			if (JSON.parse)
+			if (window.JSON)
 				// Use the secure method of parsing JSON response, if available
 				response = JSON.parse(xhr.responseText);
 			else
