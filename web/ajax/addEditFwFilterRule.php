@@ -123,6 +123,8 @@
 				$rule->executeInsert(true);
 			else
 				$rule->executeUpdate(true);
+				
+			FirewallFilterSettings::setHasChanges(true);
 		}
 		catch (Exception $ex)
 		{

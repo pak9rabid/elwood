@@ -1,16 +1,16 @@
 <?php
 	require_once "Database.class.php";
 	require_once "User.class.php";
+	require_once "ClassFactory.class.php";
 	
 	class TempDatabase extends Database
 	{
 		// Override
 		public static function executeQuery(DbQueryPreper $prep)
 		{			
-			if (!file_exists(self::getDbPath()))
+			if (!self::exists())
 			{
-				if (!copy(parent::getDbPath(), self::getDbPath()))
-					throw new Exception("Error: Unable to copy database file");
+				self::create();
 			}
 			
 			try
@@ -52,6 +52,20 @@
 		{
 			$username = User::getUser()->getAttribute("username");
 			return "/tmp/$username.db";
+		}
+		
+		public static function exists()
+		{
+			return file_exists(self::getDbPath());
+		}
+		
+		public static function create()
+		{
+			if (!copy(parent::getDbPath(), self::getDbPath()))
+				throw new Exception("Error: Unable to copy database file");
+				
+			$fwTranslator = ClassFactory::getFwFilterTranslator();
+			$fwTranslator->setDbFromSystem();
 		}
 		
 		public static function destroy()

@@ -1,5 +1,6 @@
 <?php
 	require_once "ajaxAccessControl.php";
+	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterSettings.class.php";
 	require_once "ClassFactory.class.php";
 	
@@ -24,6 +25,7 @@
 			
 		$fwTranslator = ClassFactory::getFwFilterTranslator();
 		$fwTranslator->setSystemFromDb(true);
+		TempDatabase::destroy();
 		$json = "{\"result\":true}";
 	}
 	catch (Exception $ex)

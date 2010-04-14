@@ -2,6 +2,7 @@
 	require_once "TempDatabase.class.php";
 	require_once "FirewallChain.class.php";
 	require_once "FirewallFilterRule.class.php";
+	require_once "RouterStateStatus.class.php";
 	require_once "DbQueryPreper.class.php";
 	
 	class FirewallFilterSettings
@@ -134,6 +135,37 @@
 				$rule->removeAttribute("rule_number");
 				$rule->executeInsert(true);
 			}
+		}
+		
+		public static function setHasChanges($setChanged)
+		{
+			$status = new RouterStateStatus();
+			$status->setAttribute("name", "FIREWALL_FILTER_HAS_CHANGES");
+			$status->executeDelete(true);
+			
+			if (!$setChanged)
+				return;
+				
+			$status->executeInsert(true);
+		}
+		
+		public static function hasChanges()
+		{
+			if (!TempDatabase::exists())
+				return false;
+								
+			$prep = new DbQueryPreper("SELECT * FROM router_state_status WHERE name = 'FIREWALL_FILTER_HAS_CHANGES'");
+			
+			try
+			{
+				$result = TempDatabase::executeQuery($prep);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
+			
+			return (count($result) > 0);
 		}
 	}
 ?>

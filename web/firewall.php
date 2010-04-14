@@ -1,8 +1,8 @@
 <?php 
 	require_once "accessControl.php";
 	
+	require_once "TempDatabase.class.php";
 	require_once "RouterSettings.class.php";
-	require_once "ClassFactory.class.php";
 	require_once "FirewallFilterTable.class.php";
 	require_once "NetUtils.class.php";
 	
@@ -11,8 +11,6 @@
 	
 	$extIf = RouterSettings::getSettingValue("EXTIF");
 	$intIf = RouterSettings::getSettingValue("INTIF");
-	$fwTranslator = ClassFactory::getFwFilterTranslator();
-	$fwTranslator->setDbFromSystem();
 	$fwFilter = new FirewallFilterTable();
 	$direction = $_REQUEST['dir'] == null ? "in" : $_REQUEST['dir'];
 ?>
@@ -177,5 +175,15 @@
 			</form>
 		</div>
 	</div>
+	
+	<?php 
+		if (FirewallFilterSettings::hasChanges())
+		{
+			echo	"<script language=\"JavaScript\">\n" .
+					"	showSaveButton();\n" .
+					"</script>\n";
+				
+		}
+	?>
 </body>
 </html>

@@ -11,6 +11,7 @@
 	{
 		$rule = FirewallFilterSettings::getRule($ruleId);
 		$rule->executeDelete(true);
+		FirewallFilterSettings::setHasChanges(true);
 		
 		$filterTable = new FirewallFilterTable();
 		$result = (object) array	(	"result" => true,
