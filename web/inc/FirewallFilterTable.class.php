@@ -45,7 +45,9 @@
 			$ruleDivs = "";
 			$out =  "<table id=\"firewall-table\">\n" .
 			 		"	<tr class=\"$policyClass\" nodrag nodrop>\n" .
-					"		<th colspan=\"5\">" . ($direction == "in" ? "Incoming" : "Outgoing") . "Traffic</th>\n" .
+					"		<th colspan=\"5\">" .
+								($direction == "in" ? "Incoming" : "Outgoing") . "Traffic" .
+					"		</th>\n" .
 					"	</tr>\n" .
 				 	"	<tr class=\"$policyClass\" nodrag nodrop>\n" .
 					"		<th class=\"firewall-table-protocol-col\">Proto</th>\n" .

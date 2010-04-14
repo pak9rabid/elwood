@@ -595,3 +595,30 @@ function showSaveButton()
 			element.style.opacity = 1;
 	}
 }
+
+function changePolicy()
+{
+	var stateChangeFunc = function()
+	{
+		if (xhr.readyState != 4)
+			return;
+		
+		if (xhr.status != 200)
+			return;
+		
+		var response;
+				
+		if (window.JSON)
+			response = JSON.parse(xhr.responseText);
+		else
+			response = eval("(" + xhr.responseText + ")");
+		
+		if (response.result)
+		{
+			updateFilterTable(response.fwFilterTableHtml);
+			showSaveButton();
+		}
+	};
+	
+	sendAjaxRequest("ajax/changeFwFilterPolicy.php?dir=" + document.addEditRuleForm.dir.value, stateChangeFunc, "GET");
+}

@@ -81,6 +81,7 @@
 			<a href="firewall.php?dir=out">Outgoing</a>
 			<br /><br />
 			<input type="button" value="Add Rule" onClick="addEditFilterRuleDlg()" />
+			<input type="button" value="Change Policy" onClick="changePolicy()" />
 			<div id="fwTable">
 				<?=$fwFilter->out($direction)?>
 			</div>
