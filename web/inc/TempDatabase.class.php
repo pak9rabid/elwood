@@ -30,6 +30,12 @@
 		}
 		
 		// Override
+		public static function executeSelect(DataHash $data)
+		{
+			return Database::executeSelect($data, true);
+		}
+		
+		// Override
 		public static function executeInsert(DataHash $data)
 		{
 			Database::executeInsert($data, true);

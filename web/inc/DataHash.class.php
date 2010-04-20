@@ -1,5 +1,6 @@
 <?php
 	require_once "Database.class.php";
+	require_once "TempDatabase.class.php";
 
 	class DataHash
 	{
@@ -83,6 +84,21 @@
 		public function clear()
 		{
 			$this->hashMap = array();
+		}
+		
+		public function executeSelect($isTemp = false)
+		{
+			try
+			{
+				if ($isTemp)
+					return TempDatabase::executeSelect($this);
+				
+				return Database::executeSelect($this);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
 		}
 
 		public function executeInsert($isTemp = false)

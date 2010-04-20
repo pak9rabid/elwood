@@ -30,6 +30,45 @@
 				throw new Exception("Error executing SQL query: '" . $prep->getQuery() . "'");
 			}
 		}
+		
+		public static function executeSelect(DataHash $data, $isTemp = false)
+		{
+			$prep = new DbQueryPreper("SELECT * FROM " . $data->getTable());
+			
+			if (count($data->getAttributeKeys()) > 0)
+				$prep->addSql(" WHERE ");
+
+			$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
+			$prep->addVariablesNoPlaceholder($data->getAttributeValues());
+			
+			try
+			{
+				if ($isTemp)
+					$result = TempDatabase::executeQuery($prep);
+				else
+					$result = self::executeQuery($prep);
+					
+				$resultHashes = array();
+				
+				foreach ($result as $row)
+				{
+					$resultHash = new DataHash($data->getTable());
+					$resultHash->setAllAttributes($row);
+					$resultHashes[] = $resultHash;
+				}
+				
+				return $resultHashes;
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
+		}
+		
+		public static function datahashToParamaterizedWhereClause($key)
+		{
+			return " $key = ? ";
+		}
 
 		public static function executeInsert(DataHash $data, $isTemp = false)
 		{

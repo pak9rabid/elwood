@@ -40,6 +40,11 @@
 		public function addVariables(array $bindVars, $delimiter = ",")
 		{
 			$this->query .= implode($delimiter, array_pad(array(), count($bindVars), "?"));
+			$this->addVariablesNoPlaceholder($bindVars);
+		}
+		
+		public function addVariablesNoPlaceholder(array $bindVars)
+		{
 			$this->bindVars = array_merge($this->bindVars, $bindVars);
 		}
 		
