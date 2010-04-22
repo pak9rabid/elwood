@@ -33,6 +33,7 @@
 		
 		public static function executeSelect(DataHash $data, $isTemp = false)
 		{
+			// Select rows from the database
 			$prep = new DbQueryPreper("SELECT * FROM " . $data->getTable());
 			
 			if (count($data->getAttributeKeys()) > 0)

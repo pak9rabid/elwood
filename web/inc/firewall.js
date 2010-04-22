@@ -1,5 +1,5 @@
 var dndTable;
-		
+
 function showRule(event, row, ruleId)
 {			
 	if (document.isButtonDown)
@@ -171,8 +171,7 @@ function TableDnD()
 	to do whatever you want, for example use Ajax to update the server */
 	this.onDrop = function(table, droppedRow)
 	{
-
-		// Display buttons to save rule settings
+		orderRules();
 		showSaveButton();
 	};
 
@@ -621,4 +620,18 @@ function changePolicy()
 	};
 	
 	sendAjaxRequest("ajax/changeFwFilterPolicy.php?dir=" + document.addEditRuleForm.dir.value, stateChangeFunc, "GET");
+}
+
+function getRulesOrder()
+{
+	var table = document.getElementById("firewall-table");
+	var rules = new Array();
+	    	
+	for (i=0 ; i<table.rows.length ; i++)
+	{
+		if (table.rows[i].id)
+		rules.push(table.rows[i].id);
+	}
+	
+	return rules;
 }

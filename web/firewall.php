@@ -24,15 +24,6 @@
 	<script language="JavaScript" type="text/javascript">
 	function saveRules()
 	{
-		var table = document.getElementById("firewall-table");
-		var rules = new Array();
-		    	
-		for (i=0 ; i<table.rows.length ; i++)
-		{
-			if (table.rows[i].id)
-			rules.push(table.rows[i].id);
-		}
-
 		var stateChangeFunc = function()
 		{
 			if (xhr.readyState != 4)
@@ -62,7 +53,33 @@
 			}
 		};
 
-		sendAjaxRequest("ajax/editFwFilterRules.php?dir=<?=$direction?>&order=" + rules, stateChangeFunc, "GET");
+		sendAjaxRequest("ajax/applyFwFilterRules.php", stateChangeFunc, "GET");
+	}
+
+	function orderRules()
+	{
+		var rulesOrder = getRulesOrder();
+
+		var stateChangeFunc = function()
+		{
+			if (xhr.readyState != 4)
+				return;
+
+			if (xhr.status != 200)
+				return;
+
+			var response;
+
+			if (window.JSON)
+				response = JSON.parse(xhr.responseText);
+			else
+				response = eval("(" + xhr.responseText + ")");
+
+			updateFilterTable(response.fwFilterTableHtml);
+			showSaveButton();
+		};
+
+		sendAjaxRequest("ajax/orderFwFilterRules.php?dir=<?=$direction?>&order=" + rulesOrder, stateChangeFunc, "GET");
 	}
 	</script>
 </head>

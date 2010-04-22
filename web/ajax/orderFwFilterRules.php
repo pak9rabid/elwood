@@ -1,10 +1,10 @@
 <?php
 	require_once "ajaxAccessControl.php";
-	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterSettings.class.php";
-	require_once "ClassFactory.class.php";
+	require_once "FirewallFilterTable.class.php";
 	
 	header("Content-Type: application/json");
+	
 	$direction = trim($_REQUEST['dir']);
 	$order = $_REQUEST['order'];
 	
@@ -23,16 +23,20 @@
 		if (!empty($order))
 			FirewallFilterSettings::orderRules($order, $chainName);
 			
-		$fwTranslator = ClassFactory::getFwFilterTranslator();
-		$fwTranslator->setSystemFromDb(true);
-		TempDatabase::destroy();
-		$json = "{\"result\":true}";
+		$filterTable = new FirewallFilterTable();
+			
+		$result = (object) array	(
+										"result" => true,
+										"fwFilterTableHtml" => $filterTable->out($direction)
+									);
 	}
 	catch (Exception $ex)
 	{
-		$temp = $ex->getMessage();
-		$json = "{\"result\":false}";
+		$result = (object) array	(
+										"result" => false,
+										"error" => $ex->getMessage()
+									);
 	}
 	
-	echo $json;
+	echo json_encode($result);
 ?>
