@@ -70,8 +70,8 @@
 					$ruleId = $this->getRuleAttrDisp($rule, "id");
 				
 					$out .=	"<tr id=\"$ruleId\" class=\"$rowClass\" onMouseOver=\"showRule(event, this, $ruleId)\" " .
-							"onMouseOut=\"hideRule($ruleId)\" onDblClick=\"addEditFilterRuleDlg($ruleId)\"><td>$proto</td><td>$srcAddr</td><td>$srcPort</td>" .
-							"<td>$dstAddr</td><td>$dstPort</td></tr>\n";
+							"onMouseOut=\"hideRule($ruleId)\"><td>$proto</td><td>$srcAddr</td><td>$srcPort</td>" .
+							"<td>$dstAddr</td><td>$dstPort</td><td><input type=\"button\" value=\"Edit\" onClick=\"addEditFilterRuleDlg($ruleId)\"</td></tr>\n";
 				
 					// Create div to store rule details
 					$ruleDivs .= "<div id=\"" . $ruleId . "details\" class=\"fwRuleDetails\">\n" .
