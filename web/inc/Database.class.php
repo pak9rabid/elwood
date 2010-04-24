@@ -27,7 +27,7 @@
 			}
 			catch (Exception $ex)
 			{
-				throw new Exception("Error executing SQL query: '" . $prep->getQuery() . "'");
+				throw new Exception("Error executing SQL query: " . $prep->getQueryDebug());
 			}
 		}
 		

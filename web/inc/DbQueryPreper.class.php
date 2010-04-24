@@ -53,6 +53,18 @@
 			return $this->query;
 		}
 		
+		public function getQueryDebug()
+		{
+			$debugQuery = $this->query;
+			
+			foreach ($this->bindVars as $bindVar)
+			{
+				$debugQuery = preg_replace("/\?/", "'$bindVar'", $debugQuery, 1);
+			}
+			
+			return $debugQuery;
+		}
+		
 		public function getBindVars()
 		{
 			return $this->bindVars;
