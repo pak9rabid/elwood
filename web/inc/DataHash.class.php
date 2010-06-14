@@ -145,5 +145,10 @@
 				throw $ex;
 			}
 		}
+		
+		public function getAttributeDisp($attribute)
+		{
+			return $this->getAttribute($attribute) == null ? "*" : $this->getAttribute($attribute);
+		}
 	}
 ?>

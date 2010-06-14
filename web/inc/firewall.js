@@ -1,637 +1,277 @@
-var dndTable;
-
-function showRule(event, row, ruleId)
-{			
-	if (document.isButtonDown)
-		return;
-
-	var event = event || window.event;
-			
-	var ruleDetails = document.getElementById(ruleId + "details");
-	var pos = getElementPosition(row);
-	var posLeft = event.pageX || event.clientX;
-	var posTop = pos[1] + 25;
-			
-	ruleDetails.style.position = "absolute";
-	ruleDetails.style.left = posLeft + "px";
-	ruleDetails.style.top = posTop + "px";
-	ruleDetails.style.display = "inline";
-}
-
-function hideRule(ruleId)
+$(document).ready(function()
 {
-	document.getElementById(ruleId + "details").style.display = "none";
-}
+	// Initialize elements
+	$("#saveBtn").hide();
+	$("#fwResults").hide();
+	$("#hideshow").hide();
+	$(".fwRuleDetails").hide();
+	makeFirewallTableEditable();
+	addRuleDetailsPopup();
 
-function getElementPosition(element)
-{
-	var curleft = curtop = 0;
-
-	if (element.offsetParent)
+	// Register event handlers
+	$("#cancelBtn").click(function()
 	{
-		do
-		{
-			curleft += element.offsetLeft;
-			curtop += element.offsetTop;
-		} while (element = element.offsetParent);
-	}
+		$("#hideshow").hide();
+	});
 
-	return [curleft, curtop];
-}
-
-function dndInit()
-{
-	dndTable = new TableDnD();
-	dndTable.init(document.getElementById("firewall-table"));
-}
-
-var currenttable = null;
-
-document.onmousemove = function(ev)
-{
-	if (currenttable && currenttable.dragObject)
+	$("#deleteBtn").click(function()
 	{
-		ev   = ev || window.event;
-		var mousePos = currenttable.mouseCoords(ev);
-		var y = mousePos.y - currenttable.mouseOffset.y;
-		
-		if (y != currenttable.oldY)
-		{
-			// work out if we're going up or down...
-			var movingDown = y > currenttable.oldY;
-			
-			// update the old values
-			currenttable.oldY = y;
-
-			if (currenttable.oldClass == null)
-				currenttable.oldClass = currenttable.dragObject.className;
-            
-			// update the style to show we're dragging
-			currenttable.dragObject.className = "tableRowMove";
-
-			// If we're over a row then move the dragged row to there so that the user sees the
-			// effect dynamically
-			var currentRow = currenttable.findDropTargetRow(y);
-
-			if (currentRow)
-			{
-				if (movingDown && currenttable.dragObject != currentRow)
-					currenttable.dragObject.parentNode.insertBefore(currenttable.dragObject, currentRow.nextSibling);
-				else if (! movingDown && currenttable.dragObject != currentRow)
-					currenttable.dragObject.parentNode.insertBefore(currenttable.dragObject, currentRow);
-			}
-		}
-
-		return false;
-	}
-};
-
-// Similarly for the mouseup
-document.onmouseup = function(ev)
-{
-	ev = ev || window.event;
-	var evSrc = getEventSource(ev);
-	
-	// Unregister mouse down action
-	document.isButtonDown = false;
-	
-	if (currenttable && currenttable.dragObject)
-	{
-		var droppedRow = currenttable.dragObject;
-
-		// If we have a dragObject, then we need to release it,
-		// The row will already have been moved to the right place so we just reset stuff
-		if (currenttable.oldClass != null && currenttable.oldClass != "undefined")
-		{
-			droppedRow.className = currenttable.oldClass;
-			currenttable.oldClass = null;
-		}
-        
-		currenttable.dragObject   = null;
-		// And then call the onDrop method in case anyone wants to do any post processing
-		currenttable.onDrop(currenttable.table, droppedRow);
-		currenttable = null; // let go of the table too
-	}
-};
-
-document.onmousedown = function(ev)
-{
-	// Indicate that the button is pressed	
-	document.isButtonDown = true;
-};
-
-/** get the source element from an event in a way that works for IE and Firefox and Safari
- * @param evt the source event for Firefox (but not IE--IE uses window.event) */
-function getEventSource(evt)
-{
-	if (window.event)
-	{
-		evt = window.event; // For IE
-		return evt.srcElement;
-	} 
-	else
-		return evt.target; // For Firefox
-}
-
-/**
- * Encapsulate table Drag and Drop in a class. We'll have this as a Singleton
- * so we don't get scoping problems.
- */
-function TableDnD()
-{
-	/** Keep hold of the current drag object if any */
-	this.dragObject = null;
-
-	/** The current mouse offset */
-	this.mouseOffset = null;
-
-	/** The current table */
-	this.table = null;
-
-	/** Remember the old value of Y so that we don't do too much processing */
-	this.oldY = 0;
-
-	/** Initialise the drag and drop by capturing mouse move events */
-	this.init = function(table)
-	{
-		this.table = table;
-		var rows = table.tBodies[0].rows; //getElementsByTagName("tr")
-
-		for (var i=0; i<rows.length; i++)
-		{
-			// John Tarr: added to ignore rows that I've added the NoDnD attribute to (Category and Header rows)
-			var nodrag = rows[i].getAttribute("NoDrag");
-
-			if (nodrag == null || nodrag == "undefined") // There is no NoDnD attribute on rows I want to drag
-				this.makeDraggable(rows[i]);
-		}
-	};
-
-	/** This function is called when you drop a row, so redefine it in your code
-	to do whatever you want, for example use Ajax to update the server */
-	this.onDrop = function(table, droppedRow)
-	{
-		orderRules();
+		$("#" + $("#ruleId").val()).remove();
+		$("#" + $("#ruleId").val() + "details").remove();
+		$("#hideshow").hide();
 		showSaveButton();
-	};
+	});
 
-	/** Get the position of an element by going up the DOM tree and adding up all the offsets */
-	this.getPosition = function(e)
+	$("#saveAsNewBtn").click(function()
 	{
-		var left = 0;
-		var top  = 0;
-
-		/** Safari fix -- thanks to Luis Chato for this! */
-		if (e.offsetHeight == 0)
+		$("#ruleId").val("");
+		$("#saveRuleBtn").click();
+	});
+	
+	$("#saveRuleBtn").click(function()
+	{
+		// Save rule
+		var connStates = [];
+		$(".connState").each(function()
 		{
-			/** Safari 2 doesn't correctly grab the offsetTop of a table row
-			this is detailed here:
-			http://jacob.peargrove.com/blog/2006/technical/table-row-offsettop-bug-in-safari/
-			the solution is likewise noted there, grab the offset of a table cell in the row - the firstChild.
-			note that firefox will return a text node as a first child, so designing a more thorough
-			solution may need to take that into account, for now this seems to work in firefox, safari, ie */
-			e = e.firstChild; // a table cell
-		}
-
-		while (e.offsetParent)
+			if ($(this).attr("checked"))
+				connStates.push($(this).val());
+		});
+		
+		var ruleInfo =	{
+							id:			$("#ruleId").val(),
+							protocol:	$("#protocol").val(),
+							icmp_type:	$("#icmpType").val(),
+							src_addr:	$("#srcAddr").val(),
+							sport:		$("#srcPort").val(),
+							dst_addr:	$("#dstAddr").val(),
+							dport:		$("#dstPort").val(),
+							state:		connStates.join(","),
+							fragmented:	$("#fragmented").val(),
+							target:		$("#target").val()
+						};
+		
+		$.getJSON("ajax/addEditFwFilterRule.php", ruleInfo, function(json)
 		{
-			left += e.offsetLeft;
-			top  += e.offsetTop;
-			e = e.offsetParent;
-		}
-
-		left += e.offsetLeft;
-		top += e.offsetTop;
-
-		return {x:left, y:top};
-	};
-
-	/** Get the mouse coordinates from the event (allowing for browser differences) */
-	this.mouseCoords = function(ev)
-	{
-		if (ev.pageX || ev.pageY)
-			return {x:ev.pageX, y:ev.pageY};
-		return	{
-					x:ev.clientX + document.body.scrollLeft - document.body.clientLeft,
-					y:ev.clientY + document.body.scrollTop  - document.body.clientTop
-				};
-	};
-
-	/** Given a target element and a mouse event, get the mouse offset from that element.
-	To do this we need the element's position and the mouse position */
-	this.getMouseOffset = function(target, ev)
-	{
-		ev = ev || window.event;
-
-		var docPos = this.getPosition(target);
-		var mousePos  = this.mouseCoords(ev);
-		return	{
-					x:mousePos.x - docPos.x,
-					y:mousePos.y - docPos.y
-				};
-	};
-
-	/** Take an item and add an onmousedown method so that we can make it draggable */
-	this.makeDraggable = function(item)
-	{
-		if (!item)
-			return;
-
-		var self = this; // Keep the context of the TableDnd inside the function
-
-		item.onmousedown = function(ev)
-		{
-			ev = ev || window.event;
-        	
-			if (!isLeftMouseButton(ev))
-				return;
-        	        	        	
-			// Need to check to see if we are an input or not, if we are an input, then
-			// return true to allow normal processing
-			var target = getEventSource(ev);
-			
-			if (target.tagName == 'INPUT' || target.tagName == 'SELECT')
-				return true;
-
-			currenttable = self;
-			self.dragObject  = this;
-			self.mouseOffset = self.getMouseOffset(this, ev);
-            
-			// Close any open popups
-			hideRule(item.id);
-            
-			return false;
-		};
-
-		item.style.cursor = "move";
-	};
-
-	/** We're only worried about the y position really, because we can only move rows up and down */
-	this.findDropTargetRow = function(y)
-	{
-		var rows = this.table.tBodies[0].rows;
-
-		for (var i=0; i<rows.length; i++)
-		{
-			var row = rows[i];
-
-			// John Tarr added to ignore rows that I've added the NoDnD attribute to (Header rows)
-			var nodrop = row.getAttribute("NoDrop");
-
-			if (nodrop == null || nodrop == "undefined") //There is no NoDnD attribute on rows I want to drag
-			{
-				var rowY    = this.getPosition(row).y;
-				var rowHeight = parseInt(row.offsetHeight) / 2;
-
-				if (row.offsetHeight == 0)
-				{
-					rowY = this.getPosition(row.firstChild).y;
-					rowHeight = parseInt(row.firstChild.offsetHeight)/2;
+			if (json.result)
+			{	
+				if (ruleInfo.id.length > 0)
+				{	
+					$("#" + ruleInfo.id).replaceWith(json.html.row);
+					$("#" + ruleInfo.id + "details").replaceWith(json.html.div);
 				}
-
-				// Because we always have to insert before, we need to offset the height a bit
-				if ((y > rowY - rowHeight) && (y < (rowY + rowHeight)))
+				else
 				{
-					// that's the row we're over
-					return row;
+					$("#firewall-table tbody").append(json.html.row);
+					$("#fwTable").append(json.html.div);
 				}
+				
+				addRuleDetailsPopup();
+				makeFirewallTableEditable();
+				$(".fwRuleDetails").hide();
+				$("#hideshow").hide();
+				showSaveButton();
 			}
-		}
+			else
+			{
+				$("#fwAddEditFilterRuleMsgs").css("color", "red");
+				var html =	"The following errors occured:" +
+							"<ul>";
 
-		return null;
-	};
-}
+				for (i=0 ; i<json.errors.length ; i++)
+					html += "<li>" + json.errors[i] + "</li>";
 
-function isLeftMouseButton(event)
-{
-	if (window.event)
+				html += "</ul>";
+
+				$("#fwAddEditFilterRuleMsgs").html(html);
+			}
+		});
+	});
+
+	$("#changePolicyBtn").click(function()
 	{
-		// IE or Chrome
-		if (window.event.button == 1)
-			return true;
-		
-		if (event)
+		$("#firewall-table tr[class *= 'fwPolicy']").each(function()
 		{
-			// Chrome
-			if (event.button == 0)
-				return true;
-			
-			return false;
-		}
-
-		return false;
-	}
-	
-	// Mozilla
-	if (event.button == 0)
-		return true;
-
-	return false;
-}
-
-function fade(element, opacity)
-{
-	if (element.style.opacity == null || element.style.opacity == "undefined")
-		// We're not dealing with any browser that doesn't support
-		// the CSS3 standard of opacity (IE, I'm looking at you)
-		return;
+					
+						
+			if ($(this).hasClass("fwPolicyDrop"))
+			{
+				$(this).removeClass("fwPolicyDrop");
+				$(this).addClass("fwPolicyAccept");
+			}
+			else
+			{
+				$(this).removeClass("fwPolicyAccept");
+				$(this).addClass("fwPolicyDrop");
+			}
+		});
 		
-	if (opacity == null || opacity == "undefined")
-		opacity = 10;
-	
-	if (opacity > 0)
+		showSaveButton();
+	});
+
+	$("#addRuleBtn").click(function(){addEditFilterRuleDlg(false);});
+
+	$("#saveBtn").click(function()
 	{
-		opacity -= 1;
-		element.style.opacity = opacity / 10;
+		// Save firewall rules on the server
+		reorderRules();
 		
-		var recurse = function()
+		var firewall =	{
+							direction:	$("#dir").val(),
+							policy:		$("#firewall-table tr[class *= 'fwPolicy']").attr("class").indexOf("Drop") != -1 ? "DROP" : "ACCEPT",
+							rules: 		getClientRules()
+						};
+		
+		$.post("ajax/applyFwFilterRules.php", firewall, function(json)
 		{
-			fade(element, opacity);
-		};
+			if (json)
+			{
+				$("#saveBtn").hide();
+				$("#fwResults").css("color", "green");
+				$("#fwResults").html("Firewall settings saved successfully");
+				$("#fwResults").show();
+				$("#fwResults").fadeOut(3000);
+			}
+			else
+			{
+				$("#fwResults").css("color", "red");
+				$("#fwResults").html("There was an error saving your firewall settings...please try again");
+				$("#fwResults").show();
+			}
+		});
+	});
+});
+
+function getClientRules()
+{
+	var rules = [];
+
+	$(".fwDetailsTable").each(function()
+	{				
+		var rule =	{
+						src_addr:	$(this).children().children().children("[id $= 'src_addr']").html(),
+						dst_addr:	$(this).children().children().children("[id $= 'dst_addr']").html(),
+						state:		$(this).children().children().children("[id $= 'state']").html(),
+						fragmented:	$(this).children().children().children("[id $= 'fragmented']").html(),
+						protocol:	$(this).children().children().children("[id $= 'protocol']").html(),
+						dport:		$(this).children().children().children("[id $= 'dport']").html(),
+						sport:		$(this).children().children().children("[id $= 'sport']").html(),
+						icmp_type:	$(this).children().children().children("[id $= 'icmp_type']").length > 0 ? $(this).children().children().children("[id $= 'icmp_type']").html() : "*",
+						target:		$(this).children().children().children("[id $= 'target']").html()
+					};
 		
-		setTimeout(recurse, 70);
-	}
-	else
-		opacity = 10;
+		rules.push(rule);
+	});
+
+	return rules;
 }
 
+function makeFirewallTableEditable()
+{
+	$("#firewall-table tr[class ^= 'fwRule']").each(function()
+	{
+		if ($(this).children("td:last").children("[id $= editRuleBtn]").length == 0)
+			$(this).append("<td><button id=\"" + $(this).attr("id") + "editRuleBtn\" type=\"button\">Edit</button></td>");
+	});
+	
+	$("button[id $= 'editRuleBtn']").each(function()
+	{
+		$(this).click(function(){addEditFilterRuleDlg($(this).parent().parent().attr("id"));});
+	});
+
+	// Initialize firewall table
+	$("#firewall-table").tableDnD(
+	{
+		onDragClass: "tableRowMove",
+		onDrop: function(table, row){showSaveButton();}
+	});
+}
+	
 function addEditFilterRuleDlg(ruleId)
 {
-	document.getElementById("fwAddEditFilterRuleMsgs").innerHTML = "";
-	document.addEditRuleForm.reset();
-	
+	$("#saveAsNewBtn").attr("disabled", "disabled");
+	$("#deleteBtn").attr("disabled", "disabled");
+	$("#fwAddEditFilterRuleMsgs").html("");
+	resetAddEditRuleForm();
+
 	if (ruleId)
 	{
-		// Editing an existing rule
-		document.getElementById("saveAsNewBtn").disabled = false;
-		document.getElementById("deleteBtn").disabled = false;
+		// Edit existing rule
+		$("#saveAsNewBtn").removeAttr("disabled");
+		$("#deleteBtn").removeAttr("disabled");
+
+		// Set values
+		$("#ruleId").val(ruleId);
+		$("#protocol").val($("#" + ruleId + "protocol").html() == "*" ? "any" : $("#" + ruleId + "protocol").html());
+
+		if ($("#" + ruleId + "icmp_type").length > 0)
+			$("#icmpType").val($("#" + ruleId + "icmp_type").html() == "*" ? "any" : $("#" + ruleId + "icmp_type").html());
 		
-		var stateChangeFunc = function()
+		$("#srcAddr").val($("#" + ruleId + "src_addr").html() == "*" ? "" : $("#" + ruleId + "src_addr").html());
+		$("#srcPort").val($("#" + ruleId + "sport").html() == "*" ? "" : $("#" + ruleId + "sport").html());
+		$("#dstAddr").val($("#" + ruleId + "dst_addr").html() == "*" ? "" : $("#" + ruleId + "dst_addr").html());
+		$("#dstPort").val($("#" + ruleId + "dport").html() == "*" ? "" : $("#" + ruleId + "dport").html());	
+		$(".connState").each(function()
 		{
-			if (xhr.readyState != 4)
-				return;
-			
-			if (xhr.status != 200)
-				return;
-			
-			var response;
-			
-			if (window.JSON)
-				response = JSON.parse(xhr.responseText);
-			else
-				response = eval("(" + xhr.responseText + ")");
-			
-			if (response)
-			{
-				document.addEditRuleForm.ruleId.value = ruleId;
-				
-				var formProtocol = document.addEditRuleForm.protocol;
-				var formSrcAddr = document.addEditRuleForm.srcAddr;
-				var formSrcPort = document.addEditRuleForm.srcPort;
-				var formDstAddr = document.addEditRuleForm.dstAddr;
-				var formDstPort = document.addEditRuleForm.dstPort;
-				var formConnStates = document.addEditRuleForm.connState;
-				var formFragmented = document.addEditRuleForm.fragmented;
-				var formIcmpType = document.addEditRuleForm.icmpType;
-				var formTarget = document.addEditRuleForm.target;
-				
-				// Set protocol
-				for (i=0 ; i<formProtocol.options.length ; i++)
-				{
-					if (formProtocol.options[i].value == response.protocol)
-					{
-						formProtocol.options[i].selected = true;
-						break;
-					}
-				}
-				
-				// Set source address
-				formSrcAddr.value = response.src_addr == null ? "" : response.src_addr;
-				
-				// Set source port
-				formSrcPort.value = response.sport == null ? "" : response.sport;
-				
-				// Set destination address
-				formDstAddr.value = response.dst_addr == null ? "" : response.dst_addr;
-				
-				// Set destination port
-				formDstPort.value = response.dport == null ? "" : response.dport;
-				
-				// Set connection state(s)
-				if (response.state)
-				{
-					var connStates = response.state.split(",");
-				
-					for (i=0 ; i<formConnStates.length ; i++)
-					{
-						for (j=0 ; j<connStates.length ; j++)
-						{
-							if (formConnStates[i].value == connStates[j])
-								formConnStates[i].checked = true;
-						}
-					}
-				}
-				
-				// Set fragmented
-				if (response.fragmented == "Y")
-					formFragmented.options[1].selected = true;
-				else if (response.fragmented == "N")
-					formFragmented.options[2].selected = true;
-				
-				// Set ICMP type
-				for (i=0 ; i<formIcmpType.options.length ; i++)
-				{
-					if (formIcmpType.options[i].value == response.icmp_type)
-					{
-						formIcmpType.options[i].selected = true;
-						break;
-					}
-				}
-				
-				// Set target
-				formTarget.value = response.target;
-			}
-		};
-		
-		sendAjaxRequest("ajax/getFilterRule.php?id=" + ruleId, stateChangeFunc, "GET");
+			var stateOption = $(this).val();
+			var ruleState = $("#" + ruleId + "state").html();
+
+			if (ruleState.indexOf(stateOption) != -1)
+				$(this).attr("checked", "checked");
+		});
+		$("#fragmented").val($("#" + ruleId + "fragmented").html() == "*" ? "any" : $("#" + ruleId + "fragmented").html());
+		$("#target").val($("#" + ruleId + "target").html());
 	}
 	else
-		document.addEditRuleForm.ruleId.value = null;
-	
-	document.getElementById("hideshow").style.visibility = "visible";
-}
+		$("#ruleId").val("");
 
-function closeAddEditRule()
-{
-	document.getElementById("hideshow").style.visibility = "hidden";
-	document.getElementById("saveAsNewBtn").disabled = true;
-	document.getElementById("deleteBtn").disabled = true;
-}
-
-function getPageHeight()
-{
-	var body = document.body;
-	var html = document.documentElement;
-
-	return Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
-}
-
-function submitAddEditRule()
-{
-	var params = new Array();
-	
-	if (document.addEditRuleForm.ruleId.value && document.addEditRuleForm.ruleId.value != "null")
-		params.push("ruleId=" + document.addEditRuleForm.ruleId.value);
-	
-	params.push("dir=" + document.addEditRuleForm.dir.value);
-	params.push("protocol=" + document.addEditRuleForm.protocol.value);
-	params.push("srcAddr=" + document.addEditRuleForm.srcAddr.value);
-	params.push("srcPort=" + document.addEditRuleForm.srcPort.value);
-	params.push("dstAddr=" + document.addEditRuleForm.dstAddr.value);
-	params.push("dstPort=" + document.addEditRuleForm.dstPort.value);
-	
-	if (document.addEditRuleForm.connState)
-	{
-		for (i=0 ; i<document.addEditRuleForm.connState.length; i++)
-		{
-			if (document.addEditRuleForm.connState[i].checked)
-				params.push("connState[]=" + document.addEditRuleForm.connState[i].value);
-		}
-	}
-	
-	params.push("fragmented=" + document.addEditRuleForm.fragmented.value);
-	params.push("icmpType=" + document.addEditRuleForm.icmpType.value);
-	params.push("target=" + document.addEditRuleForm.target.value);
-	
-	var postStr = params.join("&");
-	
-	var stateChangeFunc = function()
-	{
-		if (xhr.readyState != 4)
-			return;
-		
-		if (xhr.status != 200)
-			return;
-		
-		var response;
-		
-		if (window.JSON)
-			response = JSON.parse(xhr.responseText);
-		else
-			response = eval("(" + xhr.responseText + ")");
-		
-		if (response.result)
-		{
-			// Add/edit was successful
-			updateFilterTable(response.fwFilterTableHtml);
-			showSaveButton();
-			closeAddEditRule();
-		}
-		else
-		{
-			// Add/edit was unsuccessful
-			var msgsPanel = document.getElementById("fwAddEditFilterRuleMsgs");
-			msgsPanel.style.color = "red";
-			
-			var html =	"The following errors occured:" +
-						"<ul>";
-			
-			for (i=0 ; i<response.errors.length ; i++)
-				html += "<li>" + response.errors[i] + "</li>";
-			
-			html += "</ul>";
-			
-			msgsPanel.innerHTML = html;
-		}
-	};
-	
-	sendAjaxRequest("ajax/addEditFwFilterRule.php", stateChangeFunc, "POST", postStr);
-}
-
-function deleteRule(ruleId)
-{
-	var stateChangeFunc = function()
-	{
-		if (xhr.readyState != 4)
-			return;
-		
-		if (xhr.status != 200)
-			return;
-		
-		var response;
-		
-		if (window.JSON)
-			response = JSON.parse(xhr.responseText);
-		else
-			response = eval("(" + xhr.responseText + ")");
-		
-		if (response.result)
-		{
-			updateFilterTable(response.fwFilterTableHtml);
-			showSaveButton();
-		}
-		
-		closeAddEditRule();
-	};
-	
-	sendAjaxRequest("ajax/deleteFwFilterRule.php?ruleId=" + ruleId, stateChangeFunc, "GET");
-}
-
-function updateFilterTable(html)
-{
-	document.getElementById("fwTable").innerHTML = html;
-	dndInit();
+	$("#hideshow").show();
 }
 
 function showSaveButton()
 {
-	if (!document.getElementById("saveBtn"))
-	{
-		var element = document.getElementById("fwActions");
-		element.innerHTML = "<input id=\"saveBtn\" type=\"button\" value=\"Save Changes\" onClick=\"saveRules()\" />";
-		
-		if (element.style.opacity != null && element.style.opacity != "undefined")
-			element.style.opacity = 1;
-	}
+	if (!$("#saveBtn").is(":visible"))
+		$("#saveBtn").fadeIn();
 }
 
-function changePolicy()
+function reorderRules()
 {
-	var stateChangeFunc = function()
+	$($("#firewall-table tr[class ^= 'fwRule']").get().reverse()).each(function()
 	{
-		if (xhr.readyState != 4)
-			return;
-		
-		if (xhr.status != 200)
-			return;
-		
-		var response;
-				
-		if (window.JSON)
-			response = JSON.parse(xhr.responseText);
-		else
-			response = eval("(" + xhr.responseText + ")");
-		
-		if (response.result)
+		var ruleId = $(this).attr("id");
+		$("#firewall-table").after($("#" + ruleId + "details"));
+	});
+}
+
+function resetAddEditRuleForm()
+{
+	$("#addEditRuleForm").each(function()
+	{
+		this.reset();
+	});
+	
+	// IE fails to reset these back to their default values, so we'll set them
+	// manually
+	$("#protocol").val("any");
+	$("#icmpType").val("any");
+	$("#fragmented").val("any");
+	$("#target").val("DROP");
+}
+
+function addRuleDetailsPopup()
+{
+	$("#firewall-table tr[class ^= 'fwRule']")
+		.mouseover(function(e)
 		{
-			updateFilterTable(response.fwFilterTableHtml);
-			showSaveButton();
-		}
-	};
-	
-	sendAjaxRequest("ajax/changeFwFilterPolicy.php?dir=" + document.addEditRuleForm.dir.value, stateChangeFunc, "GET");
-}
-
-function getRulesOrder()
-{
-	var table = document.getElementById("firewall-table");
-	var rules = new Array();
-	    	
-	for (i=0 ; i<table.rows.length ; i++)
-	{
-		if (table.rows[i].id)
-		rules.push(table.rows[i].id);
-	}
-	
-	return rules;
+			// Display firewall rule details
+			$("#" + $(this).attr("id") + "details").css({position: "absolute",
+												 		left: e.pageX,
+												 		top: $(this).position().top + $(this).height(),
+												 		display: "inline"}).show();
+		})
+		.mouseout(function()
+		{
+			// Hide firewall rule details
+			$("#" + $(this).attr("id") + "details").hide();
+		});
 }

@@ -1,27 +1,57 @@
 <?php
 	require_once "ajaxAccessControl.php";
-	require_once "TempDatabase.class.php";
 	require_once "ClassFactory.class.php";
+	require_once "TempDatabase.class.php";
+	require_once "FirewallFilterRule.class.php";
+	require_once "DbQueryPreper.class.php";
+
+	$direction = trim($_REQUEST['direction']);
+	$policy = trim($_REQUEST['policy']);
+	$rulesIn = isset($_REQUEST['rules']) ? $_REQUEST['rules'] : array();
 	
-	header("Content-Type: application/json");
+	$rules = array();
+	
+	foreach ($rulesIn as $ruleIn)
+	{
+		$tempRule = new FirewallFilterRule();
+		
+		foreach ($ruleIn as $key => $value)
+		{
+			$tempRule->setAttribute("chain_name", "forward_" . $direction);
+			
+			if ($value != "*" && !preg_match("/^new/", $value))
+				$tempRule->setAttribute($key, $value);
+		}
+		
+		$rules[] = $tempRule;
+	}
 	
 	try
 	{
+		// Set policy
+		$forwardChain = FirewallFilterSettings::getChain("FORWARD");
+		$forwardChain->setAttribute("policy", $policy);
+		$forwardChain->executeUpdate(true);
+		
+		// Clear existing rules
+		$prep = new DbQueryPreper("DELETE FROM firewall_filter_rules WHERE chain_name = ");
+		$prep->addVariable("forward_" . $direction);
+		TempDatabase::executeQuery($prep);
+		
+		// Set rules
+		foreach ($rules as $rule)
+			$rule->executeInsert(true);
+			
 		$fwTranslator = ClassFactory::getFwFilterTranslator();
 		$fwTranslator->setSystemFromDb(true);
-		TempDatabase::destroy();
 		
-		$result = (object) array	(
-										"result" => true
-									);
+		TempDatabase::destroy();
 	}
 	catch (Exception $ex)
 	{
-		$result = (object) array	(
-										"result" => false,
-										"error" => $ex->getMessage()
-									);
+		$error = $ex->getMessage();
+		echo json_encode(false);
 	}
 	
-	echo json_encode($result);
+	echo json_encode(true);
 ?>
