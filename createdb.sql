@@ -103,16 +103,14 @@ INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
 INSERT INTO settings VALUES (null, 'LAN_WLAN', null);
 INSERT INTO settings VALUES (null, 'EXTIF', 'eth0');
 INSERT INTO settings VALUES (null, 'INTIF', 'br0');
+INSERT INTO settings VALUES (null, 'ELWOOD_CFG_DIR', '/etc/elwood');
 INSERT INTO settings VALUES (null, 'ELWOOD_WEBROOT', '/var/www');
 INSERT INTO settings VALUES (null, 'DHCPD_CONF', '/etc/dhcp3/dhcpd.conf');
 INSERT INTO settings VALUES (null, 'DHCPD_PID_PATH', '/var/run/dhcpd.pid');
 INSERT INTO settings VALUES (null, 'DHCLIENT_PID_PATH', '/var/run/dhclient.' || (SELECT value FROM settings WHERE key = 'EXTIF') || '.pid');
 INSERT INTO settings VALUES (null, 'DHCPCD_DIR', '/var/lib/dhcpc');
-INSERT INTO settings VALUES (null, 'INETD_DIR', '/etc/elwood/inet.d');
-INSERT INTO settings VALUES (null, 'HTTPD_DIR', '/etc/elwood/httpd');
 INSERT INTO settings VALUES (null, 'PROTOCOLS', '/etc/protocols');
 INSERT INTO settings VALUES (null, 'WOL', '/usr/bin/wol');
-INSERT INTO settings VALUES (null, 'FIREWALL_DIR', '/etc/elwood/firewall');
 INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');
 
 /* Initialize users and groups */

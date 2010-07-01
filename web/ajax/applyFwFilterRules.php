@@ -4,6 +4,7 @@
 	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterRule.class.php";
 	require_once "DbQueryPreper.class.php";
+	require_once "FileUtils.class.php";
 
 	$direction = trim($_REQUEST['direction']);
 	$policy = trim($_REQUEST['policy']);
@@ -43,7 +44,10 @@
 			$rule->executeInsert(true);
 			
 		$fwTranslator = ClassFactory::getFwFilterTranslator();
-		$fwTranslator->setSystemFromDb(true);
+		$iptablesRestore = $fwTranslator->setSystemFromDb(true);
+		
+		// Write file
+		FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore));
 		
 		TempDatabase::destroy();
 	}
