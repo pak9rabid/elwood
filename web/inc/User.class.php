@@ -44,7 +44,7 @@
 		
 		public function __toString()
 		{
-			return $this->getAttributDisp("username");
+			return $this->getAttribute("username");
 		}
 	}
 ?>
