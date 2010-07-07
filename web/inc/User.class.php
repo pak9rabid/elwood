@@ -41,5 +41,10 @@
 		{
 			return SessionUtils::getUser();
 		}
+		
+		public function __toString()
+		{
+			return $this->getAttributDisp("username");
+		}
 	}
 ?>
