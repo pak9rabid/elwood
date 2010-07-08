@@ -3,7 +3,7 @@
 	require_once "ClassFactory.class.php";
 	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterRule.class.php";
-	require_once "DbQueryPreper.class.php";
+	require_once "FirewallFilterSettings.class.php";
 	require_once "FileUtils.class.php";
 
 	$direction = trim($_REQUEST['direction']);
@@ -35,9 +35,7 @@
 		$forwardChain->executeUpdate(true);
 		
 		// Clear existing rules
-		$prep = new DbQueryPreper("DELETE FROM firewall_filter_rules WHERE chain_name = ");
-		$prep->addVariable("forward_" . $direction);
-		TempDatabase::executeQuery($prep);
+		FirewallFilterSettings::clearRules("forward_" . $direction);
 		
 		// Set rules
 		foreach ($rules as $rule)

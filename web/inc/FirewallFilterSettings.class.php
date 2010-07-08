@@ -108,5 +108,20 @@
 			
 			return $rules;
 		}
+		
+		public static function clearRules($chain)
+		{
+			$prep = new DbQueryPreper("DELETE FROM firewall_filter_rules WHERE chain_name = ");
+			$prep->addVariable($chain);
+			
+			try
+			{
+				TempDatabase::executeQuery($prep);
+			}
+			catch (Exception $ex)
+			{
+				throw $ex;
+			}
+		}
 	}
 ?>
