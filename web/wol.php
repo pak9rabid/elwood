@@ -41,7 +41,7 @@
             <form name="wol" action="scripts/process_wol.php" method="POST">
                Enter the MAC address of the computer to wake up:
                <br><br>
-               <table id="status-table">
+               <table class="status-table">
                   <tr><th>MAC Address:</th><td align="left"><input name="mac_addr" size="20" maxlength="17"></td></tr>
                </table>
                <?php
@@ -55,25 +55,25 @@
                   if ($errorMac)
                   {
                      $prevMac = $_GET['mac'];
-                     echo "<font id='error-font'>Error: $prevMac is not a valid MAC address</font>";
+                     echo "<font class='error-font'>Error: $prevMac is not a valid MAC address</font>";
                   }
 
                   if ($errorPass)
-                     echo "<font id='error-font'>Error: Password entered is not in the format of a valid MAC address</font>";
+                     echo "<font class='error-font'>Error: Password entered is not in the format of a valid MAC address</font>";
 
                   if ($errorPort)
-                     echo "<font id='error-font'>Error: Port number entered is not valid</font>";
+                     echo "<font class='error-font'>Error: Port number entered is not valid</font>";
 
                   if ($success)
                   {
                      $prevMac = $_GET['mac'];
-                     echo "<font id='success-font'>Waking up $prevMac</font>";
+                     echo "<font class='success-font'>Waking up $prevMac</font>";
                   }
                ?>
                <br>
                <input type="checkbox" name="show_options" value="true" onClick="javascript:toggleOptions()">Additional options
                <div id="removable">
-                  <table id="status-table">
+                  <table class="status-table">
                      <tr><th>Password:</th><td><input type="password" name="password" size="20" maxlength="255"></td></tr>
                      <tr><th>Port:</th><td><input name="port" size="20" maxlength="5"></td></tr>
                      <tr><th>Host:</th><td><input name="host" size="20" maxlength="255"></td></tr>

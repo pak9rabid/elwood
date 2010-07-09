@@ -33,7 +33,7 @@ echo <<<END
             <form action="admin/change_firewall.php" method="GET">
                <input type="hidden" name="action" value="add">
                <input type="hidden" name="stream" value="$stream">
-               <table id="access-table">
+               <table class="access-table">
                   <tr><th>Stream</th><th>Port</th><th>Protocol</th><th>Source</th><th>Destination</th><th>Job</th></tr>
                   <tr><td>$stream</td><td><input name='port' size='5' maxlength='5'></td><td>
                   <select name="protocol">

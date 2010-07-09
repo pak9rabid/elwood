@@ -74,7 +74,7 @@
                $jobColor = $red;
 
 echo <<<END
-            <table id="access-table">
+            <table class="access-table">
                <tr><th>Stream Type</th><th>Port</th><th>Protocol</th><th>Source</th><th>Destination</th><th>Job</th></tr>
                <tr><td bgcolor='$jobColor'>$stream</td><td bgcolor='$jobColor'>$port</td><td bgcolor='$jobColor'>$protocolString</td><td bgcolor='$jobColor'>$sourceList[$key]</td><td bgcolor='$jobColor'>$destinationList[$key]</td><td bgcolor='$jobColor'>$job</td></tr>
 END;

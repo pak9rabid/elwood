@@ -9,7 +9,7 @@
          <b>Add Port Forwarding Rule</b>
          <form action="admin/change_portforward.php" method="GET">
             <input type="hidden" name="action" value="add">
-            <table id="access-table">
+            <table class="access-table">
                <tr><th>Port</th><th>Protocol</th><th>Destination IP</th><th>Destination Port</tr>
                <tr>
                   <td><input name="port" size="6" maxlength="5"></td>

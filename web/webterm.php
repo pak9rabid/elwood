@@ -102,13 +102,13 @@
                   # If previous command contained tags, print warning message
                   # that the command will not be stored in history
                   if ($containsTags)
-                     echo "<font id='error-font'>Warning: Last command was not saved in history because it contained HTML tags</font>";
+                     echo "<font class='error-font'>Warning: Last command was not saved in history because it contained HTML tags</font>";
                ?>
                <form name="form" action="webterm.php" method="POST">
                   <table border="0" align="center">
                      <tr>
                         <th align="right">Linux Command:</th>
-                        <td><input id="textfield" name="cmd" size="35" maxlength="255"></td>
+                        <td><input class="textfield" name="cmd" size="35" maxlength="255"></td>
                      </tr>
                      <tr>
                         <th align="right">Previous Commands:</th>

@@ -63,32 +63,32 @@
                # Print current LAN settings in the form
 echo <<<END
                <form name="lanconfig" action="scripts/admin/lanconfig.php" method="POST">
-                  <table id="ip-table" width="300px">
+                  <table class="ip-table" width="300px">
                      <tr><th colspan="2">LAN IP Address</th></tr>
-                     <tr><td align="right">IP Address:</td><td><input id="textfield" size="20" maxlength="15" name="ipaddress" value="$lanConfig->ipAddress"></td></tr>
-                     <tr><td align="right">Subnet Mask:</td><td><input id="textfield" size="20" maxlength="15" name="netmask" value="$lanConfig->netmask"></td></tr>
+                     <tr><td align="right">IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="ipaddress" value="$lanConfig->ipAddress"></td></tr>
+                     <tr><td align="right">Subnet Mask:</td><td><input class="textfield" size="20" maxlength="15" name="netmask" value="$lanConfig->netmask"></td></tr>
                   </table>
 END;
 
                   # Print errors, if any
                   if ($_GET['errip'] == true) 
-                     echo "<font id='error-font'>Error: Invalid or no IP address entered</font><br>";
+                     echo "<font class='error-font'>Error: Invalid or no IP address entered</font><br>";
                   if ($_GET['errnetmask'] == true)
-                     echo "<font id='error-font'><b>Error: Invalid or no subnet mask entered</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Invalid or no subnet mask entered</b></font><br>";
 
                   # Print dhcp server information in form
 echo <<<END
                   <br>
-                  <table id="ip-table" width="300px">
+                  <table class="ip-table" width="300px">
                      <tr><th colspan="2">LAN DHCP Server</th></tr>
                      <tr><td align="right">DHCP Server:</td><td>$dhcpSelect1 Enabled</td></tr>
                      <tr><td>&nbsp</td><td>$dhcpSelect2 Disabled</td></tr>
                      <tr><td colspan="2">&nbsp</td></tr>
-                     <tr><td align="right">Starting Address:</td><td><input id="textfield" size="20" maxlength="15" name="startip" value="$lanConfig->dhcpStartIp"></td></tr>
-                     <tr><td align="right">Ending IP Address:</td><td><input id="textfield" size="20" maxlength="15" name="endip" value="$lanConfig->dhcpEndIp"></td></tr>
-                     <tr><td align="right">Nameserver 1:</td><td><input id="textfield" size="20" maxlength="15" name="dns1" value="$lanConfig->dns1"></td></tr>
-                     <tr><td align="right">Nameserver 2:</td><td><input id="textfield" size="20" maxlength="15" name="dns2" value="$lanConfig->dns2"></td></tr>
-                     <tr><td align="right">Nameserver 3:</td><td><input id="textfield" size="20" maxlength="15" name="dns3" value="$lanConfig->dns3"></td></tr>
+                     <tr><td align="right">Starting Address:</td><td><input class="textfield" size="20" maxlength="15" name="startip" value="$lanConfig->dhcpStartIp"></td></tr>
+                     <tr><td align="right">Ending IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="endip" value="$lanConfig->dhcpEndIp"></td></tr>
+                     <tr><td align="right">Nameserver 1:</td><td><input class="textfield" size="20" maxlength="15" name="dns1" value="$lanConfig->dns1"></td></tr>
+                     <tr><td align="right">Nameserver 2:</td><td><input class="textfield" size="20" maxlength="15" name="dns2" value="$lanConfig->dns2"></td></tr>
+                     <tr><td align="right">Nameserver 3:</td><td><input class="textfield" size="20" maxlength="15" name="dns3" value="$lanConfig->dns3"></td></tr>
                      <tr><th colspan="2">Static DHCP Addresses</th></tr>
 END;
                   foreach ($lanConfig->dhcpHostList as $key => $value)
@@ -101,30 +101,30 @@ END;
                      $tempMACValue  = $lanConfig->dhcpMACList[$key];
                      $tempIPValue   = $lanConfig->dhcpIPList[$key];
 echo <<<END
-                     <tr><td align="right">Hostname:</td><td><input id="textfield" size="20" maxlength="32" name="$tempHostName" value="$tempHostValue"></td></tr>
-                     <tr><td align="right">MAC:</td><td><input id="textfield" size="20" maxlength="17" name="$tempMACName" value="$tempMACValue"></td></tr>
-                     <tr><td align="right">IP:</td><td><input id="textfield" size="20" maxlength="15" name="$tempIPName" value="$tempIPValue"></td></tr>
+                     <tr><td align="right">Hostname:</td><td><input class="textfield" size="20" maxlength="32" name="$tempHostName" value="$tempHostValue"></td></tr>
+                     <tr><td align="right">MAC:</td><td><input class="textfield" size="20" maxlength="17" name="$tempMACName" value="$tempMACValue"></td></tr>
+                     <tr><td align="right">IP:</td><td><input class="textfield" size="20" maxlength="15" name="$tempIPName" value="$tempIPValue"></td></tr>
                      <tr><td colspan="2">&nbsp</td></tr>
 END;
                   }
 echo <<<END
                      <tr><th colspan="2">Add New Host</th></tr>
-                     <tr><td align="right">Hostname:</td><td><input id="textfield" size="20" maxlength="32" name="newdhcphost"></td></tr>
-                     <tr><td align="right">MAC:</td><td><input id="textfield" size="20" maxlength="17" name="newdhcpmac"></td></tr>
-                     <tr><td align="right">IP:</td><td><input id="textfield" size="20" maxlength="15" name="newdhcpip"></td></tr>
+                     <tr><td align="right">Hostname:</td><td><input class="textfield" size="20" maxlength="32" name="newdhcphost"></td></tr>
+                     <tr><td align="right">MAC:</td><td><input class="textfield" size="20" maxlength="17" name="newdhcpmac"></td></tr>
+                     <tr><td align="right">IP:</td><td><input class="textfield" size="20" maxlength="15" name="newdhcpip"></td></tr>
                   </table>
 END;
 
                   if ($_GET['errstartip'] == true)
-                     echo "<font id='error-font'><b>Error: Invalid or no DHCP starting address</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Invalid or no DHCP starting address</b></font><br>";
                   if ($_GET['errendip'] == true)
-                     echo "<font id='error-font'><b>Error: Invalid or no DHCP ending address</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Invalid or no DHCP ending address</b></font><br>";
                   if ($_GET['errdns1'] == true)
-                     echo "<font id='error-font'><b>Error: Nameserver 1 is invalid</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Nameserver 1 is invalid</b></font><br>";
                   if ($_GET['errdns2'] == true)
-                     echo "<font id='error-font'><b>Error: Nameserver 2 is invalid</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Nameserver 2 is invalid</b></font><br>";
                   if ($_GET['errdns3'] == true)
-                     echo "<font id='error-font'><b>Error: Nameserver 3 is invalid</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Nameserver 3 is invalid</b></font><br>";
 echo <<<END
                   <br>
                   <input type="submit" value="Change">&nbsp<input type="reset">

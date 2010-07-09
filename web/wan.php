@@ -54,7 +54,7 @@
 echo <<<END
                <form name="wanconfig" action="scripts/admin/wanconfig.php" method="POST">
                   <br>
-                  <table id="ip-table" width="300px">
+                  <table class="ip-table" width="300px">
                      <tr><th colspan="3">IP Address</th></tr>
                      <tr cellspacing="0">
                         <td>$dynRadio</td><td colspan="2">Obtain IP adress automatically</td>
@@ -67,56 +67,56 @@ echo <<<END
                      </tr>
                      <tr>
                         <td>&nbsp</td>
-                        <td align="right">IP Address:</td><td><input id="textfield" size="20" maxlength="15" name="ipaddress" value="$wanConfig->ipAddress"></td>
+                        <td align="right">IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="ipaddress" value="$wanConfig->ipAddress"></td>
                      </tr>
                      <tr><td>&nbsp</td>
-                     <td align="right">Subnet Mask:</td><td><input id="textfield" size="20" maxlength="15" name="netmask" value="$wanConfig->netmask"></td>
+                     <td align="right">Subnet Mask:</td><td><input class="textfield" size="20" maxlength="15" name="netmask" value="$wanConfig->netmask"></td>
                      </tr>
                      <tr>
                         <td>&nbsp</td>
-                        <td align="right">Gateway:</td><td><input id="textfield" size="20" maxlength="15" name="gateway" value="$wanConfig->gateway"></td>
+                        <td align="right">Gateway:</td><td><input class="textfield" size="20" maxlength="15" name="gateway" value="$wanConfig->gateway"></td>
                      </tr>
                   </table>
 END;
                   # Print out errors if any
                   if ($_GET['errip'] == true)
-                     echo "<font id='error-font'><b>Error: Invalid or no IP address entered</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Invalid or no IP address entered</b></font><br>";
                   if ($_GET['errnetmask'] == true)
-                     echo "<font id='error-font'><b>Error: Invalid or no subnet mask entered</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Invalid or no subnet mask entered</b></font><br>";
                   if ($_GET['errgw'] == true)
-                     echo "<font id='error-font'><b>Error: Invalid gateway entered</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Invalid gateway entered</b></font><br>";
                   echo "<br>";
 
 echo <<<END
-                  <table id="ip-table" width="300px">
+                  <table class="ip-table" width="300px">
                      <tr><th colspan="2">DNS</th></tr>
                      <tr>
                         <td align="right">Nameserver 1:</td>
-                        <td><input id="textfield" size="20" maxlength="15" name="dns1" value="$wanConfig->dns1"></td>
+                        <td><input class="textfield" size="20" maxlength="15" name="dns1" value="$wanConfig->dns1"></td>
                      </tr>
                      <tr>
                         <td align="right">Nameserver 2:</td>
-                        <td><input id="textfield" size="20" maxlength="15" name="dns2" value="$wanConfig->dns2"></td>
+                        <td><input class="textfield" size="20" maxlength="15" name="dns2" value="$wanConfig->dns2"></td>
                      </tr>
                      <tr>
                         <td align="right">Nameserver 3:</td>
-                        <td><input id="textfield" size="20" maxlength="15" name="dns3" value="$wanConfig->dns3"></td>
+                        <td><input class="textfield" size="20" maxlength="15" name="dns3" value="$wanConfig->dns3"></td>
                      </tr>
                   </table>
 END;
                   
                   # Print out errors if any
                   if ($_GET['errdns1'] == true)
-                     echo "<font id='error-font'><b>Error: Nameserver 1 is invalid</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Nameserver 1 is invalid</b></font><br>";
                   if ($_GET['errdns2'] == true)
-                     echo "<font id='error-font'><b>Error: Nameserver 2 is invalid</b></font><br>";
+                     echo "<font class='error-font'><b>Error: Nameserver 2 is invalid</b></font><br>";
                   if ($_GET['errdns3'] == true)
-                     echo "<font id='error-font'><b>Error: Nameserver 3 is invalid</b></font></br>";
+                     echo "<font class='error-font'><b>Error: Nameserver 3 is invalid</b></font></br>";
                   echo "<br>";
 echo <<<END
-                  <table id="access-table" width="300px">
+                  <table class="access-table" width="300px">
                      <tr><th>MTU Size</th></tr>
-                     <tr><td><input id="textfield" size="4" maxlength="10" name="mtusize" value="$wanConfig->mtuSize"></td></tr>
+                     <tr><td><input class="textfield" size="4" maxlength="10" name="mtusize" value="$wanConfig->mtuSize"></td></tr>
                   </table>
                   <br>
                   <input type="submit" value="Change">&nbsp<input type="reset">

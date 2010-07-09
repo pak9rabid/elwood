@@ -22,7 +22,7 @@
 
 			# Display current router status
 echo <<<END
-			<table id="status-table">
+			<table class="status-table">
 				<tr><th>WAN IP Address:</th><td>$routerStatus->wanIP</td></tr>
 				<tr><th>LAN IP Address:</th><td>$routerStatus->lanIP</td></tr>
 				<tr><th>&nbsp</th><td>&nbsp</td></tr>

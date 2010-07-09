@@ -56,7 +56,7 @@
          ?>
          <div id="content">
             <form action="../scripts/admin/wificonfig.php" method="POST">
-               <table id="ip-table" width="350px">
+               <table class="ip-table" width="350px">
                   <tr>
                      <th colspan="2">Basic Settings</th>
                   </tr>
@@ -88,7 +88,7 @@
                   </tr>
                </table>
                <br>
-               <table id="ip-table" width="350px">
+               <table class="ip-table" width="350px">
                   <tr>
                      <th colspan="2">Security Settings</th>
                   </tr>
