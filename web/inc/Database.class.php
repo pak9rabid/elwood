@@ -33,6 +33,8 @@
 		
 		public static function executeSelect(DataHash $data, $isTemp = false)
 		{
+			$classType = get_class($data);
+			
 			// Select rows from the database
 			$prep = new DbQueryPreper("SELECT * FROM " . $data->getTable());
 			
@@ -41,6 +43,8 @@
 
 			$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
 			$prep->addVariablesNoPlaceholder($data->getAttributeValues());
+			
+			$prep->addSql(" ORDER BY id");
 			
 			try
 			{
@@ -53,7 +57,7 @@
 				
 				foreach ($result as $row)
 				{
-					$resultHash = new DataHash($data->getTable());
+					$resultHash = new $classType($data->getTable());
 					$resultHash->setAllAttributes($row);
 					$resultHashes[] = $resultHash;
 				}

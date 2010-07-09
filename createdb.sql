@@ -98,11 +98,19 @@ END;
 
 /* Initialize settings table */
 INSERT INTO settings VALUES (null, 'SYSTEM_PROFILE', 'Debian4');
-INSERT INTO settings VALUES (null, 'IS_INITIALIZED', 'false');
+INSERT INTO settings VALUES (null, 'IS_INITIALIZED', 0);
 INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
 INSERT INTO settings VALUES (null, 'LAN_WLAN', null);
 INSERT INTO settings VALUES (null, 'EXTIF', 'eth0');
 INSERT INTO settings VALUES (null, 'INTIF', 'br0');
+INSERT INTO settings VALUES (null, 'HTTP_PORT', '80');
+INSERT INTO settings VALUES (null, 'SSH_PORT', '22');
+INSERT INTO settings VALUES (null, 'LAN_HTTP_ENABLED', 1);
+INSERT INTO settings VALUES (null, 'WAN_HTTP_ENABLED', 1);
+INSERT INTO settings VALUES (null, 'LAN_SSH_ENABLED', 1);
+INSERT INTO settings VALUES (null, 'WAN_SSH_ENABLED', 1);
+INSERT INTO settings VALUES (null, 'LAN_ICMP_ENABLED', 1);
+INSERT INTO settings VALUES (null, 'WAN_ICMP_ENABLED', 1);
 INSERT INTO settings VALUES (null, 'ELWOOD_CFG_DIR', '/etc/elwood');
 INSERT INTO settings VALUES (null, 'ELWOOD_WEBROOT', '/var/www');
 INSERT INTO settings VALUES (null, 'DHCPD_CONF', '/etc/dhcp3/dhcpd.conf');
