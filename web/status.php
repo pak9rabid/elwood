@@ -13,7 +13,7 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut("Firewall")?>
+		<?=PageElements::titleOut("Status")?>
 		<?=PageElements::navigationOut()?>
 		<div id="content">
 		<?php
