@@ -7,7 +7,7 @@
 	require_once "DbQueryPreper.class.php";
 	require_once "NetUtils.class.php";
 	
-	class IPTablesFwFilterTranslator implements FwFilterTranslator
+	class IPTablesFwFilterTranslator
 	{
 		public function setDbFromSystem()
 		{

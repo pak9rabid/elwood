@@ -1,7 +1,7 @@
 <?php
 	require_once "Database.class.php";
 	require_once "User.class.php";
-	require_once "ClassFactory.class.php";
+	require_once "IPTablesFwFilterTranslator.class.php";
 	
 	class TempDatabase extends Database
 	{
@@ -69,8 +69,8 @@
 		{
 			if (!copy(parent::getDbPath(), self::getDbPath()))
 				throw new Exception("Error: Unable to copy database file");
-				
-			$fwTranslator = ClassFactory::getFwFilterTranslator();
+
+			$fwTranslator = new IPTablesFwFilterTranslator();
 			$fwTranslator->setDbFromSystem();
 		}
 		

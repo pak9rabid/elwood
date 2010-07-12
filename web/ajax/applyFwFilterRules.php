@@ -1,10 +1,11 @@
 <?php
 	require_once "ajaxAccessControl.php";
-	require_once "ClassFactory.class.php";
+	require_once "IPTablesFwFilterTranslator.class.php";
 	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterRule.class.php";
 	require_once "FirewallFilterSettings.class.php";
 	require_once "FileUtils.class.php";
+	require_once "RouterSettings.class.php";
 
 	$direction = trim($_REQUEST['direction']);
 	$policy = trim($_REQUEST['policy']);
@@ -41,7 +42,7 @@
 		foreach ($rules as $rule)
 			$rule->executeInsert(true);
 			
-		$fwTranslator = ClassFactory::getFwFilterTranslator();
+		$fwTranslator = new IPTablesFwFilterTranslator();
 		$iptablesRestore = $fwTranslator->setSystemFromDb(true);
 		
 		// Write file
