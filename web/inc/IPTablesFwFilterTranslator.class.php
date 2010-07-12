@@ -3,13 +3,12 @@
 	require_once "FirewallFilterSettings.class.php";
 	require_once "FirewallChain.class.php";
 	require_once "FirewallFilterRule.class.php";
-	require_once "FwFilterTranslator.class.php";
 	require_once "DbQueryPreper.class.php";
 	require_once "NetUtils.class.php";
 	
 	class IPTablesFwFilterTranslator
 	{
-		public function setDbFromSystem()
+		public static function setDbFromSystem()
 		{
 			// Reads the current system firewall settings by running and
 			// parsing the results of iptables-save on the 'filter' table
@@ -113,7 +112,7 @@
 			}
 		}
 		
-		public function setSystemFromDb($writeChanges)
+		public static function setSystemFromDb($writeChanges)
 		{
 			// Syncs the system filter firewall to what's specified in the
 			// database by generating and executing an iptables-restore script

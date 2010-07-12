@@ -41,9 +41,8 @@
 		// Set rules
 		foreach ($rules as $rule)
 			$rule->executeInsert(true);
-			
-		$fwTranslator = new IPTablesFwFilterTranslator();
-		$iptablesRestore = $fwTranslator->setSystemFromDb(true);
+
+		$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb(true);
 		
 		// Write file
 		FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");

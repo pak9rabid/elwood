@@ -70,8 +70,7 @@
 			if (!copy(parent::getDbPath(), self::getDbPath()))
 				throw new Exception("Error: Unable to copy database file");
 
-			$fwTranslator = new IPTablesFwFilterTranslator();
-			$fwTranslator->setDbFromSystem();
+			IPTablesFwFilterTranslator::setDbFromSystem();
 		}
 		
 		public static function destroy()
