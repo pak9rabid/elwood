@@ -97,7 +97,7 @@ BEGIN
 END;
 
 /* Initialize settings table */
-INSERT INTO settings VALUES (null, 'SYSTEM_PROFILE', 'Debian4');
+INSERT INTO settings VALUES (null, 'SYSTEM_PROFILE', 'debian4');
 INSERT INTO settings VALUES (null, 'IS_INITIALIZED', 0);
 INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
 INSERT INTO settings VALUES (null, 'LAN_WLAN', null);
