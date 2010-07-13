@@ -1,21 +1,22 @@
 <?php
 	require_once "Database.class.php";
 	require_once "DbQueryPreper.class.php";
+	require_once "SessionUtils.class.php";
 	require_once "User.class.php";
 	
 	session_start();
 	
 	if (isset($_REQUEST['logout']))
 	{
-		unset($_SESSION['user']);
+		SessionUtils::logout();
 		header("Location: ../status.php");
 	}
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 
-<?php	
-	$user = isset($_SESSION['user']) ? unserialize($_SESSION['user']) : null;
+<?php
+	$user = SessionUtils::getUser();
 	
 	if (!isset($user))
 	{
@@ -53,14 +54,12 @@
 		$username = $_POST['username'];
 		$password = $_POST['password'];
 
-		$prep = new DbQueryPreper("SELECT * FROM users WHERE username = ");
-		$prep->addVariable($username);
-		$prep->addSql(" AND passwd = ");
-		$prep->addVariable(sha1($password));
+		$userQuery = new User();
+		$userQuery->setAttribute("username", $username);
+		$userQuery->setAttribute("passwd", sha1($password));
+		$userMatch = $userQuery->executeSelect();
 	
-		$result = Database::executeQuery($prep);
-	
-		if (empty($result))
+		if (empty($userMatch))
 		{
 			unset($_SESSION['user']);
 			?>
@@ -76,10 +75,7 @@
 			<?exit;
 		}
 		
-		$row = $result[0];
-		$user = new User();
-		$user->setAllAttributes($row);
-		$user->setGroup();
+		$user = $userMatch[0];
 		$_SESSION['user'] = serialize($user);
 	}
 ?>

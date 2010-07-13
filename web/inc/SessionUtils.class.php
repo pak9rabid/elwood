@@ -11,5 +11,10 @@
 				return null;
 				
 		}
+		
+		public static function logout()
+		{
+			unset($_SESSION['user']);
+		}
 	}
 ?>

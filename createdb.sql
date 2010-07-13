@@ -9,25 +9,11 @@ CREATE TABLE settings
 CREATE TABLE users
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	uid INTEGER UNIQUE NOT NULL,
 	username VARCHAR(32) UNIQUE NOT NULL,
-	passwd VARCHAR(40)  NOT NULL
-);
+	usergroup VARCHAR(32) NOT NULL,
+	passwd VARCHAR(40) NOT NULL,
 
-CREATE TABLE groups
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	gid INTEGER UNIQUE NOT NULL,
-	name VARCHAR(32) UNIQUE NOT NULL
-);
-
-CREATE TABLE user_groups
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	uid INTEGER UNIQUE NOT NULL,
-	gid INTEGER NOT NULL,
-	FOREIGN KEY (uid) REFERENCES users(uid),
-	FOREIGN KEY (gid) REFERENCES groups(gid)
+	CHECK (usergroup IN ('admins', 'users'))
 );
 
 CREATE TABLE webterm_history
@@ -44,6 +30,7 @@ CREATE TABLE firewall_chains
 	table_name VARCHAR(32) NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
 	policy VARCHAR(32),
+
 	CONSTRAINT u_table_chain UNIQUE (table_name, chain_name)
 );
 
@@ -61,6 +48,7 @@ CREATE TABLE firewall_filter_rules
 	sport VARCHAR(16),
  	icmp_type VARCHAR(16),
 	target VARCHAR(16),
+
 	CONSTRAINT u_chain_rulenum UNIQUE (chain_name, rule_number)
 );
 
@@ -70,6 +58,7 @@ CREATE TABLE firewall_dnat_rules
 	in_port VARCHAR(16) UNIQUE NOT NULL,
 	out_address VARCHAR(64) NOT NULL,
 	out_port VARCHAR(16),
+
 	CONSTRAINT u_forward_rule UNIQUE (in_port, out_address, out_port)
 );
 
@@ -121,8 +110,5 @@ INSERT INTO settings VALUES (null, 'PROTOCOLS', '/etc/protocols');
 INSERT INTO settings VALUES (null, 'WOL', '/usr/bin/wol');
 INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');
 
-/* Initialize users and groups */
-INSERT INTO users VALUES (null, 0, 'admin', 'da942a52feff28ee63725f388318641d67a4dbe4');
-INSERT INTO groups VALUES (null, 0, 'admins');
-INSERT INTO groups VALUES (null, 1, 'users');
-INSERT INTO user_groups VALUES (null, 0, 0);
+/* Initialize users */
+INSERT INTO users VALUES (null, 'admin', 'admins', 'da942a52feff28ee63725f388318641d67a4dbe4');
