@@ -5,6 +5,7 @@
 	require_once "FirewallFilterRule.class.php";
 	require_once "DbQueryPreper.class.php";
 	require_once "NetUtils.class.php";
+	require_once "Console.class.php";
 	
 	class IPTablesFwFilterTranslator
 	{
@@ -12,10 +13,7 @@
 		{
 			// Reads the current system firewall settings by running and
 			// parsing the results of iptables-save on the 'filter' table
-			$shellCmd = "sudo /sbin/iptables-save -t filter";
-			$output = array();
-			
-			exec($shellCmd, $output);
+			$output = Console::execute("sudo /sbin/iptables-save -t filter");
 			
 			// Clear chains and rules related to filtering
 			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_chains WHERE table_name = 'filter'"));
@@ -277,10 +275,7 @@
 			// If specified, write changes to the active firewall
 			if ($writeChanges)
 			{
-				exec("echo \"" . implode("\n", $iptablesRestore) . "\" | sudo /sbin/iptables-restore", $placeholder, $returnVal);
-				
-				if ($returnVal != 0)
-					throw new Exception("There was an error running iptables-restore");
+				Console::execute("echo \"" . implode("\n", $iptablesRestore) . "\" | sudo /sbin/iptables-restore");
 			}
 			
 			return $iptablesRestore;
