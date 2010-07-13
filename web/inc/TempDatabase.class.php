@@ -68,7 +68,7 @@
 		public static function create()
 		{
 			if (!copy(parent::getDbPath(), self::getDbPath()))
-				throw new Exception("Error: Unable to copy database file");
+				throw new Exception("Unable to copy database file");
 
 			IPTablesFwFilterTranslator::setDbFromSystem();
 		}

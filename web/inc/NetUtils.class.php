@@ -4,7 +4,7 @@
 		public static function mask2CIDR($netmask)
 		{
 			if (!self::isValidNetmask($netmask))
-				throw new Exception("Error: Invalid netmask to convert");	
+				throw new Exception("Invalid netmask to convert");	
 			
 			$long = ip2long($netmask);
 			$base = ip2long('255.255.255.255');
@@ -16,7 +16,7 @@
 			list($ip, $netmask) = preg_split("/\//", $fullAddress);
 			
 			if (!self::isValidIp($ip))
-				throw new Exception("Error: Invalid IP to convert");
+				throw new Exception("Invalid IP to convert");
 			
 			//if (count($ipElements) == 1 || preg_match("/^[0-9]{1,2}$/", $ipElements[1]))
 			if ($netmask == null || preg_match("/^[0-9]{1,2}$/", $netmask))
@@ -112,7 +112,7 @@
 		{
 			// Converts $mac to xx:xx:xx:xx:xx:xx notation
 			if (!self::isValidMac($mac))
-				throw new Exception("Error: Invalid MAC address to convert");
+				throw new Exception("Invalid MAC address to convert");
 				
 			$mac = preg_replace("/[^0-9A-Fa-f]/", "", $mac);
 			$mac = str_split($mac, 2);
