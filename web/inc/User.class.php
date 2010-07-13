@@ -18,7 +18,6 @@
 		// Methods
 		public function getGroup()
 		{
-			//return $this->group;
 			return $this->getAttribute("usergroup");
 		}
 				
