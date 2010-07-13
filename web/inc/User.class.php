@@ -5,10 +5,7 @@
 	require_once "SessionUtils.class.php";
 	
 	class User extends DataHash
-	{
-		// Attributes
-		//protected $group;
-		
+	{		
 		// Constructors
 		public function __construct()
 		{
