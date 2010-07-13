@@ -1,0 +1,53 @@
+{
+	"name": "debian4",
+
+	"services":
+	{
+		"dnsmasq":
+		{
+			"class": "DebianDnsmasqService",
+			"config": "/etc/dnsmasq.conf",
+			"pid": "/var/run/dnsmasq.pid"
+		},
+
+		"apache2":
+		{
+			"class": "DebianApache2Service",
+			"config": "/etc/apache2/ports.conf",
+			"pid": "/var/run/apache2.pid"
+		},
+
+		"sshd":
+		{
+			"class": "DebianSshdService",
+			"config": "/etc/ssh/sshd_config",
+			"pid": "/var/run/sshd.pid"
+		},
+
+		"network":
+		{
+			"class": "DebianNetworkService",
+			"config": "/etc/network/interfaces"
+		},
+
+		"hostapd":
+		{
+			"class": "DebianHostapdService",
+			"config": "/etc/hostapd/hostapd.conf",
+			"pid": "/var/run/hostapd.pid"
+		}
+	},
+
+	"interfaces":
+	{
+		"wan":
+		{
+			"class": "DebianWanNetworkInterface"
+		},
+
+		"lan":
+		{
+			"class": "DebianLanNetworkInterface"
+		}
+	}
+}
