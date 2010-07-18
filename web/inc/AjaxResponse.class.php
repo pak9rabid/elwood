@@ -1,13 +1,13 @@
 <?php
 	class AjaxResponse
 	{
-		protected $hasError;
 		protected $responseText;
+		protected $hasError;
 		
-		public function __construct($hasError = false, $responseText = "")
+		public function __construct($responseText = "", $hasError = false)
 		{
-			$this->hasError = $hasError;
 			$this->responseText = $responseText;
+			$this->hasError = $hasError;
 		}
 		
 		public function hasError()

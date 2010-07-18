@@ -8,7 +8,7 @@
 	
 	if (empty($requestHandler))
 	{
-		$response = new AjaxResponse(true, "No ajax request handler specified");
+		$response = new AjaxResponse("No ajax request handler specified", true);
 		
 		echo $response->toJson();
 		exit;
@@ -19,7 +19,7 @@
 	
 	if (!class_exists($requestHandlerClass))
 	{
-		$response = new AjaxResponse(true, "Specified ajax request handler ($requestHandler) does not exist");
+		$response = new AjaxResponse("Specified ajax request handler ($requestHandler) does not exist", true);
 		
 		echo $response->toJson();
 		exit;
@@ -29,7 +29,7 @@
 	
 	if (!($requestHandlerObj instanceof AjaxRequestHandler))
 	{
-		$response = new AjaxResponse(true, "Specified ajax request handler ($requestHandler) does not implement the AjaxRequestHandler interface");
+		$response = new AjaxResponse("Specified ajax request handler ($requestHandler) does not implement the AjaxRequestHandler interface", true);
 		
 		echo $response->toJson();
 		exit;

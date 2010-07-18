@@ -37,33 +37,42 @@ $(document).ready(function()
 			if ($(this).attr("checked"))
 				connStates.push($(this).val());
 		});
-		
-		var ruleInfo =	{
-							id:			$("#ruleId").val(),
-							protocol:	$("#protocol").val(),
-							icmp_type:	$("#icmpType").val(),
-							src_addr:	$("#srcAddr").val(),
-							sport:		$("#srcPort").val(),
-							dst_addr:	$("#dstAddr").val(),
-							dport:		$("#dstPort").val(),
-							state:		connStates.join(","),
-							fragmented:	$("#fragmented").val(),
-							target:		$("#target").val()
+
+		var params =	{
+							handler: "AddEditFwFilterRule",
+							parameters:
+							{
+								id:			$("#ruleId").val(),
+								protocol:	$("#protocol").val(),
+								icmp_type:	$("#icmpType").val(),
+								src_addr:	$("#srcAddr").val(),
+								sport:		$("#srcPort").val(),
+								dst_addr:	$("#dstAddr").val(),
+								dport:		$("#dstPort").val(),
+								state:		connStates.join(","),
+								fragmented:	$("#fragmented").val(),
+								target:		$("#target").val()
+							}
 						};
 		
-		$.getJSON("ajax/addEditFwFilterRule.php", ruleInfo, function(json)
+		$.getJSON("ajax/ajaxRequest.php", params, function(response)
 		{
-			if (json.result)
-			{	
-				if (ruleInfo.id.length > 0)
-				{	
-					$("#" + ruleInfo.id).replaceWith(json.html.row);
-					$("#" + ruleInfo.id + "details").replaceWith(json.html.div);
+			if (response.hasError)
+			{
+				$("#fwAddEditFilterRuleMsgs").css("color", "red");
+				$("#fwAddEditFilterRuleMsgs").html(response.responseText);
+			}
+			else
+			{
+				if (params.parameters.id.length > 0)
+				{
+					$("#" + params.parameters.id).replaceWith(response.responseText.row);
+					$("#" + params.parameters.id + "details").replaceWith(response.responseText.div);
 				}
 				else
 				{
-					$("#firewall-table tbody").append(json.html.row);
-					$("#fwTable").append(json.html.div);
+					$("#firewall-table tbody").append(response.responseText.row);
+					$("#fwTable").append(response.responseText.div);
 				}
 				
 				addRuleDetailsPopup();
@@ -72,20 +81,8 @@ $(document).ready(function()
 				$("#hideshow").hide();
 				showSaveButton();
 			}
-			else
-			{
-				$("#fwAddEditFilterRuleMsgs").css("color", "red");
-				var html =	"The following errors occured:" +
-							"<ul>";
-
-				for (i=0 ; i<json.errors.length ; i++)
-					html += "<li>" + json.errors[i] + "</li>";
-
-				html += "</ul>";
-
-				$("#fwAddEditFilterRuleMsgs").html(html);
-			}
 		});
+		
 	});
 
 	$("#changePolicyBtn").click(function()
@@ -116,27 +113,31 @@ $(document).ready(function()
 		// Save firewall rules on the server
 		reorderRules();
 		
-		var firewall =	{
-							direction:	$("#dir").val(),
-							policy:		$("#firewall-table tr[class *= 'fwPolicy']").attr("class").indexOf("Drop") != -1 ? "DROP" : "ACCEPT",
-							rules: 		getClientRules()
+		var params =	{
+							handler: "ApplyFwFilterRules",
+							parameters:
+							{
+								direction:	$("#dir").val(),
+								policy:		$("#firewall-table tr[class *= 'fwPolicy']").attr("class").indexOf("Drop") != -1 ? "DROP" : "ACCEPT",
+								rules: 		getClientRules()
+							}
 						};
 		
-		$.post("ajax/applyFwFilterRules.php", firewall, function(json)
+		$.post("ajax/ajaxRequest.php", params, function(response)
 		{
-			if (json)
+			if (response.hasError)
+			{
+				$("#fwResults").cass("color", "red");
+				$("#fwResults").html(response.responseText);
+				$("#fwResults").show();
+			}
+			else
 			{
 				$("#saveBtn").hide();
 				$("#fwResults").css("color", "green");
 				$("#fwResults").html("Firewall settings saved successfully");
 				$("#fwResults").show();
 				$("#fwResults").fadeOut(3000);
-			}
-			else
-			{
-				$("#fwResults").css("color", "red");
-				$("#fwResults").html("There was an error saving your firewall settings...please try again");
-				$("#fwResults").show();
 			}
 		});
 	});
