@@ -5,7 +5,7 @@
 	{
 		protected $service;
 		
-		public static function getClass($serviceName)
+		public static function getInstance($serviceName)
 		{
 			$profile = SystemProfile::getProfile();
 			$service = $profile->services->$serviceName;
