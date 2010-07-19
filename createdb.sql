@@ -39,6 +39,8 @@ CREATE TABLE firewall_filter_rules
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
 	rule_number INTEGER,
+	int_in VARCHAR(16),
+	int_out VARCHAR(16),
 	src_addr VARCHAR(64),
 	dst_addr VARCHAR(64),
 	state VARCHAR(32),

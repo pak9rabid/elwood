@@ -44,6 +44,20 @@
 						{
 							switch ($lineElements[$i])
 							{
+								case "-i":
+									// Input interface
+									if ($lineElements[$i + 1] == "!")
+										$newRule->setAttribute("int_in", "!" . $lineElements[$i + 2]);
+									else
+										$newRule->setAttribute("int_in", $lineElements[$i + 1]);
+									break;
+								case "-o":
+									// Output interface
+									if ($lineElements[$i + 1] == "!")
+										$newRule->setAttribute("int_out", "!" . $lineElements[$i + 2]);
+									else
+										$newRule->setAttribute("int_out", $lineElements[$i + 1]);
+									break;
 								case "-s":
 									// Source address
 									if ($lineElements[$i + 1] == "!")
@@ -129,6 +143,30 @@
 				foreach ($chainRules as $rule)
 				{
 					$iptablesRule = "-A $chainName ";
+					
+					if ($rule->getAttribute("int_in") != null)
+					{
+						// Input interface
+						$intIn = $rule->getAttribute("int_in");
+						$iptablesRule .= "-i ";
+						
+						if (self::beginsWith($intIn, "!"))
+							$iptablesRule .= "! ";
+							
+						$iptablesRule .= trim($intIn, "!") . " ";
+					}
+					
+					if ($rule->getAttribute("int_out") != null)
+					{
+						// Output interface
+						$intOut = $rule->getAttribute("int_out");
+						$iptablesRule .= "-o ";
+						
+						if (self::beginsWith($intOut, "!"))
+							$iptablesRule .= "! ";
+							
+						$iptablesRule .= trim($intOut, "!") . " ";
+					}
 					
 					if ($rule->getAttribute("src_addr") != null)
 					{
