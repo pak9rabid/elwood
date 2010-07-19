@@ -58,9 +58,10 @@ $(document).ready(function()
 		$.getJSON("ajax/ajaxRequest.php", params, function(response)
 		{
 			if (response.hasError)
-			{
-				$("#fwAddEditFilterRuleMsgs").css("color", "red");
-				$("#fwAddEditFilterRuleMsgs").html(response.responseText);
+			{	
+				$("#fwAddEditFilterRuleMsgs")
+					.css("color", "red")
+					.html(response.responseText);
 			}
 			else
 			{
@@ -93,13 +94,15 @@ $(document).ready(function()
 						
 			if ($(this).hasClass("fwPolicyDrop"))
 			{
-				$(this).removeClass("fwPolicyDrop");
-				$(this).addClass("fwPolicyAccept");
+				$(this)
+					.removeClass("fwPolicyDrop")
+					.addClass("fwPolicyAccept");
 			}
 			else
 			{
-				$(this).removeClass("fwPolicyAccept");
-				$(this).addClass("fwPolicyDrop");
+				$(this)
+					.removeClass("fwPolicyAccept")
+					.addClass("fwPolicyDrop");
 			}
 		});
 		
@@ -127,17 +130,19 @@ $(document).ready(function()
 		{
 			if (response.hasError)
 			{
-				$("#fwResults").cass("color", "red");
-				$("#fwResults").html(response.responseText);
-				$("#fwResults").show();
+				$("#fwResults")
+					.css("color", "red")
+					.html(response.responseText)
+					.show();
 			}
 			else
 			{
 				$("#saveBtn").hide();
-				$("#fwResults").css("color", "green");
-				$("#fwResults").html("Firewall settings saved successfully");
-				$("#fwResults").show();
-				$("#fwResults").fadeOut(3000);
+				$("#fwResults")
+					.css("color", "green")
+					.html("Firewall settings saved successfully")
+					.show()
+					.fadeOut(3000);
 			}
 		});
 	});
