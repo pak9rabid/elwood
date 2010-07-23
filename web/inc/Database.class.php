@@ -39,13 +39,14 @@
 			$prep = new DbQueryPreper("SELECT * FROM " . $data->getTable());
 			
 			if (count($data->getAttributeKeys()) > 0)
+			{
 				$prep->addSql(" WHERE ");
-
-			$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
-			$prep->addVariablesNoPlaceholder($data->getAttributeValues());
+				$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
+				$prep->addVariablesNoPlaceholder($data->getAttributeValues());
+			}
 			
 			$prep->addSql(" ORDER BY id");
-			
+						
 			try
 			{
 				if ($isTemp)
@@ -137,16 +138,16 @@
 
 		public static function executeDelete(DataHash $data, $isTemp = false)
 		{
-			// Delete specified row in the database
-			$primaryKey = $data->getPrimaryKey();
-			$primaryKeyValue = $data->getAttribute($primaryKey);
-
-			if (empty($primaryKey) || empty($primaryKeyValue))
-				throw new Exception("Primary key not specified and/or set");
-
-			$prep = new DbQueryPreper("DELETE FROM " . $data->getTable() . " WHERE $primaryKey = ");
-			$prep->addVariable($primaryKeyValue);
+			// Deletes rows from the database based on the criteria specified in $data
+			$prep = new DbQueryPreper("DELETE FROM " . $data->getTable());
 			
+			if (count($data->getAttributeKeys()) > 0)
+			{
+				$prep->addSql(" WHERE ");
+				$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
+				$prep->addVariablesNoPlaceHolder($data->getAttributeValues());
+			}
+
 			try
 			{
 				if ($isTemp)
