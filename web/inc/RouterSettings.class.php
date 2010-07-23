@@ -7,59 +7,26 @@
 	{
 		public static function getSetting($key)
 		{
-			$prep = new DbQueryPreper("SELECT * FROM settings where key = ");
-			$prep->addVariable($key);
+			$selectHash = new DataHash("settings");
+			$selectHash->setAttribute("key", $key);
 			
-			try
-			{
-				$result = Database::executeQuery($prep);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			$results = $selectHash->executeSelect();
 			
-			$resultHash = new DataHash("settings");
-			$resultHash->setAllAttributes($result[0]);
-			
-			return $resultHash;
+			if (count($results) <= 0)
+				throw new Exception("Specified setting does not exist");
+				
+			return $results[0];
 		}
 
 		public static function getSettingValue($key)
 		{
-			try
-			{
-				$setting = self::getSetting($key);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
-			
-			return $setting->getAttribute("value");
+			return self::getSetting($key)->getAttribute("value");
 		}
 
 		public static function getAllSettings()
 		{
-			$settings = array();
-
-			try
-			{
-				$results = Database::executeQuery(new DbQueryPreper("SELECT * FROM settings"));
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
-
-			foreach ($results as $row)
-			{
-				$dataHash = new DataHash("settings");
-				$dataHash->setAllAttributes($row);
-				$settings[] = $dataHash;
-			}
-			
-			return $settings;
+			$selectHash = new DataHash("settings");
+			return $selectHash->executeSelect();
 		}
 
 		public static function saveSetting($key, $value)

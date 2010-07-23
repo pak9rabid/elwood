@@ -19,19 +19,12 @@
 		{
 			// Returns a list of webterm commands executed by
 			// $user as an array of DataHashes
-			try
-			{
-				$prep = new DbQueryPreper("SELECT * FROM webterm_history " .
+			$prep = new DbQueryPreper("SELECT * FROM webterm_history " .
 										  "WHERE user = ");
-				$prep->addVariable($this->user);
-				$prep->addSql(" ORDER BY time");
+			$prep->addVariable($this->user);
+			$prep->addSql(" ORDER BY time");
 				
-				$results = Database::executeQuery($prep);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			$results = Database::executeQuery($prep);
 
 			$history = array();
 			
@@ -47,18 +40,11 @@
 
 		public function addEntry($command)
 		{
-			try
-			{
-				$prep = new DbQueryPreper("INSERT INTO webterm_history VALUES (null, ");
-				$prep->addVariables(array($command, $this->user));
-				$prep->addSql(",datetime('now'))");
+			$prep = new DbQueryPreper("INSERT INTO webterm_history VALUES (null, ");
+			$prep->addVariables(array($command, $this->user));
+			$prep->addSql(",datetime('now'))");
 				
-				Database::executeQuery($prep);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			Database::executeQuery($prep);
 		}
 	}
 ?>

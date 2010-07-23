@@ -16,8 +16,13 @@
 			$output = Console::execute("sudo /sbin/iptables-save -t filter");
 			
 			// Clear chains and rules related to filtering
-			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_chains WHERE table_name = 'filter'"));
-			TempDatabase::executeQuery(new DbQueryPreper("DELETE FROM firewall_filter_rules"));
+			$deleteChainHash = new FirewallChain();
+			$deleteRulesHash = new FirewallFilterRule();
+			
+			$deleteChainHash->setAttribute("table_name", "filter");
+			
+			$deleteChainHash->executeDelete(true);
+			$deleteRulesHash->executeDelete(true);
 			
 			foreach ($output as $line)
 			{
