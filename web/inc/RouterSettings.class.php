@@ -31,16 +31,9 @@
 
 		public static function saveSetting($key, $value)
 		{
-			try
-			{
-				$setting = self::getSetting($key);
-				$setting->setAttribute("value", $value);
-				$setting->executeUpdate();
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			$setting = self::getSetting($key);
+			$setting->setAttribute("value", $value);
+			$setting->executeUpdate();
 		}
 	}
 ?>
