@@ -46,11 +46,13 @@
 			$this->port = $port;
 		}
 		
+		// Override
 		public function setPort($port)
 		{
 			$this->port = $port;
 		}
 		
+		// Override
 		public function getPort()
 		{
 			return $this->port;
