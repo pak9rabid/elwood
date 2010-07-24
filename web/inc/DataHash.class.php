@@ -88,62 +88,34 @@
 		
 		public function executeSelect($isTemp = false)
 		{
-			try
-			{
-				if ($isTemp)
-					return TempDatabase::executeSelect($this);
+			if ($isTemp)
+				return TempDatabase::executeSelect($this);
 				
-				return Database::executeSelect($this);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			return Database::executeSelect($this);
 		}
 
 		public function executeInsert($isTemp = false)
 		{
-			try
-			{
-				if ($isTemp)
-					TempDatabase::executeInsert($this);
-				else
-					Database::executeInsert($this);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			if ($isTemp)
+				TempDatabase::executeInsert($this);
+			else
+				Database::executeInsert($this);
 		}
 
 		public function executeUpdate($isTemp = false)
 		{
-			try
-			{
-				if ($isTemp)
-					TempDatabase::executeUpdate($this);
-				else
-					Database::executeUpdate($this);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			if ($isTemp)
+				TempDatabase::executeUpdate($this);
+			else
+				Database::executeUpdate($this);
 		}
 
 		public function executeDelete($isTemp = false)
 		{
-			try
-			{
-				if ($isTemp)
-					TempDatabase::executeDelete($this);
-				else
-					Database::executeDelete($this);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			if ($isTemp)
+				TempDatabase::executeDelete($this);
+			else
+				Database::executeDelete($this);
 		}
 		
 		public function getAttributeDisp($attribute)

@@ -47,28 +47,21 @@
 			
 			$prep->addSql(" ORDER BY id");
 						
-			try
-			{
-				if ($isTemp)
-					$result = TempDatabase::executeQuery($prep);
-				else
-					$result = self::executeQuery($prep);
+			if ($isTemp)
+				$result = TempDatabase::executeQuery($prep);
+			else
+				$result = self::executeQuery($prep);
 					
-				$resultHashes = array();
+			$resultHashes = array();
 				
-				foreach ($result as $row)
-				{
-					$resultHash = new $classType($data->getTable());
-					$resultHash->setAllAttributes($row);
-					$resultHashes[] = $resultHash;
-				}
-				
-				return $resultHashes;
-			}
-			catch (Exception $ex)
+			foreach ($result as $row)
 			{
-				throw $ex;
+				$resultHash = new $classType($data->getTable());
+				$resultHash->setAllAttributes($row);
+				$resultHashes[] = $resultHash;
 			}
+				
+			return $resultHashes;
 		}
 		
 		public static function datahashToParamaterizedWhereClause($key)
@@ -84,17 +77,10 @@
 			$prep->addVariables($data->getAttributeValues());
 			$prep->addSql(")");
 			
-			try
-			{
-				if ($isTemp)
-					TempDatabase::executeQuery($prep);
-				else
-					self::executeQuery($prep);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			if ($isTemp)
+				TempDatabase::executeQuery($prep);
+			else
+				self::executeQuery($prep);
 		}
 
 		public static function executeUpdate(DataHash $data, $isTemp = false)
@@ -123,17 +109,10 @@
 			$prep->addSql(" WHERE $primaryKey = ");
 			$prep->addVariable($primaryKeyValue);
 			
-			try
-			{
-				if ($isTemp)
-					TempDatabase::executeQuery($prep);
-				else
-					self::executeQuery($prep);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			if ($isTemp)
+				TempDatabase::executeQuery($prep);
+			else
+				self::executeQuery($prep);
 		}
 
 		public static function executeDelete(DataHash $data, $isTemp = false)
@@ -148,17 +127,10 @@
 				$prep->addVariablesNoPlaceHolder($data->getAttributeValues());
 			}
 
-			try
-			{
-				if ($isTemp)
-					TempDatabase::executeQuery($prep);
-				else
-					self::executeQuery($prep);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			if ($isTemp)
+				TempDatabase::executeQuery($prep);
+			else
+				self::executeQuery($prep);
 		}
 		
 		public static function getDbPath()

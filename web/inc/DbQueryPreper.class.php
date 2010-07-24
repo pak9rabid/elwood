@@ -16,14 +16,7 @@
 		// Methods
 		public function execute()
 		{
-			try
-			{
-				return Database::executeQuery($this);
-			}
-			catch (Exception $ex)
-			{
-				throw $ex;
-			}
+			return Database::executeQuery($this);
 		}
 		
 		public function addSql($sql)
