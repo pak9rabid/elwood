@@ -27,7 +27,67 @@
 	<title>Remote Access Control</title>
 	<link rel="StyleSheet" type="text/css" href="routerstyle.css">
 	<script src="inc/jquery-1.4.2.min.js" type="text/javascript"></script>
-	<script language="JavaScript" src="inc/access.js" type="text/javascript"></script>
+	<script src="inc/access.js" type="text/javascript"></script>
+	<script type="text/javascript">
+$(document).ready(function()
+{
+	// Initialize elements
+	$("#saveAccessBtn").hide();
+	$("#saveUsersBtn").hide();
+	$("#messages").hide();
+
+	// Register event handlers
+	$(".accessInput").change(function()
+	{
+		if (!$("#saveAccessBtn").is(":visible"))
+			$("#saveAccessBtn").fadeIn();
+	});
+
+	$(".usersInput").change(function()
+	{
+		if (!$("#saveUsersBtn").is(":visible"))
+			$("#saveUsersBtn").fadeIn();
+	});
+
+	$("#saveAccessBtn").click(function()
+	{
+		var $params =	{
+							handler: "EditAccessMethods",
+							parameters:
+							{
+								httpWan: $("#httpwan:checked").is(":checked") ? 1 : 0,
+								httpLan: $("#httplan:checked").is(":checked") ? 1 : 0,
+								sshWan: $("#sshwan:checked").is(":checked") ? 1 : 0,
+								sshLan: $("#sshlan:checked").is(":checked") ? 1 : 0,
+								icmpWan: $("#icmpwan:checked").is(":checked") ? 1 : 0,
+								icmpLan: $("#icmplan:checked").is(":checked") ? 1 : 0,
+								httpPort: $("#httpport").val(),
+								sshPort: $("#sshport").val()
+							}
+						};
+
+		$.getJSON("ajax/ajaxRequest.php", $params, function(response)
+		{
+			if (response.hasError)
+			{
+				$("#messages")
+					.css("color", "red")
+					.html(response.responseText)
+					.show();
+			}
+			else
+			{
+				$("#saveAccessBtn").hide();
+				$("#messages")
+					.css("color", "green")
+					.html("Access settings saved successfully")
+					.show()
+					.fadeOut(3000);
+			}
+		});
+	});
+});
+	</script>
 </head>
 
 <body>
@@ -35,8 +95,7 @@
 		<?=PageElements::titleOut("Access")?>
 		<?=PageElements::navigationOut()?>
 		<div id="content">
-			<font size="5"><b><u>General Access</u></b></font>
-			<br><br>
+			<div class="section-header">Access Methods</div>
 			<form name="access_method">
 				<table class="access-table">
 					<tr>
@@ -47,125 +106,54 @@
 					</tr>
 					<tr>
 						<td>HTTP</td>
-						<td><input type="checkbox" name="httpwan" value="1" <?=$wanHttpEnabled ? "checked" : ""?>></td>
-						<td><input type="checkbox" name="httplan" value="1" <?=$lanHttpEnabled ? "checked" : ""?>></td>
-						<td><input class="textfield" name="httpport" size="7" maxlength="5" value="<?=$httpPort?>"></td>
+						<td><input class="accessInput" type="checkbox" id="httpwan" name="httpwan" value="httpwan" <?=$wanHttpEnabled ? "checked" : ""?>></td>
+						<td><input class="accessInput" type="checkbox" id="httplan" name="httplan" value="httplan" <?=$lanHttpEnabled ? "checked" : ""?>></td>
+						<td><input class="textfield accessInput" id="httpport" name="httpport" size="7" maxlength="5" value="<?=$httpPort?>"></td>
 					</tr>
 					<tr>
 						<td>SSH</td>
-						<td><input type="checkbox" name="sshwan" value="1" <?=$wanSshEnabled ? "checked" : ""?>></td>
-						<td><input type="checkbox" name="sshlan" value="1" <?=$lanSshEnabled ? "checked" : ""?>></td>
-						<td><input class="textfield" name="sshport" size="7" maxlength="5" value="<?=$sshPort?>"></td>
+						<td><input class="accessInput" type="checkbox" id="sshwan" name="sshwan" value="sshwan" <?=$wanSshEnabled ? "checked" : ""?>></td>
+						<td><input class="accessInput" type="checkbox" id="sshlan" name="sshlan" value="sshlan" <?=$lanSshEnabled ? "checked" : ""?>></td>
+						<td><input class="textfield accessInput" id="sshport" name="sshport" size="7" maxlength="5" value="<?=$sshPort?>"></td>
 					</tr>
 					<tr>
 						<td>ICMP</td>
-						<td><input type="checkbox" name="icmpwan" value="1" <?=$wanIcmpEnabled ? "checked" : ""?>></td>
-						<td><input type="checkbox" name="icmplan" value="1" <?=$lanIcmpEnabled ? "checked" : ""?>></td>
+						<td><input class="accessInput" type="checkbox" id="icmpwan" name="icmpwan" value="icmpwan" <?=$wanIcmpEnabled ? "checked" : ""?>></td>
+						<td><input class="accessInput" type="checkbox" id="icmplan" name="icmplan" value="icmplan" <?=$lanIcmpEnabled ? "checked" : ""?>></td>
 						<td>&nbsp;</td>
 					</tr>
 				</table>
-				<br>
-				<input name="submit" type="submit" value="Change">&nbsp
-				<input type="reset">
-				<br>
-				<font color="red" size="4"><u>WARNING:</u></font> If no access type is checked, the only access is shell access through the console.
+				<div style="margin-top: 10px;">
+					<span style="font-size: 12pt; font-weight: bold; color: red;">WARNING:</span>
+					If no access type is checked, the only access is shell access through the console.
+				</div>
+				<button id="saveAccessBtn" type="button" style="margin-top: 5px;">Save</button>
+				<div id="messages"></div>
 			</form>
-			<hr>
-			<font size="5"><b><u>Web Users</u></b></font>
-			<br><br>
+			<br>
+			<div class="section-header">Users</div>
 			<form name="users">
 				<table class="access-table">
 					<tr>
-						<th>Users</th>
+						<th>User</th>
 						<th>Group</th>
-						<th>Remove</th>
+						<th>Actions</th>
 					</tr>
 <?php
 	foreach ($users as $user)
-	{
+	{		
 		$username = $user->getAttribute("username");
-		
+		$passwordButton = "<button id='$username-passwd' type='button' title='Change password for $username'>Password</button>";
+		$deleteButton = "<button id='$username-delete' type='button' title='Remove user $username'>Delete</button>";
 		$selectBox = writeGroupSelect($user);
 		
 		if ($username == "admin")
-			echo "<tr><td>$username</td><td>admins</td><td>&nbsp</td></tr>";
+			echo "<tr><td>$username</td><td>admins</td><td>$passwordButton</td></tr>";
 		else
-		{
-			$userVal = $username . "-rm";
-			echo "<tr><td>$username</td><td>$selectBox</td><td><input type='checkbox' name='$userVal', value='1'></td></tr>";
-		}
+			echo "<tr><td>$username</td><td>$selectBox</td><td>$passwordButton&nbsp;$deleteButton</td></tr>";
 	}
 ?>
 				</table>
-				<br>
-<?php
-	if ($userGroup == "admins")
-		echo "<b>Add User/Change Password</b>";
-	else
-		echo "<b>Change Password</b>";
-
-	echo "<br>";
-
-	# Check for errors and print appropriate error message
-	if ($_GET['error'] == "pass1")
-	{
-		echo "<br>";
-		echo "<font class='error-font'><b>Error: No password entered</b></font>";
-	}
-	else if ($_GET['error'] == "pass2")
-	{
-		echo "<br>";
-		echo "<font class='error-font'><b>Error: Password does not match confirmed password</b></font>";
-	}
-	else if ($_GET['error'] == "username")
-	{
-		echo "<br>";
-		echo "<font class='error-font'><b>Error: Username entered is not allowed</b></font>";
-	}
-
-echo <<<END
-				<br>
-				<table class="status-table">
-END;
-
-	if ($userGroup == "admins")
-	{
-echo <<<END
-					<tr>
-						<th>Username:</th>
-						<td><input class="textfield" name="username" length="10" maxlength="20"></td>
-					</tr>
-					<tr>
-						<th>Password:</th>
-						<td><input class="textfield" name="password" type="password" length="10" maxlength="20"></td>
-					</tr>
-					<tr>
-						<th>Confirm Password:</th>
-						<td><input class="textfield" name="confirm" type="password" length="10" maxlength="20"></td>
-					</tr>
-END;
-	}
-	else
-	{
-echo <<<END
-					<input type="hidden" name="username" value="$currentUser">
-					<tr>
-						<th>New Password:</th>
-						<td><input class="textfield" name="password" type="password" length="10" maxlength="20"></td>
-					</tr>
-					<tr>
-						<th>Confirm Password:</th>
-						<td><input class="textfield" name="confirm" type="password" length="10" maxlength="20"></td>
-					</tr>
-END;
-	}
-echo <<<END
-				</table>
-				<br>
-				<input name="submit" type="submit" value="Change">&nbsp<input name="reset" type="reset">
-			</form>
-END;
-?>
 		</div>
 	</div>
 </body>
@@ -177,9 +165,7 @@ END;
 	##########################
 
 	function writeGroupSelect(User $user)
-	{
-		$user->setGroup();
-		
+	{	
 		$username = $user->getAttribute("username");
 		
 		$selectBoxName = $user . "-gs";
