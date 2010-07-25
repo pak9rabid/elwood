@@ -1,7 +1,18 @@
 <?php
-	require_once "ajaxAccessControl.php";
 	require_once "AjaxResponse.class.php";
 	require_once "AjaxRequestHandler.class.php";
+	
+	session_start();
+	header("Content-Type: application/json");
+	
+	if (!isset($_SESSION['user']))
+	{
+		// User not logged in
+		$response = new AjaxResponse("User is not logged in", true);
+		
+		echo $response->toJson();
+		exit;
+	}
 	
 	$requestHandler = $_REQUEST['handler'];
 	$requestParams = $_REQUEST['parameters'];
