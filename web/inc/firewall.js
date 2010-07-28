@@ -57,11 +57,11 @@ $(document).ready(function()
 		
 		$.getJSON("ajax/ajaxRequest.php", params, function(response)
 		{
-			if (response.hasError)
+			if (response.errors.length > 0)
 			{	
 				$("#fwAddEditFilterRuleMsgs")
 					.css("color", "red")
-					.html(response.responseText);
+					.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>");
 			}
 			else
 			{
@@ -128,11 +128,11 @@ $(document).ready(function()
 		
 		$.post("ajax/ajaxRequest.php", params, function(response)
 		{
-			if (response.hasError)
+			if (response.errors.length > 0)
 			{
 				$("#fwResults")
 					.css("color", "red")
-					.html(response.responseText)
+					.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
 					.show();
 			}
 			else

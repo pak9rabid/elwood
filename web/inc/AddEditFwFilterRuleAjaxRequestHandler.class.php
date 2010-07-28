@@ -86,7 +86,7 @@
 			if (empty($errors))
 				$this->response = new AjaxResponse($rule->out());
 			else
-				$this->response = new AjaxResponse("The following errors occurred: <ul><li>" . implode("</li><li>", $errors) . "</li></ul>", true);
+				$this->response = new AjaxResponse("", $errors);
 		}
 		
 		// Override

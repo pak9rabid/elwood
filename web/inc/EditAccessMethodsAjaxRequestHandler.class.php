@@ -38,7 +38,8 @@
 				
 			if (!empty($errors))
 			{
-				$this->response = new AjaxResponse("The following errors occurred: <ul><li>" . implode("</li><li>", $errors) . "</li></ul>", true);
+				$this->response = new AjaxResponse("", $errors);
+				
 				return;
 			}
 			

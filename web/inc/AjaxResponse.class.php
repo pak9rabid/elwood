@@ -2,17 +2,17 @@
 	class AjaxResponse
 	{
 		protected $responseText;
-		protected $hasError;
+		protected $errors;
 		
-		public function __construct($responseText = "", $hasError = false)
+		public function __construct($responseText = "", array $errors = array())
 		{
 			$this->responseText = $responseText;
-			$this->hasError = $hasError;
+			$this->errors = $errors;
 		}
 		
-		public function hasError()
+		public function hasErrors()
 		{
-			return $this->hasError;
+			return count($this->errors) > 0;
 		}
 		
 		public function getResponseText()
@@ -20,9 +20,9 @@
 			return $this->responseText;
 		}
 		
-		public function setError($hasError)
+		public function setErrors(array $errors)
 		{
-			$this->hasError = $hasError;
+			$this->errors = $errors;
 		}
 		
 		public function setResponseText($responseText)

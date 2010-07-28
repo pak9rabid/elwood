@@ -8,7 +8,7 @@
 	if (!isset($_SESSION['user']))
 	{
 		// User not logged in
-		$response = new AjaxResponse("User is not logged in", true);
+		$response = new AjaxResponse("", array("User is not logged in"));
 		
 		echo $response->toJson();
 		exit;
@@ -21,7 +21,7 @@
 	{
 		if (empty($requestHandler))
 		{
-			$response = new AjaxResponse("No ajax request handler specified", true);
+			$response = new AjaxResponse("", array("No ajax request handler specified"));
 		
 			echo $response->toJson();
 			exit;
@@ -32,7 +32,7 @@
 	
 		if (!class_exists($requestHandlerClass))
 		{
-			$response = new AjaxResponse("Specified ajax request handler ($requestHandler) does not exist", true);
+			$response = new AjaxResponse("", array("Specified ajax request handler ($requestHandler) does not exist"));
 		
 			echo $response->toJson();
 			exit;
@@ -42,7 +42,7 @@
 	
 		if (!($requestHandlerObj instanceof AjaxRequestHandler))
 		{
-			$response = new AjaxResponse("Specified ajax request handler ($requestHandler) does not implement the AjaxRequestHandler interface", true);
+			$response = new AjaxResponse("", array("Specified ajax request handler ($requestHandler) does not implement the AjaxRequestHandler interface"));
 		
 			echo $response->toJson();
 			exit;
@@ -53,7 +53,7 @@
 	}
 	catch (Exception $ex)
 	{
-		$response = new AjaxResponse("Exception: " . $ex->getMessage(), true);
+		$response = new AjaxResponse("", array("Exception: " . $ex->getMessage()));
 		echo $response->toJson();
 	}
 ?>
