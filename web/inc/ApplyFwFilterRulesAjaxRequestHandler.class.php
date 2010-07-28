@@ -36,31 +36,24 @@
 				$rules[] = $tempRule;
 			}
 	
-			try
-			{
-				// Set policy
-				$forwardChain = FirewallFilterSettings::getChain("FORWARD");
-				$forwardChain->setAttribute("policy", $policy);
-				$forwardChain->executeUpdate(true);
+			// Set policy
+			$forwardChain = FirewallFilterSettings::getChain("FORWARD");
+			$forwardChain->setAttribute("policy", $policy);
+			$forwardChain->executeUpdate(true);
 		
-				// Clear existing rules
-				FirewallFilterSettings::clearRules("forward_" . $direction);
+			// Clear existing rules
+			FirewallFilterSettings::clearRules("forward_" . $direction);
 		
-				// Set rules
-				foreach ($rules as $rule)
-					$rule->executeInsert(true);
+			// Set rules
+			foreach ($rules as $rule)
+				$rule->executeInsert(true);
 
-				$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb(true);
+			$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb(true);
 		
-				// Write file
-				FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");
+			// Write file
+			FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");
 		
-				TempDatabase::destroy();
-			}
-			catch (Exception $ex)
-			{
-				$this->response = new AjaxResponse($ex->getMessage(), true);
-			}
+			TempDatabase::destroy();
 	
 			$this->response = new AjaxResponse();
 		}
