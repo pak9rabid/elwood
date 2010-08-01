@@ -59,7 +59,7 @@
 				"<option value='any'>any</option>";
 
 	foreach (NetUtils::getNetworkProtocols() as $protocol)
-		$hideshow .= "<option value='$protocol'>$protocol</option>\n'";
+		$hideshow .= "<option value='$protocol'>$protocol</option>\n";
 	
 	$hideshow .="</select>" .
 				"</td>" .
