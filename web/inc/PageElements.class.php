@@ -40,15 +40,5 @@
 					"	<a href='webterm.php'>WebTerm</a>\n" .
 					"</div>\n";
 		}
-		
-		public static function hideShow($content)
-		{
-			return	"<div id='hideshow'>\n" .
-					"	<div id='fade'></div>\n" .
-					"	<div class='popup_block'>\n\n" .
-					$content .
-					"\n\n	</div>\n";
-			
-		}
 	}
 ?>

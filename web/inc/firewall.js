@@ -1,9 +1,9 @@
 $(document).ready(function()
 {
 	// Initialize elements
+	$.initElwoodPopups();
 	$("#saveBtn").hide();
 	$("#fwResults").hide();
-	$("#hideshow").hide();
 	$(".fwRuleDetails").hide();
 	makeFirewallTableEditable();
 	addRuleDetailsPopup();
@@ -11,14 +11,14 @@ $(document).ready(function()
 	// Register event handlers
 	$("#cancelBtn").click(function()
 	{
-		$("#hideshow").hide();
+		$("#addEditRulePopup").closeElwoodPopup();
 	});
 
 	$("#deleteBtn").click(function()
 	{
 		$("#" + $("#ruleId").val()).remove();
 		$("#" + $("#ruleId").val() + "details").remove();
-		$("#hideshow").hide();
+		$("#addEditRulePopup").closeElwoodPopup();
 		showSaveButton();
 	});
 
@@ -79,7 +79,7 @@ $(document).ready(function()
 				addRuleDetailsPopup();
 				makeFirewallTableEditable();
 				$(".fwRuleDetails").hide();
-				$("#hideshow").hide();
+				$("#addEditRulePopup").closeElwoodPopup();
 				showSaveButton();
 			}
 		});
@@ -194,7 +194,7 @@ function makeFirewallTableEditable()
 }
 	
 function addEditFilterRuleDlg(ruleId)
-{
+{	
 	$("#saveAsNewBtn").attr("disabled", "disabled");
 	$("#deleteBtn").attr("disabled", "disabled");
 	$("#fwAddEditFilterRuleMsgs").html("");
@@ -230,8 +230,8 @@ function addEditFilterRuleDlg(ruleId)
 	}
 	else
 		$("#ruleId").val("");
-
-	$("#hideshow").show();
+	
+	$("#addEditRulePopup").openElwoodPopup();
 }
 
 function showSaveButton()

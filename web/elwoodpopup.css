@@ -1,0 +1,31 @@
+#elwoodHideShow
+{
+	position: absolute;
+	display: none;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+#elwoodFade
+{
+	background: #000;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	filter: alpha(opacity=80);
+	opacity: .80;
+	left: 0;
+	top: 0;
+	z-index: 2;
+}
+
+#elwoodPopupBlock
+{
+	position: absolute;
+	background: #ddd;
+	padding: 10px 20px;
+	border: 10px solid #fff;
+	z-index: 100;
+}

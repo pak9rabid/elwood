@@ -19,8 +19,10 @@
 <head>
 	<title>Firewall Setup</title>
 	<link rel="StyleSheet" type="text/css", href="routerstyle.css" />
+	<link rel="StyleSheet" type="text/css", href="elwoodpopup.css" />
 	<script src="inc/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="inc/jquery.tablednd_0_5.js" type="text/javascript"></script>
+	<script src="inc/jquery.elwoodpopup.js" type="text/javascript"></script>
 	<script src="inc/firewall.js" type="text/javascript"></script>
 </head>
 
@@ -44,104 +46,101 @@
 			</div>
 		</div>
 	</div>
-
-<?php
-	$hideshow = "<div id='fwAddEditFilterRuleMsgs'></div>" .
-				"<form id='addEditRuleForm'>" .
-				"<input type='hidden' id='ruleId' name='ruleId' value='' />" .
-				"<input type='hidden' id='dir' name='dir' value='$direction' />" .
-				"<table>" .
-				"<tr>" .
-				"<!-- Protocol -->" .
-				"<td class='tabInputLabel'>Protocol:</td>" .
-				"<td class='tabInputValue'>" .
-				"<select id='protocol'>" .
-				"<option value='any'>any</option>";
-
-	foreach (NetUtils::getNetworkProtocols() as $protocol)
-		$hideshow .= "<option value='$protocol'>$protocol</option>\n";
-	
-	$hideshow .="</select>" .
-				"</td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- ICMP Type -->" .
-				"<td class='tabInputLabel'>ICMP Type:</td>" .
-				"<td class='tabInputValue'>" .
-				"<select id='icmpType'>";
-
-	foreach (array_values(NetUtils::getIcmpTypes()) as $icmpType)
-		$hideshow .= "<option value='$icmpType'>$icmpType</option>\n";
-	
-	$hideshow .="</select>" .
-				"</td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Source Address -->" .
-				"<td class='tabInputLabel'>Source Address:</td>" .
-				"<td class='tabInputValue'><input type='text' id='srcAddr' name='srcAddr' size='20' maxlength='20' /></td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Source Port -->" .
-				"<td class='tabInputLabel'>Source Port:</td>" .
-				"<td class='tabInputValue'><input type='text' id='srcPort' name='srcPort' size='20' maxlength='5' /></td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Destination Address -->" .
-				"<td class='tabInputLabel'>Destination Address:</td>" .
-				"<td class='tabInputValue'><input type='text' id='dstAddr' name='dstAddr' size='20' maxlength='20' /></td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Destination Port -->" .
-				"<td class='tabInputLabel'>Destination Port:</td>" .
-				"<td class='tabInputValue'><input type='text' id='dstPort' name='dstPort' size='20' maxlength='5' /></td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Connection State -->" .
-				"<td class='tabInputLabel'>Connection State:</td>" .
-				"<td class='tabInputValue'>";
-
-	foreach (NetUtils::getConnectionStates() as $connState)
-		$hideshow .= "<input type='checkbox' class='connState' value='$connState' />$connState&nbsp;\n";
-	
-	$hideshow .="</td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Fragmented -->" .
-				"<td class='tabInputLabel'>Fragmented:</td>" .
-				"<td class='tabInputValue'>" .
-				"<select id='fragmented'>" .
-				"<option value='any' checked>any</option>" .
-				"<option value='Y'>Yes</option>" .
-				"<option value='N'>No</option>" .
-				"</select>" .
-				"</td>" .
-				"</tr>" .
-				"<tr>" .
-				"<!-- Target -->" .
-				"<td class='tabInputLabel'>Target:</td>" .
-				"<td class='tabInputValue'>" .
-				"<select id='target'>" .
-				"<option value='DROP'>DROP</option>" .
-				"<option value='ACCEPT'>ACCEPT</option>" .
-				"</select>" .
-				"</td>" .
-				"</tr>" .
-				"<tr>" .
-				"<td colspan='2'>&nbsp;</td>" .
-				"</tr>" .
-				"<tr>" .
-				"<td colspan='2' align='center'>" .
-				"<button id='saveRuleBtn' type='button'>Save</button>" .
-				"<button id='saveAsNewBtn' type='button'>Save As New</button>" .
-				"<button id='deleteBtn' type='button'>Delete</button>" .
-				"<button id='cancelBtn' type='button'>Cancel</button>" .
-				"</td>" .
-				"</tr>" .
-				"</table>" .
-				"</form>";
-
-	echo PageElements::hideShow($hideshow);
-?>
+	<div id="addEditRulePopup" class="elwoodPopup">
+		<div id="fwAddEditFilterRuleMsgs"></div>
+		<form id="addEditRuleForm">
+			<input type="hidden" id="ruleId" name="ruleId" value="" />
+			<input type="hidden" id="dir" name="dir" value="<?=$direction?>" />
+			<table>
+				<tr>
+					<!-- Protocol -->
+					<td class="tabInputLabel">Protocol:</td>
+					<td class="tabInputValue">
+						<select id="protocol">
+							<option value="any">any</option>
+						<?php
+							foreach (NetUtils::getNetworkProtocols() as $protocol)
+								echo "<option value=\"$protocol\">$protocol</option>\n";
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<!-- ICMP Type -->
+					<td class="tabInputLabel">ICMP Type:</td>
+					<td class="tabInputValue">
+						<select id="icmpType">
+						<?php 
+							foreach (array_values(NetUtils::getIcmpTypes()) as $icmpType)
+								echo "<option value=\"$icmpType\">$icmpType</option>\n";
+						?>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<!-- Source Address -->
+					<td class="tabInputLabel">Source Address:</td>
+					<td class="tabInputValue"><input type="text" id="srcAddr" name="srcAddr" size="20" maxlength="20" /></td>
+				</tr>
+				<tr>
+					<!-- Source Port -->
+					<td class="tabInputLabel">Source Port:</td>
+					<td class="tabInputValue"><input type="text" id="srcPort" name="srcPort" size="20" maxlength="5" /></td>
+				</tr>
+				<tr>
+					<!-- Destination Address -->
+					<td class="tabInputLabel">Destination Address:</td>
+					<td class="tabInputValue"><input type="text" id="dstAddr" name="dstAddr" size="20" maxlength="20" /></td>
+				</tr>
+				<tr>
+					<!-- Destination Port -->
+					<td class="tabInputLabel">Destination Port:</td>
+					<td class="tabInputValue"><input type="text" id="dstPort" name="dstPort" size="20" maxlength="5" /></td>
+				</tr>
+				<tr>
+					<!-- Connection State -->
+					<td class="tabInputLabel">Connection State:</td>
+					<td class="tabInputValue">
+						<?php 
+							foreach (NetUtils::getConnectionStates() as $connState)
+								echo "<input type=\"checkbox\" class=\"connState\" value=\"$connState\" />$connState&nbsp;\n";
+						?>
+					</td>
+				</tr>
+				<tr>
+					<!-- Fragmented -->
+					<td class="tabInputLabel">Fragmented:</td>
+					<td class="tabInputValue">
+						<select id="fragmented">
+							<option value="any" checked>any</option>
+							<option value="Y">Yes</option>
+							<option value="N">No</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<!-- Target -->
+					<td class="tabInputLabel">Target:</td>
+					<td class="tabInputValue">
+						<select id="target">
+							<option value="DROP">DROP</option>
+							<option value="ACCEPT">ACCEPT</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+						<button id="saveRuleBtn" type="button">Save</button>
+						<button id="saveAsNewBtn" type="button">Save As New</button>
+						<button id="deleteBtn" type="button">Delete</button>
+						<button id="cancelBtn" type="button">Cancel</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
 </body>
 </html>

@@ -200,28 +200,6 @@ textarea
 	margin-top: 15px;
 }
 
-#hideshow
-{
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-}
-
-#fade
-{
-	background: #000;
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	filter: alpha(opacity=80);
-	opacity: .80;
-	left: 0;
-	top: 0;
-	z-index: 2;
-}
-
 .status-table
 {
    background-color: #D0D0D0;
@@ -281,19 +259,6 @@ textarea
 {
    border:  #C0C0C0 1px solid;
    padding: 1px;
-}
-
-.popup_block
-{
-	background: #ddd;
-	padding: 10px 20px;
-	border: 10px solid #fff;
-	float: left;
-	position: fixed;
-	top: 20%;
-	left: 50%;
-	margin: 0 0 0 -310px;
-	z-index: 100;
 }
 
 .firewall-table-protocol-col
