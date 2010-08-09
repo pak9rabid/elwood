@@ -1,4 +1,5 @@
-/* Result after calling .toggleElwoodPopup to create a popup
+/* Result after calling .toggleElwoodPopup() to create a popup:
+ 
 <div id="elwoodHideShow">
 	<div id="elwoodFade"></div>
 	<div id="elwoodPopupBlock">
@@ -7,6 +8,7 @@
 		</div>
 	</div>
 </div>
+
 */
 
 (function($)
