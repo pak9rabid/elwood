@@ -81,7 +81,7 @@
 <html>
    <head>
       <title>WebTerm</title>
-      <link rel="StyleSheet" type="text/css" href="routerstyle.css">
+      <link rel="StyleSheet" type="text/css" href="css/routerstyle.css">
    </head>
 
    <body onLoad="document.form.cmd.focus()">

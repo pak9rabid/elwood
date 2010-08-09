@@ -25,8 +25,8 @@
 <html>
    <head>
       <title>Port Forwarding Setup</title>
-      <link rel="StyleSheet" type="text/css" href="routerstyle.css">
-      <script language="JavaScript" src="inc/portforward.js" type="text/javascript"></script>
+      <link rel="StyleSheet" type="text/css" href="css/routerstyle.css">
+      <script language="JavaScript" src="js/portforward.js" type="text/javascript"></script>
    </head>
 
    <body>

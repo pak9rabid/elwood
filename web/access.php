@@ -25,9 +25,9 @@
 <html>
 <head>
 	<title>Remote Access Control</title>
-	<link rel="StyleSheet" type="text/css" href="routerstyle.css">
-	<script src="inc/jquery-1.4.2.min.js" type="text/javascript"></script>
-	<script src="inc/access.js" type="text/javascript"></script>
+	<link rel="StyleSheet" type="text/css" href="css/routerstyle.css">
+	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+	<script src="js/access.js" type="text/javascript"></script>
 	<script type="text/javascript">
 $(document).ready(function()
 {

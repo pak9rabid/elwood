@@ -21,8 +21,8 @@
 <html>
    <head>
       <title>Wake On LAN</title>
-      <link rel="StyleSheet" type="text/css" href="routerstyle.css">
-      <script lang="JavaScript" type="text/javascript" src="inc/wol.js"></script>
+      <link rel="StyleSheet" type="text/css" href="css/routerstyle.css">
+      <script lang="JavaScript" type="text/javascript" src="js/wol.js"></script>
    </head>
 
    <body onLoad="hideOptions()">

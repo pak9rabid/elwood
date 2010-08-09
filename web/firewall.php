@@ -18,12 +18,12 @@
 <html>
 <head>
 	<title>Firewall Setup</title>
-	<link rel="StyleSheet" type="text/css", href="routerstyle.css" />
-	<link rel="StyleSheet" type="text/css", href="elwoodpopup.css" />
-	<script src="inc/jquery-1.4.2.min.js" type="text/javascript"></script>
-	<script src="inc/jquery.tablednd_0_5.js" type="text/javascript"></script>
-	<script src="inc/jquery.elwoodpopup.js" type="text/javascript"></script>
-	<script src="inc/firewall.js" type="text/javascript"></script>
+	<link rel="StyleSheet" type="text/css", href="css/routerstyle.css" />
+	<link rel="StyleSheet" type="text/css", href="css/elwoodpopup.css" />
+	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+	<script src="js/jquery.tablednd_0_5.js" type="text/javascript"></script>
+	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
+	<script src="js/firewall.js" type="text/javascript"></script>
 </head>
 
 <body>
