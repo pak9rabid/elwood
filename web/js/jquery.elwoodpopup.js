@@ -14,39 +14,45 @@
 (function($)
 {
 	$.fn.openElwoodPopup = function()
-	{
-		if ($("#elwoodPopupBlock").size() == 0)
+	{			
+		var popup = this.first();
+		var zFade = 50;
+		var zPopupBlock = 100;
+		
+		// check for any other popups and set z-index values accordingly
+		if ($(".elwoodPopupBlock").length > 0)
 		{
-			var popup = this.first();
-				
-			// create wrapping divs for popup
-			popup
-				.wrap("<div id='elwoodPopupBlock'></div>")
-			.parent()
-				.wrap("<div id='elwoodHideShow'></div>")
-				.before("<div id='elwoodFade'></div>");
-		
-			// make popup visible
-			popup
-				.show()
-			.parent().parent()
-				.show();
-		
-			// center popup
-			var top  = ($(window).height() - popup.parent().outerHeight()) / 4 + $(window).scrollTop();
-			var left = (($(window).width() - popup.parent().outerWidth()) / 2 + $(window).scrollLeft());
-		
-			popup.parent()
-				.css("top",  top + "px")
-				.css("left", left + "px");
+			zFade = parseInt($(".elwoodPopupBlock").last().css("z-index")) + 50;
+			zPopupBlock = zFade + 50;
 		}
+				
+		// create wrapping divs for popup
+		popup
+			.wrap("<div class='elwoodPopupBlock' style='z-index: " + zPopupBlock + ";'></div>")
+		.parent()
+			.wrap("<div class='elwoodHideShow'></div>")
+			.before("<div class='elwoodFade' style='z-index: " + zFade + ";'></div>");
+		
+		// make popup visible
+		popup
+			.show()
+		.parent().parent()
+			.show();
+		
+		// center popup
+		var top  = ($(window).height() - popup.parent().outerHeight()) / 4 + $(window).scrollTop();
+		var left = (($(window).width() - popup.parent().outerWidth()) / 2 + $(window).scrollLeft());
+		
+		popup.parent()
+			.css("top",  top + "px")
+			.css("left", left + "px");
 			
 		return this;
 	};
 		
 	$.fn.closeElwoodPopup = function()
 	{
-		if ($("#elwoodPopupBlock").size() > 0)
+		if ($(".elwoodPopupBlock").size() > 0)
 		{
 			var popup = this.first();
 			
@@ -57,7 +63,7 @@
 				.hide();
 			
 			// remove wrapping divs for popup
-			popup.parent().parent().children("#elwoodFade").remove();
+			popup.parent().parent().children(".elwoodFade").remove();
 			popup.parent().unwrap();
 			popup.unwrap();
 		}

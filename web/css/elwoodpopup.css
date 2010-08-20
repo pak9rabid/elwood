@@ -1,4 +1,4 @@
-#elwoodHideShow
+.elwoodHideShow
 {
 	position: absolute;
 	display: none;
@@ -8,7 +8,7 @@
 	left: 0;
 }
 
-#elwoodFade
+.elwoodFade
 {
 	background: #000;
 	position: fixed;
@@ -18,14 +18,12 @@
 	opacity: .80;
 	left: 0;
 	top: 0;
-	z-index: 2;
 }
 
-#elwoodPopupBlock
+.elwoodPopupBlock
 {
 	position: absolute;
 	background: #ddd;
 	padding: 10px 20px;
 	border: 10px solid #fff;
-	z-index: 100;
 }
