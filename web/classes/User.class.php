@@ -22,10 +22,20 @@
 		{
 			return $this->getGroup() == "admins";
 		}
+		
+		public function setPassword($password)
+		{
+			$this->setAttribute("password", self::encryptPassword($password));
+		}
 				
 		public static function getUser()
 		{
 			return SessionUtils::getUser();
+		}
+		
+		public static function encryptPassword($password)
+		{
+			return sha1($password);
 		}
 		
 		public function __toString()
