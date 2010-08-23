@@ -17,6 +17,11 @@
 		{
 			return $this->getAttribute("usergroup");
 		}
+		
+		public function isAdminUser()
+		{
+			return $this->getGroup() == "admins";
+		}
 				
 		public static function getUser()
 		{
