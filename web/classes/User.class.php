@@ -25,7 +25,7 @@
 		
 		public function setPassword($password)
 		{
-			$this->setAttribute("password", self::encryptPassword($password));
+			$this->setAttribute("passwd", self::encryptPassword($password));
 		}
 				
 		public static function getUser()
