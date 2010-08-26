@@ -89,7 +89,7 @@
 				</tr>
 			</table>
 			<div style="margin-top: 10px;">
-				<span style="font-size: 12pt; font-weight: bold; color: red;">WARNING:</span>If no access type is checked, the only access is shell access throughthe console.
+				<span style="font-size: 12pt; font-weight: bold; color: red;">WARNING:</span>If no access type is checked, the only access is shell access through the console.
 			</div>
 			<button id="saveAccessBtn" type="button" style="margin-top: 5px;">Save</button>
 			<div id="accessMessages"></div>

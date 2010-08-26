@@ -75,7 +75,7 @@
 			<?exit;
 		}
 		
-		$user = $userMatch[0];
-		$_SESSION['user'] = serialize($user);
+		foreach ($userMatch as $user)
+			$_SESSION['user'] = serialize($user);
 	}
 ?>
