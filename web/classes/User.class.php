@@ -5,7 +5,7 @@
 	require_once "SessionUtils.class.php";
 	
 	class User extends DataHash
-	{		
+	{	
 		// Constructors
 		public function __construct()
 		{
@@ -36,6 +36,11 @@
 		public static function encryptPassword($password)
 		{
 			return sha1($password);
+		}
+		
+		public static function validGroups()
+		{
+			return array("admins", "users");
 		}
 		
 		public function __toString()
