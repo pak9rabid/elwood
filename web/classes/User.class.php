@@ -43,6 +43,11 @@
 			return array("admins", "users");
 		}
 		
+		public static function isValidGroup($group)
+		{
+			return in_array($group, self::validGroups());
+		}
+		
 		public function __toString()
 		{
 			return $this->getAttribute("username");
