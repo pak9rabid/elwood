@@ -7,6 +7,13 @@ $(document).ready(function()
 	$(".fwRuleDetails").hide();
 	makeFirewallTableEditable();
 	addRuleDetailsPopup();
+	
+	if (!isAdminUser)
+	{
+		$("#addRuleBtn").attr("disabled", "disabled");
+		$("#changePolicyBtn").attr("disabled", "disabled");
+		$("[id $= editRuleBtn]").attr("disabled", "disabled");
+	}
 
 	// Register event handlers
 	$("#cancelBtn").click(function()
@@ -186,11 +193,14 @@ function makeFirewallTableEditable()
 	});
 
 	// Initialize firewall table
-	$("#firewall-table").tableDnD(
+	if (isAdminUser)
 	{
-		onDragClass: "tableRowMove",
-		onDrop: function(table, row){showSaveButton();}
-	});
+		$("#firewall-table").tableDnD(
+		{
+			onDragClass: "tableRowMove",
+			onDrop: function(table, row){showSaveButton();}
+		});
+	}
 }
 	
 function addEditFilterRuleDlg(ruleId)

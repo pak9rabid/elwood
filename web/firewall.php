@@ -6,6 +6,7 @@
 	require_once "FirewallFilterTable.class.php";
 	require_once "NetUtils.class.php";
 	require_once "PageElements.class.php";
+	require_once "User.class.php";
 
 	TempDatabase::create();
 	
@@ -24,6 +25,9 @@
 	<script src="js/jquery.tablednd_0_5.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
 	<script src="js/firewall.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		var isAdminUser = '<?=User::getUser()->isAdminUser()?>' == 1 ? true : false;
+	</script>
 </head>
 
 <body>

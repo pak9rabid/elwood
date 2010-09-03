@@ -7,6 +7,7 @@
 	require_once "FirewallFilterSettings.class.php";
 	require_once "FileUtils.class.php";
 	require_once "RouterSettings.class.php";
+	require_once "User.class.php";
 	
 	class ApplyFwFilterRulesAjaxRequestHandler implements AjaxRequestHandler
 	{
@@ -15,6 +16,12 @@
 		// Override
 		public function processRequest(array $parameters)
 		{
+			if (!User::getUser()->isAdminUser())
+			{
+				$this->response = new AjaxResponse("", array("Only admin users are allowed to make changes to the firewall"));
+				return;
+			}
+			
 			$direction = trim($parameters['direction']);
 			$policy = trim($parameters['policy']);
 			$rulesIn = isset($parameters['rules']) ? $parameters['rules'] : array();
