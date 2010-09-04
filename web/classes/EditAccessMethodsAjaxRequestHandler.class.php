@@ -7,6 +7,7 @@
 	require_once "Service.class.php";
 	require_once "IPTablesFwFilterTranslator.class.php";
 	require_once "FileUtils.class.php";
+	require_once "User.class.php";
 	
 	class EditAccessMethodsAjaxRequestHandler implements AjaxRequestHandler
 	{
@@ -15,6 +16,12 @@
 		// Override
 		public function processRequest(array $parameters)
 		{
+			if (!User::getUser()->isAdminUser())
+			{
+				$this->response = new AjaxResponse("", array("Only admin users are allowed to change access methods"));
+				return;
+			}
+			
 			$httpWan = (boolean)$parameters['httpWan'];
 			$httpLan = (boolean)$parameters['httpLan'];
 			$sshWan = (boolean)$parameters['sshWan'];

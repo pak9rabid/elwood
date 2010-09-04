@@ -12,7 +12,10 @@ $(document).ready(function()
 	$("#usersMessages").hide();
 
 	if (currentGroup != "admins")
+	{
+		$(".accessInput").attr("disabled", "disabled");
 		$("#addUserBtn").attr("disabled", "disabled");
+	}
 
 	// Register event handlers
 	$("#addUserBtn").click(function()
