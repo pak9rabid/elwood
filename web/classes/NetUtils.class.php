@@ -1,4 +1,6 @@
 <?php
+	require_once "Net/IPv4.php";
+	
 	class NetUtils
 	{
 		public static function mask2CIDR($netmask)
@@ -18,7 +20,6 @@
 			if (!self::isValidIp($ip))
 				throw new Exception("Invalid IP to convert");
 			
-			//if (count($ipElements) == 1 || preg_match("/^[0-9]{1,2}$/", $ipElements[1]))
 			if ($netmask == null || preg_match("/^[0-9]{1,2}$/", $netmask))
 				return $fullAddress;
 				
@@ -180,6 +181,48 @@
 		{
 			$icmpTypes = self::getIcmpTypes();
 			return $icmpTypes[$icmpCode];
+		}
+		
+		public static function isValidMtu($mtu)
+		{
+			if (!preg_match("/^[0-9]+$/", $mtu))
+				return false;
+				
+			if ($mtu < 68 || $mtu > 9000)
+					return false;
+			
+			return true;
+		}
+				
+		public static function calculate($ip, $netmask = "")
+		{
+			// $ip can be in regular (with $netmask) or CIDR form
+			// if $netmask is specified, $ip will be parsed as a regular IP (not in CIDR form)
+			if (empty($netmask))
+			{
+				if (!self::isValidNetwork($ip))
+					throw new Exception("Invalid CIDR address specified");
+					
+				list($ip, $netmask) = explode("/", $ip);
+			}
+			else
+			{
+				if (!self::isValidIp($ip))
+					throw new Exception("Invalid IP specified");
+					
+				$netmask = self::mask2CIDR($netmask);
+			}
+			
+			$netCalculator = new Net_IPv4();
+			$netCalculator->ip = $ip;
+			$netCalculator->bitmask = $netmask;
+			
+			$error = $netCalculator->calculate();
+			
+			if (is_object($error))
+				throw new Exception($error->getMessage());
+				
+			return (object) array("network" => $netCalculator->network, "broadcast" => $netCalculator->broadcast);
 		}
 	}
 ?>
