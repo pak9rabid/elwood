@@ -1,13 +1,19 @@
 <?php
 	require_once "SystemProfile.class.php";
+	require_once "NetUtils.class.php";
 	
 	abstract class NetworkInterface
 	{
+		protected $name;
 		protected $usesDhcp;
 		protected $ip;
 		protected $netmask;
-		protected $gateway;
 		protected $mtu;
+		protected $gateway;
+		
+		abstract public function save();
+		abstract public function load();
+		abstract public function apply();
 		
 		public static function getInstance($interfaceName)
 		{
@@ -27,8 +33,76 @@
 			return new $className();
 		}
 		
-		abstract public function save();
-		abstract public function load();
-		abstract public function apply();
+		public function getName()
+		{
+			return $this->name;
+		}
+		
+		public function usesDhcp()
+		{
+			return $this->usesDhcp;
+		}
+		
+		public function getIp()
+		{
+			return $this->ip;
+		}
+		
+		public function getNetmask()
+		{
+			return $this->netmask;
+		}
+		
+		public function getMtu()
+		{
+			return $this->mtu;
+		}
+		
+		public function getGateway()
+		{
+			return $this->gateway;
+		}
+		
+		public function setName($name)
+		{
+			$this->name = $name;
+		}
+		
+		public function setUsesDhcp($usesDhcp)
+		{
+			$this->usesDhcp = (boolean) $usesDhcp;
+		}
+		
+		public function setIp($ip)
+		{
+			if (NetUtils::isValidIp($ip))
+				$this->ip = $ip;
+			else
+				throw new Exception("Invalid IP address specified");
+		}
+		
+		public function setNetmask($netmask)
+		{
+			if (NetUtils::isValidNetmask($netmask))
+				$this->netmask = $netmask;
+			else
+				throw new Exception("Invalid netmask specified");
+		}
+		
+		public function setMtu($mtu)
+		{
+			if (NetUtils::isValidMtu($mtu))
+				$this->mtu = $mtu;
+			else
+				throw new Exception("Invalid MTU specified");
+		}
+		
+		public function setGateway($gateway)
+		{
+			if (NetUtils::isValidIp($gateway))
+				$this->gateway = $gateway;
+			else
+				throw new Exception("Invalid gateway specified");
+		}
 	}
 ?>
