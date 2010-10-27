@@ -9,5 +9,25 @@
 			fwrite($fp, $output);
 			fclose($fp);
 		}
+		
+		public static function readFileAsString($file)
+		{
+			$content = @file_get_contents($file);
+			
+			if (!$content)
+				throw new Exception("Unable to read contents of file: $file");
+				
+			return $content;
+		}
+		
+		public static function readFileAsArray($file)
+		{
+			$content = @file($file);
+			
+			if (!$content)
+				throw new Exception("Unable to read contents of file: $file");
+				
+			return $content;
+		}
 	}
 ?>
