@@ -75,7 +75,7 @@
 		
 		public function setIp($ip)
 		{
-			if (NetUtils::isValidIp($ip))
+			if (empty($ip) || NetUtils::isValidIp($ip))
 				$this->ip = $ip;
 			else
 				throw new Exception("Invalid IP address specified");
@@ -83,7 +83,7 @@
 		
 		public function setNetmask($netmask)
 		{
-			if (NetUtils::isValidNetmask($netmask))
+			if (empty($netmask) || NetUtils::isValidNetmask($netmask))
 				$this->netmask = $netmask;
 			else
 				throw new Exception("Invalid netmask specified");
@@ -91,7 +91,7 @@
 		
 		public function setMtu($mtu)
 		{
-			if (NetUtils::isValidMtu($mtu))
+			if (empty($mtu) || NetUtils::isValidMtu($mtu))
 				$this->mtu = $mtu;
 			else
 				throw new Exception("Invalid MTU specified");
@@ -99,7 +99,7 @@
 		
 		public function setGateway($gateway)
 		{
-			if (NetUtils::isValidIp($gateway))
+			if (empty($gateway) || NetUtils::isValidIp($gateway))
 				$this->gateway = $gateway;
 			else
 				throw new Exception("Invalid gateway specified");
