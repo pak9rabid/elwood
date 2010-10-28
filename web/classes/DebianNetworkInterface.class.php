@@ -21,6 +21,7 @@
 						"netmask " . $this->netmask . "\n" .
 						"network " . $networkAndBroadcast->network . "\n" .
 						"broadcast " . $networkAndBroadcast->broadcast . "\n" .
+						(!empty($this->mtu) ? "mtu " . $this->mtu . "\n" : "") .
 						(!empty($this->gateway) ? "gateway " . $this->gateway : "");
 			}
 			
