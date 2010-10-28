@@ -11,7 +11,7 @@
 		public function save()
 		{
 			$out =	"auto " . $this->name . "\n" .
-					"iface " . $this->name . "inet " . ($this->usesDhcp ? "dhcp" : "static") . "\n";
+					"iface " . $this->name . " inet " . ($this->usesDhcp ? "dhcp" : "static") . "\n";
 			
 			if (!$this->usesDhcp)
 			{
@@ -19,32 +19,39 @@
 				
 				$out .=	"address " . $this->ip . "\n" .
 						"netmask " . $this->netmask . "\n" .
-						"network " . $networkAndBroadcast['network'] . "\n" .
-						"broadcast " . $networkAndBroadcast['broadcast'] . "\n" .
+						"network " . $networkAndBroadcast->network . "\n" .
+						"broadcast " . $networkAndBroadcast->broadcast . "\n" .
 						(!empty($this->gateway) ? "gateway " . $this->gateway : "");
 			}
-
-		
+			
+			$content = $this->readInterfacesFile();
+			$remove = false;
+			
+			foreach ($content as $key => $line)
+			{
+				$line = trim($line);
+				
+				if ($line == "auto " . $this->name)
+					$remove = true;
+				else if (preg_match("/^auto.*$/", $line))
+					$remove = false;
+					
+				if ($remove)
+					unset($content[$key]);
+			}
+			
+			$out = implode("", $content) . $out;
+			
+			FileUtils::writeToFile("/etc/network/interfaces", $out);
 		}
 		
 		// Override
 		public function load()
 		{
 			$ifName = $this->name;
-			
-			$content = FileUtils::readFileAsArray("/etc/network/interfaces");
-			
-			// remove commented and blank lines
-			function filterCommentBlank($line)
-			{
-				$line = trim($line);
-				return !empty($line) && !preg_match("/^#.*$/", $line);
-			}
-			
-			$content = array_filter($content, "filterCommentBlank");
-					
+								
 			// uses dhcp?			
-			foreach ($content as $line)
+			foreach ($this->readInterfacesFile() as $line)
 			{
 				if (preg_match("/^iface $ifName.*$/", $line))
 				{
@@ -86,7 +93,20 @@
 		// Override
 		public function apply()
 		{
-			
+			$netService = Service::getInstance("network");
+			$netService->restart();
+		}
+		
+		private function filterCommentBlank($line)
+		{
+			$line = trim($line);
+			return !empty($line) && !preg_match("/^#.*$/", $line);
+		}
+		
+		private function readInterfacesFile()
+		{			
+			// remove commented and blank lines			
+			return array_filter(FileUtils::readFileAsArray("/etc/network/interfaces"), array(&$this, "filterCommentBlank"));
 		}
 	}
 ?>
