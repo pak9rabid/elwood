@@ -30,7 +30,9 @@
 				
 			require_once "$className.class.php";
 			
-			return new $className();
+			$interface = new $className();
+			$interface->load();
+			return $interface;
 		}
 		
 		public function getName()
@@ -62,7 +64,7 @@
 		{
 			return $this->gateway;
 		}
-		
+				
 		public function setName($name)
 		{
 			$this->name = $name;

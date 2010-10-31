@@ -22,7 +22,7 @@
 		
 		public static function readFileAsArray($file)
 		{
-			$content = @file($file);
+			$content = @file($file, FILE_IGNORE_NEW_LINES);
 			
 			if (!$content)
 				throw new Exception("Unable to read contents of file: $file");

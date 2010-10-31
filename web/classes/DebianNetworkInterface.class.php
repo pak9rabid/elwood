@@ -7,24 +7,37 @@
 	
 	abstract class DebianNetworkInterface extends NetworkInterface
 	{
-		// Override
-		public function save()
+		protected $config;
+		
+		protected function generateConfig()
 		{
-			$out =	"auto " . $this->name . "\n" .
-					"iface " . $this->name . " inet " . ($this->usesDhcp ? "dhcp" : "static") . "\n";
+			$out = array();
+			
+			$out[] = "auto " . $this->name;
+			$out[] = "iface " . $this->name . " inet " . ($this->usesDhcp ? "dhcp" : "static");
 			
 			if (!$this->usesDhcp)
 			{
 				$networkAndBroadcast = NetUtils::calculate($this->ip, $this->netmask);
 				
-				$out .=	"address " . $this->ip . "\n" .
-						"netmask " . $this->netmask . "\n" .
-						"network " . $networkAndBroadcast->network . "\n" .
-						"broadcast " . $networkAndBroadcast->broadcast . "\n" .
-						(!empty($this->mtu) ? "mtu " . $this->mtu . "\n" : "") .
-						(!empty($this->gateway) ? "gateway " . $this->gateway : "");
+				$out[] = "address " . $this->ip;
+				$out[] = "netmask " . $this->netmask;
+				$out[] = "network " . $networkAndBroadcast->network;
+				$out[] = "broadcast " . $networkAndBroadcast->broadcast;
+				
+				if (!empty($this->mtu))
+					$out[] = "mtu " . $this->mtu;
+					
+				if (!empty($this->gateway))
+					$out[] = "gateway " . $this->gateway;
 			}
 			
+			return $out;
+		}
+		
+		// Override
+		public function save()
+		{			
 			$content = $this->readInterfacesFile();
 			$remove = false;
 			
@@ -41,7 +54,7 @@
 					unset($content[$key]);
 			}
 			
-			$out = implode("", $content) . $out;
+			$out = implode("\n", array_merge($content, $this->generateConfig()));
 			
 			FileUtils::writeToFile("/etc/network/interfaces", $out);
 		}
