@@ -3,7 +3,7 @@
 	{
 		public static function writeToFile($file, $output)
 		{
-			if (!$fp = fopen($file, 'w'))
+			if (!$fp = @fopen($file, 'w'))
 				throw new Exception("Unable to open file for writing: $file");
 				
 			fwrite($fp, $output);
