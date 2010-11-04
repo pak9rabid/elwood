@@ -1,10 +1,13 @@
 <?php
 	require_once "accessControl.php";
 	require_once "PageElements.class.php";
-	require_once "NetworkSettings.class.php";
+	require_once "NetworkInterface.class.php";
+	require_once "DNSSettings.class.php";
 	require_once "RouterStats.class.php";
-		
-	$networkSettings = new NetworkSettings();
+
+	$wanInt = NetworkInterface::getInstance("wan");
+	$lanInt = NetworkInterface::getInstance("lan");
+	$dns = new DNSSettings();
 ?>
 
 <html>
@@ -33,13 +36,13 @@
 		<?=PageElements::navigationOut()?>
 		<div id="content">	
 			<table class="status-table" style="width: 60%;">
-				<tr><th>WAN IP Address:</th><td><?=$networkSettings->getWanInterface()->getIp()?></td></tr>
-				<tr><th>LAN IP Address:</th><td><?=$networkSettings->getLanInterface()->getIp()?></td></tr>
+				<tr><th>WAN IP Address:</th><td><?=$wanInt->getIp()?></td></tr>
+				<tr><th>LAN IP Address:</th><td><?=$lanInt->getIp()?></td></tr>
 				<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
 				
-<?php foreach ($networkSettings->getNameservers() as $key => $nameserver) { ?>
+<?php foreach ($dns->getNameservers() as $key => $nameserver) { ?>
 				<tr><th>Nameserver <?=$key + 1?>:</th><td><?=$nameserver?></td></tr>
-<?php } ?>
+<? } ?>
 				<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
 				<tr><th>Uptime:</th><td id="uptime"></td></tr>
 			</table>

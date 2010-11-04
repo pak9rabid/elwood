@@ -1,18 +1,12 @@
 <?php
 	require_once "FileUtils.class.php";
-	require_once "NetworkInterface.class.php";
 	
-	class NetworkSettings
+	class DNSSettings
 	{
-		private $wanInterface;
-		private $lanInterface;
 		private $nameservers;
 		
 		public function __construct()
 		{
-			$this->wanInterface = NetworkInterface::getInstance("wan");
-			$this->lanInterface = NetworkInterface::getInstance("lan");
-			
 			$this->nameservers = array();
 			$content = FileUtils::readFileAsArray("/etc/resolv.conf");
 			
@@ -26,19 +20,24 @@
 			}
 		}
 		
-		public function getWanInterface()
-		{
-			return $this->wanInterface;
-		}
-		
-		public function getLanInterface()
-		{
-			return $this->lanInterface;
-		}
-		
 		public function getNameservers()
 		{
 			return $this->nameservers;
+		}
+		
+		public function setNameservers(array $nameservers)
+		{
+			$this->nameservers = $nameservers;
+		}
+		
+		public function save()
+		{
+			$out = array();
+			
+			foreach ($this->nameservers as $nameserver)
+				$out[] = "nameserver $nameserver";
+				
+			FileUtils::writeToFile("/etc/resolv.conf", implode("\n", $out));
 		}
 	}
 ?>
