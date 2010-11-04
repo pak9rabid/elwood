@@ -4,6 +4,7 @@
 	require_once "Console.class.php";
 	require_once "NetUtils.class.php";
 	require_once "FileUtils.class.php";
+	require_once "Service.class.php";
 	
 	abstract class DebianNetworkInterface extends NetworkInterface
 	{
