@@ -25,12 +25,17 @@
 				$out[] = "netmask " . $this->netmask;
 				$out[] = "network " . $networkAndBroadcast->network;
 				$out[] = "broadcast " . $networkAndBroadcast->broadcast;
-				
-				if (!empty($this->mtu))
-					$out[] = "mtu " . $this->mtu;
-					
+									
 				if (!empty($this->gateway))
 					$out[] = "gateway " . $this->gateway;
+			}
+			
+			if (!empty($this->mtu))
+			{
+				if ($this->usesDhcp)
+					$out[] = "post-up /sbin/ifconfig " . $this->name . " mtu " . $this->mtu;
+				else
+					$out[] = "mtu " . $this->mtu;
 			}
 			
 			return $out;
