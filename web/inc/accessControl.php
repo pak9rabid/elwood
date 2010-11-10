@@ -11,15 +11,13 @@
 		SessionUtils::logout();
 		header("Location: ../status.php");
 	}
-?>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-
-<?php
 	$user = SessionUtils::getUser();
 	
 	if (!isset($user))
 	{
+		echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
+		
 		if (empty($user) && !isset($_POST['username']))
 		{?>
 			<html>
