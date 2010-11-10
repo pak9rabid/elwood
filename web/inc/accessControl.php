@@ -9,7 +9,7 @@
 	if (isset($_REQUEST['logout']))
 	{
 		SessionUtils::logout();
-		header("Location: ../status.php");
+		header("Location: ../elwoodPage.php?page=Status");
 	}
 
 	$user = SessionUtils::getUser();
@@ -29,6 +29,7 @@
 			<h1>Login Required</h1>
 		
 			<form method="post" action="<?=$_SERVER['PHP_SELF']?>">
+			<input type="hidden" name="page" value="<?=$_REQUEST['page']?>" />
 			<table>
 				<tr>
 					<td>Username:</td>

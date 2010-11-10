@@ -29,7 +29,7 @@
 		public static function navigationOut()
 		{
 			return	"<div id='navigation'>\n" .
-					"	<a href='status.php'>Status</a>\n" .
+					"	<a href='elwoodPage.php?page=Status'>Status</a>\n" .
 					"	<a href='access.php'>Access</a>\n" .
 					"	<a href='wan.php'>WAN</a>\n" .
 					"	<a href='lan.php'>LAN</a>\n" .
