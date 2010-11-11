@@ -29,11 +29,7 @@
 	<link rel="StyleSheet" type="text/css" href="css/elwoodpopup.css">
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
-	<script src="js/access.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		var currentUser = "<?=$currentUser?>";
-		var currentGroup = "<?=$userGroup?>";
-	</script>
+	<script src="js/access.js.php" type="text/javascript"></script>
 </head>
 
 <body>

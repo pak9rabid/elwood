@@ -1,4 +1,16 @@
+<?php
+	require_once "User.class.php";
+	header("Content-type: text/javascript");
+	
+	session_start();
+	
+	$user = User::getUser();
+	$group = !empty($user) ? $user->getGroup() : null;
+?>
+
 var addEditUserAction;
+var currentUser = "<?=$user?>";
+var currentGroup = "<?=$group?>";
 
 $(document).ready(function()
 {
