@@ -68,7 +68,7 @@
 			</head>
 	
 			<body>
-				Invalid username or password.  <a href="<?=$_SERVER['PHP_SELF']?>">Click here</a> to try again.
+				Invalid username or password.  <a href="<?=$_SERVER['PHP_SELF']?>?page=<?=$_REQUEST['page']?>">Click here</a> to try again.
 			</body>
 			</html>
 			<?exit;
