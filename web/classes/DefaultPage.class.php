@@ -23,6 +23,11 @@
 		}
 		
 		// Override
+		public function popupsOut()
+		{
+		}
+		
+		// Override
 		public function isRestricted()
 		{
 			return false;

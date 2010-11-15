@@ -41,6 +41,8 @@
 		<div id="content">
 			<?=$pageObj->contentOut()?>
 		</div>
+		
+		<?=$pageObj->popupsOut()?>
 	</div>
 </body>
 </html>
