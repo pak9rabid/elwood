@@ -15,30 +15,38 @@
 		// Override
 		public function headOut()
 		{
-			return	"<rel='StyleSheet' type='text/css' href='css/jquery.countdown.css'>\n" .
-					"<script src='js/jquery.countdown.pack.js' type='text/javascript'></script>\n" .
-					"<script src='js/status.js.php' type='text/javascript'></script>\n";
+			$out = <<<END
+			<rel="StyleSheet" type="text/css" href="css/jquery.countdown.css">
+			<script src="js/jquery.countdown.pack.js" type="text/javascript"></script>
+			<script src="js/status.js.php" type="text/javascript"></script>
+END;
+
+			return $out;
 		}
 		
 		// Override
 		public function contentOut()
-		{
-			$wanInt = NetworkInterface::getInstance("wan");
-			$lanInt = NetworkInterface::getInstance("lan");
+		{			
+			$wanIp = NetworkInterface::getInstance("wan")->getIp();
+			$lanIp = NetworkInterface::getInstance("lan")->getIp();
 			$dns = new DNSSettings();
 			
-			$out =	"<table class='status-table' style='width: 60%;'>\n" .
-						"<tr><th>WAN IP Address:</th><td>" . $wanInt->getIp() . "</td></tr>\n" .
-						"<tr><th>LAN IP Address:</th><td>" . $lanInt->getIp() . "</td></tr>\n" .
-						"<tr><th>&nbsp;</th><td>&nbsp;</td></tr>";
-				
+			$out = <<<END
+			<table class="status-table" style="width: 60%;">
+				<tr><th>WAN IP Address:</th><td>$wanIp</td></tr>
+				<tr><th>LAN IP Address:</th><td>$lanIp</td></tr>
+				<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
+END;
+
 			foreach ($dns->getNameservers() as $key => $nameserver)
 				$out .= "<tr><th>Nameserver " . ($key + 1) . ":</th><td>" . $nameserver . "</td></tr>\n";
+				
+			$out .= <<<END
+				<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
+				<tr><th>Uptime:</th><td id='uptime'></td></tr>
+			</table>
+END;
 
-			$out .=		"<tr><th>&nbsp;</th><td>&nbsp;</td></tr>\n" .
-						"<tr><th>Uptime:</th><td id='uptime'></td></tr>\n" .
-					"</table>\n";
-			
 			return $out;
 		}
 		
