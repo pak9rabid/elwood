@@ -7,38 +7,44 @@
 		{
 			$user = User::getUser();
 			
-			$out = "<div id='title'>\n";
+			$out = <<<END
 			
-			$out .= "\t<font id='usertxt'>\n";
+			<div id="title">
+				<font id="usertxt">
+END;
 			
 			if (!empty($user))
 			{
-				$out .= "\t\tLogged in: " . $user->getAttribute("username") . "<br />\n" .
-						"\t\t<a href='inc/accessControl.php?logout=true'>Logout</a>\n";
+				$out .= <<<END
+				Logged in: {$user->getAttribute("username")}<br />
+				<a href='inc/accessControl.php?logout=true'>Logout</a>
+END;
 			}
-			else
-				$out .= "\t\t&nbsp;\n";
 				
-			$out .= "\t</font>\n" .
-					"\t$title" .
-					"</div>";
+			return $out .= <<<END
 			
-			return $out;
+				</font>
+				$title
+			</div>
+END;
 		}
 		
 		public static function navigation()
 		{
-			return	"<div id='navigation'>\n" .
-					"	<a href='elwoodPage.php?page=Status'>Status</a>\n" .
-					"	<a href='access.php'>Access</a>\n" .
-					"	<a href='wan.php'>WAN</a>\n" .
-					"	<a href='lan.php'>LAN</a>\n" .
-					"	<a href='wifi.php'>WiFi</a>\n" .
-					"	<a href='wol.php'>WOL</a>\n" .
-					"	<a href='firewall.php'>Firewall</a>\n" .
-					"	<a href='portforward.php'>Port Forwarding</a>\n" .
-					"	<a href='webterm.php'>WebTerm</a>\n" .
-					"</div>\n";
+			return	<<<END
+			
+			<div id="navigation">
+				<a href="elwoodPage.php?page=Status">Status</a>
+				<a href="elwoodPage.php?page=Access">Access</a>
+				<a href="wan.php">WAN</a>
+				<a href="lan.php">LAN</a>
+				<a href="wifi.php">WiFi</a>
+				<a href="wol.php">WOL</a>
+				<a href="firewall.php">Firewall</a>
+				<a href="portforward.php">Port Forwarding</a>
+				<a href="webterm.php">WebTerm</a>
+			</div>
+END;
 		}
 	}
 ?>
