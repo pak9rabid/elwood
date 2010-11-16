@@ -28,21 +28,21 @@
 
 <html>
 <head>
-	<title><?=$pageObj->getName()?></title>
+	<title><?=$pageObj->name()?></title>
 	<link rel="StyleSheet" type="text/css" href="css/routerstyle.css" />
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
-	<?=$pageObj->headOut()?>
+	<?=$pageObj->head()?>
 </head>
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut($pageObj->getName())?>
+		<?=PageElements::titleOut($pageObj->name())?>
 		<?=PageElements::navigationOut()?>
 		<div id="content">
-			<?=$pageObj->contentOut()?>
+			<?=$pageObj->content()?>
 		</div>
 		
-		<?=$pageObj->popupsOut()?>
+		<?=$pageObj->popups()?>
 	</div>
 </body>
 </html>

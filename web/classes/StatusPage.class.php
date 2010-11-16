@@ -7,31 +7,31 @@
 	class StatusPage implements Page
 	{
 		// Override
-		public function getName()
+		public function name()
 		{
 			return "Status";
 		}
 		
 		// Override
-		public function headOut()
+		public function head()
 		{
-			$out = <<<END
+			return <<<END
+			
 			<rel="StyleSheet" type="text/css" href="css/jquery.countdown.css">
 			<script src="js/jquery.countdown.pack.js" type="text/javascript"></script>
 			<script src="js/status.js.php" type="text/javascript"></script>
 END;
-
-			return $out;
 		}
 		
 		// Override
-		public function contentOut()
+		public function content()
 		{			
 			$wanIp = NetworkInterface::getInstance("wan")->getIp();
 			$lanIp = NetworkInterface::getInstance("lan")->getIp();
 			$dns = new DNSSettings();
 			
 			$out = <<<END
+			
 			<table class="status-table" style="width: 60%;">
 				<tr><th>WAN IP Address:</th><td>$wanIp</td></tr>
 				<tr><th>LAN IP Address:</th><td>$lanIp</td></tr>
@@ -41,17 +41,16 @@ END;
 			foreach ($dns->getNameservers() as $key => $nameserver)
 				$out .= "<tr><th>Nameserver " . ($key + 1) . ":</th><td>" . $nameserver . "</td></tr>\n";
 				
-			$out .= <<<END
+			return $out .= <<<END
+			
 				<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
-				<tr><th>Uptime:</th><td id='uptime'></td></tr>
+				<tr><th>Uptime:</th><td id="uptime"></td></tr>
 			</table>
 END;
-
-			return $out;
 		}
 		
 		// Override
-		public function popupsOut()
+		public function popups()
 		{
 		}
 		

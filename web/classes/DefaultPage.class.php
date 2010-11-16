@@ -4,26 +4,25 @@
 	class DefaultPage implements Page
 	{				
 		// Override
-		public function getName()
+		public function name()
 		{
 			return "Default Page";
 		}
 		
 		// Override
-		public function headOut()
+		public function head()
 		{
-			return "";
 		}
 		
 		// Override
-		public function contentOut()
+		public function content()
 		{
 			return	"This is the default page.  You're seeing this page becaue " .
 					"a page wasn't specified, or the specified page doesn't exist";
 		}
 		
 		// Override
-		public function popupsOut()
+		public function popups()
 		{
 		}
 		
