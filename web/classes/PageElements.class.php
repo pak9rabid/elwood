@@ -36,7 +36,7 @@ END;
 			<div id="navigation">
 				<a href="elwoodPage.php?page=Status">Status</a>
 				<a href="elwoodPage.php?page=Access">Access</a>
-				<a href="wan.php">WAN</a>
+				<a href="elwoodPage.php?page=Wan">WAN</a>
 				<a href="lan.php">LAN</a>
 				<a href="wifi.php">WiFi</a>
 				<a href="wol.php">WOL</a>
