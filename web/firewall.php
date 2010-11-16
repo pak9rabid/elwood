@@ -24,10 +24,7 @@
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery.tablednd_0_5.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
-	<script src="js/firewall.js" type="text/javascript"></script>
-	<script type="text/javascript">
-		var isAdminUser = '<?=User::getUser()->isAdminUser()?>' == 1 ? true : false;
-	</script>
+	<script src="js/firewall.js.php" type="text/javascript"></script>
 </head>
 
 <body>
