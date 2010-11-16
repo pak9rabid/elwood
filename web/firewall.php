@@ -32,8 +32,8 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut("Firewall")?>
-		<?=PageElements::navigationOut()?>
+		<?=PageElements::title("Firewall")?>
+		<?=PageElements::navigation()?>
 		<div id="content">
 			<a href="firewall.php?dir=in">Incoming</a>
 			&nbsp;

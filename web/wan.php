@@ -18,8 +18,8 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut("WAN Setup")?>
-		<?=PageElements::navigationOut()?>
+		<?=PageElements::title("WAN Setup")?>
+		<?=PageElements::navigation()?>
 		<div id="content">
 			<table class="ip-table" style="width: 400px;">
 				<tr><th colspan="3">IP Address</th></tr>

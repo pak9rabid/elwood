@@ -3,7 +3,7 @@
 	
 	class PageElements
 	{
-		public static function titleOut($title)
+		public static function title($title)
 		{
 			$user = User::getUser();
 			
@@ -26,7 +26,7 @@
 			return $out;
 		}
 		
-		public static function navigationOut()
+		public static function navigation()
 		{
 			return	"<div id='navigation'>\n" .
 					"	<a href='elwoodPage.php?page=Status'>Status</a>\n" .

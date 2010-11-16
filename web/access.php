@@ -34,8 +34,8 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut("Access")?>
-		<?=PageElements::navigationOut()?>
+		<?=PageElements::title("Access")?>
+		<?=PageElements::navigation()?>
 		
 		<div id="content">
 		

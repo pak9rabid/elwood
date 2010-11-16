@@ -22,8 +22,8 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut("Status")?>
-		<?=PageElements::navigationOut()?>
+		<?=PageElements::title("Status")?>
+		<?=PageElements::navigation()?>
 		<div id="content">	
 			<table class="status-table" style="width: 60%;">
 				<tr><th>WAN IP Address:</th><td><?=$wanInt->getIp()?></td></tr>

@@ -36,8 +36,8 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::titleOut($pageObj->name())?>
-		<?=PageElements::navigationOut()?>
+		<?=PageElements::title($pageObj->name())?>
+		<?=PageElements::navigation()?>
 		<div id="content">
 			<?=$pageObj->content()?>
 		</div>
