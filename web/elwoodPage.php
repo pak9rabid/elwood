@@ -39,10 +39,10 @@
 		<?=PageElements::title($pageObj->name())?>
 		<?=PageElements::navigation()?>
 		<div id="content">
-			<?=$pageObj->content()?>
+			<?=$pageObj->content($_REQUEST)?>
 		</div>
 		
-		<?=$pageObj->popups()?>
+		<?=$pageObj->popups($_REQUEST)?>
 	</div>
 </body>
 </html>

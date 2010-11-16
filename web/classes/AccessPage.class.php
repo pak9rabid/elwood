@@ -23,7 +23,7 @@ END;
 		}
 		
 		// Override
-		public function content()
+		public function content(array $parameters)
 		{
 			$httpPort = RouterSettings::getSettingValue("HTTP_PORT");
 			$sshPort = RouterSettings::getSettingValue("SSH_PORT");
@@ -128,7 +128,7 @@ END;
 		}
 		
 		// Override
-		public function popups()
+		public function popups(array $parameters)
 		{
 			return <<<END
 			

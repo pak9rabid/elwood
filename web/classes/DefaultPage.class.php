@@ -15,14 +15,14 @@
 		}
 		
 		// Override
-		public function content()
+		public function content(array $parameters)
 		{
 			return	"This is the default page.  You're seeing this page becaue " .
 					"a page wasn't specified, or the specified page doesn't exist";
 		}
 		
 		// Override
-		public function popups()
+		public function popups(array $parameters)
 		{
 		}
 		

@@ -21,7 +21,7 @@ END;
 		}
 		
 		// Override
-		public function content()
+		public function content(array $parameters)
 		{
 			$wanInt = NetworkInterface::getInstance("wan");
 			$dns = new DNSSettings();
@@ -95,7 +95,7 @@ END;
 		}
 		
 		// Override
-		public function popups()
+		public function popups(array $parameters)
 		{
 		}
 		

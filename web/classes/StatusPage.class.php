@@ -24,7 +24,7 @@ END;
 		}
 		
 		// Override
-		public function content()
+		public function content(array $parameters)
 		{			
 			$wanIp = NetworkInterface::getInstance("wan")->getIp();
 			$lanIp = NetworkInterface::getInstance("lan")->getIp();
@@ -50,7 +50,7 @@ END;
 		}
 		
 		// Override
-		public function popups()
+		public function popups(array $parameters)
 		{
 		}
 		
