@@ -133,58 +133,58 @@ END;
 			return <<<END
 			
 			<div id="addEditUserPopup" class="elwoodPopup">
-			<div id="addEditUserMsgs"></div>
-			<table>
-				<tr>
-					<td class="tabInputLabel">Username:</td>
-					<td class="tabInputValue">
-						<input type="text" id="username" name="username" size="20" maxlength="32" />
-					</td>
-				</tr>
-				<tr>
-					<td class="tabInputLabel">Password:</td>
-					<td class="tabInputValue">
-						<input type="password" id="passwd" name="passwd" size="20" maxlength="32" />
-					</td>
-				</tr>
-				<tr>
-					<td class="tabInputLabel">Confirm Password:</td>
-					<td class="tabInputValue">
-						<input type="password" id="confPasswd" name="confPasswd" size="20" maxlength="32" />
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2">&nbsp;</td>
-				</tr>
-				<tr>
-					<td class="tabInputLabel">Group</td>
-					<td class="tabInputValue">
-						<select id="groupSelect">
-							<option value="admins">admins</option>
-							<option value="users">users</option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2">&nbsp;</td>
-				</tr>
-				<tr>
-					<td colspan="2">
-						<button type="button" id="saveAddEditUserBtn">Save</button>
-						<button type="button" id="cancelAddEditUserBtn">Cancel</button>
-						&nbsp;&nbsp;
-						<button type="button" id="deleteUserBtn">Delete</button>
-					</td>
-				</tr>
-			</table>
-		</div>
+				<div id="addEditUserMsgs"></div>
+				<table>
+					<tr>
+						<td class="tabInputLabel">Username:</td>
+						<td class="tabInputValue">
+							<input type="text" id="username" name="username" size="20" maxlength="32" />
+						</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Password:</td>
+						<td class="tabInputValue">
+							<input type="password" id="passwd" name="passwd" size="20" maxlength="32" />
+						</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Confirm Password:</td>
+						<td class="tabInputValue">
+							<input type="password" id="confPasswd" name="confPasswd" size="20" maxlength="32" />
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td class="tabInputLabel">Group</td>
+						<td class="tabInputValue">
+							<select id="groupSelect">
+								<option value="admins">admins</option>
+								<option value="users">users</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">&nbsp;</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<button type="button" id="saveAddEditUserBtn">Save</button>
+							<button type="button" id="cancelAddEditUserBtn">Cancel</button>
+							&nbsp;&nbsp;
+							<button type="button" id="deleteUserBtn">Delete</button>
+						</td>
+					</tr>
+				</table>
+			</div>	
 
-		<div id="deleteUserPopup" class="elwoodPopup">
-			<div id="removeUserConfirm"></div>
-			<br />
-			<button type="button" id="rmUserYesBtn">Yes</button>
-			<button type="button" id="rmUserNoBtn">No</button>
-		</div>
+			<div id="deleteUserPopup" class="elwoodPopup">
+				<div id="removeUserConfirm"></div>
+				<br />
+				<button type="button" id="rmUserYesBtn">Yes</button>
+				<button type="button" id="rmUserNoBtn">No</button>
+			</div>
 END;
 		}
 		
