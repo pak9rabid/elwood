@@ -40,7 +40,7 @@ END;
 				<a href="lan.php">LAN</a>
 				<a href="wifi.php">WiFi</a>
 				<a href="wol.php">WOL</a>
-				<a href="firewall.php">Firewall</a>
+				<a href="elwoodPage.php?page=Firewall">Firewall</a>
 				<a href="portforward.php">Port Forwarding</a>
 				<a href="webterm.php">WebTerm</a>
 			</div>
