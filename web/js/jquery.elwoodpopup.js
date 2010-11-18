@@ -16,6 +16,11 @@
 	$.fn.openElwoodPopup = function()
 	{			
 		var popup = this.first();
+		
+		if (popup.is(":visible"))
+			// popup is already being shown...do nothing
+			return;
+		
 		var zFade = 50;
 		var zPopupBlock = 100;
 		
@@ -55,6 +60,10 @@
 		if ($(".elwoodPopupBlock").size() > 0)
 		{
 			var popup = this.first();
+			
+			if (!popup.is(":visible"))
+				// popup is already closed...do nothing
+				return;
 			
 			// make popup invisible
 			popup
