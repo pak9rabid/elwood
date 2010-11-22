@@ -1,12 +1,10 @@
 <?php
-	require_once "Service.class.php";
+	require_once "AccessService.class.php";
 	require_once "Console.class.php";
 	require_once "FileUtils.class.php";
 	
-	class DebianSshdService extends Service
-	{
-		private $port;
-		
+	class DebianSshdService extends AccessService
+	{		
 		// Override
 		public function stop()
 		{
@@ -51,19 +49,7 @@
 			
 			$this->port = $port;
 		}
-		
-		// Override
-		public function setPort($port)
-		{
-			$this->port = $port;
-		}
-		
-		// Override
-		public function getPort()
-		{
-			return $this->port;
-		}
-		
+				
 		private function setPortCallback($line)
 		{
 			if (preg_match("/^Port.*$/", $line))

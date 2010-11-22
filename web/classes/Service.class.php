@@ -41,7 +41,5 @@
 		abstract public function restart();
 		abstract public function save();
 		abstract public function load();
-		abstract public function setPort($port);
-		abstract public function getPort();
 	}
 ?>

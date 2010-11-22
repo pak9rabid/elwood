@@ -1,12 +1,10 @@
 <?php
-	require_once "Service.class.php";
+	require_once "AccessService.class.php";
 	require_once "Console.class.php";
 	require_once "FileUtils.class.php";
 	
-	class DebianApache2Service extends Service
+	class DebianApache2Service extends AccessService
 	{
-		private $port;
-		
 		// Override
 		public function stop()
 		{
@@ -44,18 +42,6 @@
 		{
 			list($temp, $port) = explode(" ", file_get_contents($this->service->config));
 			$this->port = $port;
-		}
-		
-		// Override
-		public function setPort($port)
-		{
-			$this->port = $port;
-		}
-		
-		// Override
-		public function getPort()
-		{
-			return $this->port;
 		}
 	}
 ?>
