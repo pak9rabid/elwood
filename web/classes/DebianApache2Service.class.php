@@ -1,10 +1,14 @@
 <?php
-	require_once "AccessService.class.php";
+	require_once "Service.class.php";
+	require_once "HTTPService.class.php";
 	require_once "Console.class.php";
 	require_once "FileUtils.class.php";
+	require_once "NetUtils.class.php";
 	
-	class DebianApache2Service extends AccessService
+	class DebianApache2Service extends Service implements HTTPService
 	{
+		private $port;
+		
 		// Override
 		public function stop()
 		{
@@ -41,6 +45,21 @@
 		public function load()
 		{
 			list($temp, $port) = explode(" ", file_get_contents($this->service->config));
+			$this->port = $port;
+		}
+		
+		// Override
+		public function getPort()
+		{
+			return $this->port;
+		}
+		
+		// Override
+		public function setPort($port)
+		{
+			if (!NetUtils::isValidIanaPortNumber($port))
+				throw new Exception("Invalid port number specified for HTTP server");
+				
 			$this->port = $port;
 		}
 	}

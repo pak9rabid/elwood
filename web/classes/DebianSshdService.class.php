@@ -1,10 +1,14 @@
 <?php
-	require_once "AccessService.class.php";
+	require_once "Service.class.php";
+	require_once "SSHService.class.php";
 	require_once "Console.class.php";
 	require_once "FileUtils.class.php";
+	require_once "NetUtils.class.php";
 	
-	class DebianSshdService extends AccessService
-	{		
+	class DebianSshdService extends Service implements SSHService
+	{
+		private $port;
+
 		// Override
 		public function stop()
 		{
@@ -47,6 +51,21 @@
 				
 			list($temp, $port) = explode(" ", array_shift($lines));
 			
+			$this->port = $port;
+		}
+		
+		// Override
+		public function getPort()
+		{
+			return $this->port;
+		}
+		
+		// Override
+		public function setPort($port)
+		{
+			if (!NetUtils::isValidIanaPortNumber($port))
+				throw new Exception("Invalid port number specified for SSH server");
+				
 			$this->port = $port;
 		}
 				

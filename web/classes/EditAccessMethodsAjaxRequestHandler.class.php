@@ -5,6 +5,8 @@
 	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterRule.class.php";
 	require_once "Service.class.php";
+	require_once "HTTPService.class.php";
+	require_once "SSHService.class.php";
 	require_once "IPTablesFwFilterTranslator.class.php";
 	require_once "FileUtils.class.php";
 	require_once "User.class.php";
@@ -49,6 +51,18 @@
 				
 				return;
 			}
+			
+			$httpService = Service::getInstance("http");
+			$sshService = Service::getInstance("ssh");
+			
+			if (!($httpService instanceof HTTPService))
+				throw new Exception("HTTP service class does not implement the HTTPService interface");
+				
+			if (!($sshService instanceof SSHService))
+				throw new Exception("SSH service class does not implement the SSHService interface");
+				
+			$httpService->load();
+			$sshService->load();
 			
 			// Create temp database and clear INPUT chain
 			TempDatabase::create();
@@ -127,13 +141,7 @@
 			FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");
 			TempDatabase::destroy();
 			
-			// Restart services, if needbe
-			$httpService = Service::getInstance("http");
-			$sshService = Service::getInstance("ssh");
-			
-			$httpService->load();
-			$sshService->load();
-			
+			// Restart services, if needbe			
 			if ($httpService->getPort() != $httpPort)
 			{
 				$httpService->setPort($httpPort);
