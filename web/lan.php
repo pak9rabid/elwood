@@ -12,15 +12,27 @@
    ################################################
 
    # Include lan.inc to provide us with the lanConfig class
-   require_once "formatting.inc";
-   require_once "lan.inc";
+  // require_once "formatting.inc";
+  // require_once "lan.inc";
+  
+   require_once "accessControl.php";
+   require_once "PageElements.class.php";
+   require_once "User.class.php";
+   require_once "NetworkInterface.class.php";
 
    # Create LAN config object to get current LAN settings
-   $lanConfig = new lanConfig;
+   //$lanConfig = new lanConfig;
+   $lanInt = NetworkInterface::getInstance("lan");
 
    # Determine which group the current user belongs to
-   $currentUser = getUser();
-   $userGroup   = getGroup($currentUser);
+   //$currentUser = getUser();
+   //$userGroup   = getGroup($currentUser);
+   $currentUser = User::getUser();
+   $userGroup = $currentUser->getGroup();
+   
+   // Testing
+   print_r($lanInt);
+   // End Testing
 ?>
 
 <html>
@@ -32,7 +44,8 @@
 
    <?php
       # Check to see if dhcp server is enabled
-      if ($lanConfig->dhcpServerEnabled)
+      //if ($lanConfig->dhcpServerEnabled)
+      if ($lanInt->usesDhcp())
          $isDhcpServerEnabled = "true";
       else
          $isDhcpServerEnabled = "false";
@@ -40,16 +53,13 @@
 
    <body onLoad="javascript:setInputsForUser(<? echo "'$userGroup'";?>,<? echo $isDhcpServerEnabled; ?>)">
       <div id="container">
-         <div id="title">
-            <?php echo printTitle("LAN Setup"); ?>
-         </div>
-         <?php
-            printNavigation();
-         ?>
+         <?=PageElements::title("LAN Setup")?>
+         <?=PageElements::navigation()?>
          <div id="content">
             <?php
                # Check to see if dhcp server is enabled and set radio buttons accordingly
-               if ($lanConfig->dhcpServerEnabled)
+               //if ($lanConfig->dhcpServerEnabled)
+               if ($lanInt->usesDhcp())
                {
                   $dhcpSelect1 = "<input type='radio' name='dhcpserver' value='enabled' checked onClick='javascript:enableInputs()'>";
                   $dhcpSelect2 = "<input type='radio' name='dhcpserver' value='disabled' onClick='javascript:disableInputs()'>";
@@ -65,8 +75,8 @@ echo <<<END
                <form name="lanconfig" action="scripts/admin/lanconfig.php" method="POST">
                   <table class="ip-table" width="300px">
                      <tr><th colspan="2">LAN IP Address</th></tr>
-                     <tr><td align="right">IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="ipaddress" value="$lanConfig->ipAddress"></td></tr>
-                     <tr><td align="right">Subnet Mask:</td><td><input class="textfield" size="20" maxlength="15" name="netmask" value="$lanConfig->netmask"></td></tr>
+                     <tr><td align="right">IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="ipaddress" value="$lanInt->getIp()"></td></tr>
+                     <tr><td align="right">Subnet Mask:</td><td><input class="textfield" size="20" maxlength="15" name="netmask" value="$lanInt->getNetmask()"></td></tr>
                   </table>
 END;
 
@@ -84,30 +94,12 @@ echo <<<END
                      <tr><td align="right">DHCP Server:</td><td>$dhcpSelect1 Enabled</td></tr>
                      <tr><td>&nbsp</td><td>$dhcpSelect2 Disabled</td></tr>
                      <tr><td colspan="2">&nbsp</td></tr>
-                     <tr><td align="right">Starting Address:</td><td><input class="textfield" size="20" maxlength="15" name="startip" value="$lanConfig->dhcpStartIp"></td></tr>
-                     <tr><td align="right">Ending IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="endip" value="$lanConfig->dhcpEndIp"></td></tr>
-                     <tr><td align="right">Nameserver 1:</td><td><input class="textfield" size="20" maxlength="15" name="dns1" value="$lanConfig->dns1"></td></tr>
-                     <tr><td align="right">Nameserver 2:</td><td><input class="textfield" size="20" maxlength="15" name="dns2" value="$lanConfig->dns2"></td></tr>
-                     <tr><td align="right">Nameserver 3:</td><td><input class="textfield" size="20" maxlength="15" name="dns3" value="$lanConfig->dns3"></td></tr>
+                     <tr><td align="right">Starting Address:</td><td><input class="textfield" size="20" maxlength="15" name="startip" value=""></td></tr>
+                     <tr><td align="right">Ending IP Address:</td><td><input class="textfield" size="20" maxlength="15" name="endip" value=""></td></tr>
+                     <tr><td align="right">Nameserver 1:</td><td><input class="textfield" size="20" maxlength="15" name="dns1" value=""></td></tr>
+                     <tr><td align="right">Nameserver 2:</td><td><input class="textfield" size="20" maxlength="15" name="dns2" value=""></td></tr>
+                     <tr><td align="right">Nameserver 3:</td><td><input class="textfield" size="20" maxlength="15" name="dns3" value=""></td></tr>
                      <tr><th colspan="2">Static DHCP Addresses</th></tr>
-END;
-                  foreach ($lanConfig->dhcpHostList as $key => $value)
-                  {
-                     $tempHostName  = "dhcphost" . $key;
-                     $tempMACName   = "dhcpmac" . $key;
-                     $tempIPName    = "dhcpip" . $key;
-
-                     $tempHostValue = $value;
-                     $tempMACValue  = $lanConfig->dhcpMACList[$key];
-                     $tempIPValue   = $lanConfig->dhcpIPList[$key];
-echo <<<END
-                     <tr><td align="right">Hostname:</td><td><input class="textfield" size="20" maxlength="32" name="$tempHostName" value="$tempHostValue"></td></tr>
-                     <tr><td align="right">MAC:</td><td><input class="textfield" size="20" maxlength="17" name="$tempMACName" value="$tempMACValue"></td></tr>
-                     <tr><td align="right">IP:</td><td><input class="textfield" size="20" maxlength="15" name="$tempIPName" value="$tempIPValue"></td></tr>
-                     <tr><td colspan="2">&nbsp</td></tr>
-END;
-                  }
-echo <<<END
                      <tr><th colspan="2">Add New Host</th></tr>
                      <tr><td align="right">Hostname:</td><td><input class="textfield" size="20" maxlength="32" name="newdhcphost"></td></tr>
                      <tr><td align="right">MAC:</td><td><input class="textfield" size="20" maxlength="17" name="newdhcpmac"></td></tr>
