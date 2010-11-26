@@ -28,7 +28,7 @@
 		
 		public function getService()
 		{
-			return $service;
+			return $this->service;
 		}
 		
 		public function setService($service)
