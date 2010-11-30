@@ -25,25 +25,19 @@
 		// Override
 		public function save()
 		{
-			/* N/A */
+			/*
+			 * Network settings get saved on a per-interface bases via the
+			 * NetworkInterface classes
+			 */
 		}
 		
 		// Override
 		public function load()
 		{
-			/* N/A */
-		}
-		
-		// Override
-		public function setPort($port)
-		{
-			/* N/A */
-		}
-		
-		// Override
-		public function getPort()
-		{
-			/* N/A */
+			/*
+			 * Network settings get loaded on a per-interface bases via the
+			 * NetworkInterface classes
+			 */
 		}
 	}
 ?>
