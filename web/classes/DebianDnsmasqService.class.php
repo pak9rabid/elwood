@@ -98,6 +98,12 @@
 		}
 		
 		// Override
+		public function isRunning()
+		{
+			return file_exists($this->service->pid);
+		}
+		
+		// Override
 		public function getIpRanges()
 		{
 			return $this->ipRanges;

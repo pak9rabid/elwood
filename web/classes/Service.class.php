@@ -41,5 +41,6 @@
 		abstract public function restart();
 		abstract public function save();
 		abstract public function load();
+		abstract public function isRunning();
 	}
 ?>

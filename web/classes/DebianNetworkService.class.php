@@ -39,5 +39,11 @@
 			 * NetworkInterface classes
 			 */
 		}
+		
+		// Override
+		public function isRunning()
+		{
+			return true;
+		}
 	}
 ?>
