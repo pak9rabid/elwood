@@ -19,7 +19,25 @@
 			
 			<rel="StyleSheet" type="text/css" href="css/jquery.countdown.css">
 			<script src="js/jquery.countdown.pack.js" type="text/javascript"></script>
-			<script src="js/status.js.php" type="text/javascript"></script>
+END;
+		}
+		
+		// Override
+		public function javascript()
+		{
+			$uptime = RouterStats::getUptime();
+			
+			return <<<END
+			
+			$(document).ready(function()
+			{	
+				$("#uptime").countdown	(	{
+												since: -$uptime,
+												format: "dHMS",
+												layout: "{d<}{dn} days and {d>}{hn}:{mnn}:{snn}"
+											}
+										);
+			});
 END;
 		}
 		

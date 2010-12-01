@@ -32,6 +32,9 @@
 	<link rel="StyleSheet" type="text/css" href="css/routerstyle.css" />
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<?=$pageObj->head()?>
+	<script type="text/javascript">
+	<?=$pageObj->javascript()?>
+	</script>
 </head>
 
 <body>

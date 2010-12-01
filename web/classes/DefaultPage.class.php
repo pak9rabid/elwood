@@ -15,6 +15,11 @@
 		}
 		
 		// Override
+		public function javascript()
+		{
+		}
+		
+		// Override
 		public function content(array $parameters)
 		{
 			return	"This is the default page.  You're seeing this page becaue " .
