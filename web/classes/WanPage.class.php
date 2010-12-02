@@ -5,6 +5,13 @@
 	
 	class WanPage implements Page
 	{
+		private $wanInt;
+		
+		public function __construct()
+		{
+			$this->wanInt = NetworkInterface::getInstance("wan");
+		}
+		
 		// Override
 		public function name()
 		{
@@ -18,7 +25,7 @@
 		
 		public function javascript()
 		{
-			$isDhcpEnabled = NetworkInterface::getInstance("wan")->usesDhcp() ? "true" : "false";
+			$isDhcpEnabled = $this->wanInt->usesDhcp() ? "true" : "false";
 			
 			return <<<END
 			
@@ -160,7 +167,6 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
-			$wanInt = NetworkInterface::getInstance("wan");
 			$dns = new DNSSettings();
 			$out = <<<END
 			
@@ -177,17 +183,17 @@ END;
 				<tr>
 					<td>&nbsp;</td>
 					<td align="right">IP Address:</td>
-					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="ipAddress" name="ipAddress" value="{$wanInt->getIp()}" /></td>
+					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="ipAddress" name="ipAddress" value="{$this->wanInt->getIp()}" /></td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
 					<td align="right">Subnet Mask:</td>
-					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="netmask" name="netmask" value="{$wanInt->getNetmask()}" /></td>
+					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="netmask" name="netmask" value="{$this->wanInt->getNetmask()}" /></td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
 					<td align="right">Gateway:</td>
-					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="gateway" name="gateway" value="{$wanInt->getGateway()}" /></td>
+					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="gateway" name="gateway" value="{$this->wanInt->getGateway()}" /></td>
 				</tr>
 			</table>
 			<br />
@@ -223,7 +229,7 @@ END;
 			<br />
 			<table class="access-table" style="width: 400px;">
 				<tr><th>MTU</th></tr>
-				<tr><td><input class="wanInput textfield" size="4" maxlength="10" id="mtu" name="mtu" value="{$wanInt->getMtu()}" /></td></tr>
+				<tr><td><input class="wanInput textfield" size="4" maxlength="10" id="mtu" name="mtu" value="{$this->wanInt->getMtu()}" /></td></tr>
 			</table>
 			<button type="button" id="saveWanSettingsBtn" style="margin-top: 5px;">Save</button>
 			<br />
