@@ -19,6 +19,7 @@
 		{			
 			$out = parent::generateConfig();
 			$out[] = "bridge_ports " . $this->ethInt . (!empty($this->wlanInt) ? " " . $this->wlanInt : "");
+			$out[] = "bridge_maxwait 0";
 			
 			return $out;
 		}

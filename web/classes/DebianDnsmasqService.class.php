@@ -130,25 +130,37 @@
 		// Override
 		public function setIpRanges(array $ipRanges)
 		{
+			$temp = array();
+			
 			foreach ($ipRanges as $ipRange)
 			{
+				$ipRange = (object) $ipRange;
+				
 				if (!NetUtils::isValidIp($ipRange->startIp) || !NetUtils::isValidIp($ipRange->endIp))
 					throw new Exception("Invalid IP entered for ip range: " . $ipRange->startIp . " - " . $ipRange->endIp);
+					
+				$temp[] = $ipRange;
 			}
 			
-			$this->ipRanges = $ipRanges;
+			$this->ipRanges = $temp;
 		}
 		
 		// Override
 		public function setStickyIps(array $stickyIps)
 		{
+			$temp = array();
+			
 			foreach ($stickyIps as $stickyIp)
 			{
+				$stickyIp = (object) $stickyIp;
+				
 				if (!NetUtils::isValidIp($stickyIp->ip) || !NetUtils::isValidMac($stickyIp->mac))
 					throw new Exception("Invalid IP or MAC entered for sticky IP");
+					
+				$temp[] = $stickyIp;
 			}
 			
-			$this->stickyIps = $stickyIps;
+			$this->stickyIps = $temp;
 		}
 		
 		// Override
