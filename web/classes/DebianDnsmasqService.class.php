@@ -136,6 +136,9 @@
 			{
 				$ipRange = (object) $ipRange;
 				
+				if (empty($ipRange->startIp) && empty($ipRange->endIp))
+					continue;
+				
 				if (!NetUtils::isValidIp($ipRange->startIp) || !NetUtils::isValidIp($ipRange->endIp))
 					throw new Exception("Invalid IP entered for ip range: " . $ipRange->startIp . " - " . $ipRange->endIp);
 					
@@ -153,6 +156,9 @@
 			foreach ($stickyIps as $stickyIp)
 			{
 				$stickyIp = (object) $stickyIp;
+				
+				if (empty($stickyIp->name) && empty($stickyIp->mac) && empty($stickyIp->ip))
+					continue;
 				
 				if (!NetUtils::isValidIp($stickyIp->ip) || !NetUtils::isValidMac($stickyIp->mac))
 					throw new Exception("Invalid IP or MAC entered for sticky IP");
@@ -172,13 +178,20 @@
 		// Override
 		public function setNameservers(array $nameservers)
 		{
+			$temp = array();
+			
 			foreach ($nameservers as $nameserver)
 			{
+				if (empty($nameserver))
+					continue;
+					
 				if (!NetUtils::isValidIp($nameserver))
 					throw new Exception("Invalid IP entered for nameserver");
+					
+				$temp[] = $nameserver;
 			}
 			
-			$this->nameservers = $nameservers;
+			$this->nameservers = $temp;
 		}
 	}
 ?>
