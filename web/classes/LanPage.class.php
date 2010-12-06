@@ -34,19 +34,21 @@
 			
 			return <<<END
 			
+			var showSaveButton = function()
+			{
+				if (!$("#saveLanSettingsBtn").is(":visible"))
+				{
+					$("#saveLanSettingsBtn")
+						.html("Save")
+						.removeAttr("disabled")
+						.fadeIn();
+				}
+			}
+			
 			$(document).ready(function()
 			{
 				// event handlers				
-				$(".lanInput").change(function()
-				{
-					if (!$("#saveLanSettingsBtn").is(":visible"))
-					{
-						$("#saveLanSettingsBtn")
-							.html("Save")
-							.removeAttr("disabled")
-							.fadeIn();
-					}
-				});
+				$(".lanInput").change(showSaveButton);
 				
 				$("#addNameserverBtn").click(function()
 				{
@@ -202,9 +204,7 @@
 				element.find("button.removeBtn").click(function()
 				{
 					$(this).parentsUntil(".removeable").parent().remove();
-					
-					// make 'Save' button appear
-					$(".lanInput").first().change();
+					showSaveButton();
 				});
 			}
 			
@@ -213,9 +213,8 @@
 				where.append(what);
 				$(".removeBtn").hide();
 				makeRemoveable(where.find(".removeable:last"));
-				
-				// make 'Save' button appear
-				$(".lanInput").first().change();
+								
+				where.find("input.lanInput").change(showSaveButton);
 			}
 END;
 		}
