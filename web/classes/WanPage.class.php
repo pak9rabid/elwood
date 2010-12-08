@@ -29,19 +29,21 @@
 			
 			return <<<END
 			
+			var showSaveButton = function()
+			{
+				if (!$("#saveWanSettingsBtn").is(":visible"))
+				{
+					$("#saveWanSettingsBtn")
+						.html("Save")
+						.removeAttr("disabled")
+						.fadeIn();
+				}
+			}
+			
 			$(document).ready(function()
 			{
 				// event handlers
-				$(".wanInput").change(function()
-				{
-					if (!$("#saveWanSettingsBtn").is(":visible"))
-					{
-						$("#saveWanSettingsBtn")
-							.html("Save")
-							.removeAttr("disabled")
-							.fadeIn();
-					}
-				});
+				$(".wanInput").change(showSaveButton);
 			
 				$("#ipTypeDhcp").click(function()
 				{
@@ -68,25 +70,25 @@
 					});
 			
 					$("#addNsBtn").attr("disabled", "disabled");
+					$("#nameservers > tbody > tr").removeClass("removeable");
 				});
 			
 				$("#dnsTypeStatic").click(function()
 				{
 					$(".nameserverInput").removeAttr("disabled");
 					$("#addNsBtn").removeAttr("disabled");
+					$("#nameservers > tbody > tr").addClass("removeable");
+					makeRemoveable($(".removeable"));
 				});
 			
-				$("#addNsBtn").click(function()
+				$("#addNameserverBtn").click(function()
 				{
-					var i = $(".nameserverInput").length + 1;
-					
-					$("#dns-table > tbody").append	(
-														"<tr>" +
-															"<td>&nbsp;</td>" +
-															"<td align='right'>Nameserver " + i + ":</td>" +
-															"<td><input class='wanInput textfield nameserverInput' id='nameserver" + i + "' name='nameserver" + i + "' /></td>" +
-														"</tr>"
-													);
+					var html =	"<tr class='removeable'>" +
+									"<td><input class='textfield wanInput nameserverInput nameserver' /></td>" +
+									"<td width='30px'><button type='button' class='removeBtn nameserverInput' title='Remove nameserver'>-</button></td>" +
+								"</tr>";
+								
+					addRemoveableField(html, $("#nameservers > tbody"));
 				});
 			
 				$("#saveWanSettingsBtn").click(function()
@@ -99,7 +101,7 @@
 						
 					var nameservers = new Array();
 					
-					$(".nameserverInput").each(function()
+					$(".nameserver").each(function()
 					{
 						var nameserver = $(this).val().replace(/^\s+|\s+$/g, "");
 						
@@ -116,12 +118,12 @@
 											ipAddress: $("#ipAddress").val(),
 											netmask: $("#netmask").val(),
 											gateway: $("#gateway").val(),
-											nameservers: nameservers.join(","),
+											nameservers: nameservers,
 											mtu: $("#mtu").val()
 										}
 									};
 			
-					$.getJSON("ajax/ajaxRequest.php", params, function(response)
+					$.post("ajax/ajaxRequest.php", params, function(response)
 					{
 						if (response.errors.length > 0)
 						{
@@ -147,6 +149,7 @@
 				});
 			
 				// initialize
+				$(".removeBtn").hide();
 				$("#saveWanSettingsBtn").hide();
 				$("#wanMessages").hide();
 				
@@ -160,7 +163,44 @@
 					$("#ipTypeStatic").click();
 					$("#dnsTypeStatic").click();
 				}
+				
+				makeRemoveable($(".removeable"));
 			});
+			
+			function makeRemoveable(element)
+			{
+				element
+					.mouseover(function()
+					{
+						var rmButton = $(this).find("button.removeBtn");
+						
+						if (!rmButton.is(":disabled"))
+							rmButton.show();
+					})
+					
+					.mouseout(function()
+					{
+						var rmButton = $(this).find("button.removeBtn");
+						
+						if (!rmButton.is(":disabled"))
+							rmButton.hide();
+					});
+					
+				element.find("button.removeBtn").click(function()
+				{
+					$(this).parentsUntil(".removeable").parent().remove();
+					showSaveButton();
+				});
+			}
+			
+			function addRemoveableField(what, where)
+			{
+				where.append(what);
+				$(".removeBtn").hide();
+				makeRemoveable(where.find(".removeable:last"));
+								
+				where.find("input.wanInput").change(showSaveButton);
+			}
 END;
 		}
 		
@@ -171,14 +211,17 @@ END;
 			$out = <<<END
 			
 			<table class="ip-table" style="width: 400px;">
-				<tr><th colspan="3">IP Address</th></tr>
+				<tr><th colspan="3">Interface</th></tr>
 				<tr>
 					<td align="right"><input class="wanInput" type="radio" id="ipTypeDhcp" name="ipType" value="dynamic" /></td>
 					<td align="left" colspan="2">Obtain IP address automatically</td>
 				</tr>
 				<tr>
 					<td align="right"><input class="wanInput" type="radio" id="ipTypeStatic" name="ipType" value="static" /></td>
-					<td align="left" colspan="2">Specify IP address</td>
+					<td align="left" colspan="2">Specify IP address:</td>
+				</tr>
+				<tr>
+					<td colspan="3">&nbsp;</td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>
@@ -195,6 +238,14 @@ END;
 					<td align="right">Gateway:</td>
 					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="gateway" name="gateway" value="{$this->wanInt->getGateway()}" /></td>
 				</tr>
+				<tr>
+					<td colspan="3">&nbsp;</td>
+				</tr>
+				<tr>
+					<td>&nbsp;</td>
+					<td align="right">MTU:</td>
+					<td align="left"><input class="wanInput textfield" size="4" maxlength="4" id="mtu" name="mtu" value="{$this->wanInt->getMtu()}" /></td>
+				</tr>
 			</table>
 			<br />
 			<table id="dns-table" class="ip-table" style="width: 400px;">
@@ -205,32 +256,41 @@ END;
 				</tr>
 				<tr>
 					<td align="right"><input class="wanInput" type="radio" id="dnsTypeStatic" name="dnsType" value="static" /></td>
-					<td align="left">Specify DNS information</td>
-					<td align="right"><button type="button" id="addNsBtn" title="Add nameserver">+</button></td>
+					<td align="left" colspan="2">Specify DNS information</td>
 				</tr>
+				<tr>
+					<td colspan="3">&nbsp;</td>
+				</tr>
+				<tr>
+					<td align="center" colspan="3">
+						<fieldset>
+							<legend>Nameservers</legend>
+							<button type="button" id="addNameserverBtn" class="nameserverInput" title="Add nameserver">+</button>
+							<br /><br />
+							<table id="nameservers" align="center" style="border-collapse: collapse;">
+								<tbody>
 END;
-
+			
 			foreach ($dns->getNameservers() as $key => $nameserver)
 			{
-				$nsNum = $key + 1;
 				$out .= <<<END
-					
-				<tr>
-					<td>&nbsp;</td>
-					<td align="right">Nameserver $nsNum:</td>
-					<td><input class="wanInput textfield nameserverInput" id="nameserver$nsNum" name="nameserver$nsNum" value="$nameserver" /></td>
-				</tr>
+				
+									<tr class="removeable">
+										<td><input class="textfield wanInput nameserverInput nameserver" value="$nameserver" /></td>
+										<td width="30px"><button type="button" class="removeBtn nameserverInput" title="Remove nameserver">-</button></td>
+									</tr>
 END;
 			}
 				
 			return $out .= <<<END
 			
+								</tbody>
+							</table>
+						</fieldset>
+					</td>
+				</tr>
 			</table>
 			<br />
-			<table class="access-table" style="width: 400px;">
-				<tr><th>MTU</th></tr>
-				<tr><td><input class="wanInput textfield" size="4" maxlength="10" id="mtu" name="mtu" value="{$this->wanInt->getMtu()}" /></td></tr>
-			</table>
 			<button type="button" id="saveWanSettingsBtn" style="margin-top: 5px;">Save</button>
 			<br />
 			<div id="wanMessages"></div>

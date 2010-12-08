@@ -20,7 +20,7 @@
 			
 			$ipType = trim($parameters['ipType']);
 			$dnsType = trim($parameters['dnsType']);
-			$nameservers = explode(",", trim($parameters['nameservers']));
+			$nameservers = $parameters['nameservers'];
 			$mtu = trim($parameters['mtu']);
 			
 			$wanInt = NetworkInterface::getInstance("wan");
