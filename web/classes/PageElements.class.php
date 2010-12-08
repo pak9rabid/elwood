@@ -42,7 +42,6 @@ END;
 				<a href="wol.php">WOL</a>
 				<a href="elwoodPage.php?page=Firewall">Firewall</a>
 				<a href="portforward.php">Port Forwarding</a>
-				<a href="webterm.php">WebTerm</a>
 			</div>
 END;
 		}

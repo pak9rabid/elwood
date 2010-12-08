@@ -16,14 +16,6 @@ CREATE TABLE users
 	CHECK (usergroup IN ('admins', 'users'))
 );
 
-CREATE TABLE webterm_history
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	command VARCHAR (256) NOT NULL,
-	user VARCHAR (32) NOT NULL,
-	time TIMESTAMP NOT NULL
-);
-
 CREATE TABLE firewall_chains
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
@@ -65,14 +57,6 @@ CREATE TABLE firewall_dnat_rules
 );
 
 /* Create triggers */
-CREATE TRIGGER webterm_history_limiter AFTER INSERT ON webterm_history
-BEGIN
-	DELETE FROM webterm_history WHERE id IN
-		(SELECT id FROM webterm_history WHERE user =
-			(SELECT user from webterm_history WHERE rowid = last_insert_rowid())
-		ORDER BY time DESC LIMIT 50 OFFSET 50);
-END;
-
 CREATE TRIGGER set_filter_rule_num AFTER INSERT ON firewall_filter_rules
 BEGIN
 	UPDATE firewall_filter_rules
