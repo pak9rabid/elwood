@@ -24,7 +24,7 @@
 		{
 			$content = @file($file, FILE_IGNORE_NEW_LINES);
 			
-			if (!$content)
+			if (!is_array($content))
 				throw new Exception("Unable to read contents of file: $file");
 				
 			return $content;
