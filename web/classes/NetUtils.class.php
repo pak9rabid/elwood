@@ -267,18 +267,24 @@
 			return in_array($method, $wirelessSecurity->getConstants());
 		}
 		
-		public static function isValidWirelessKey($key, $type)
+		public static function isValidWirelessKey($key, $securityMethod)
 		{
-			// $type is one of 'WEP' or 'WPA'
-			// for WEP, only hex values are accepted
-			// for WPA, passphrase (strings) are accepted
+			// $securityMethod is one of the defined constants in the WirelessSecurity class
+			// for WEP, only 40 or 104 bit hex values are accepted
+			// for WPA[2]_PSK, passphrases between 8 and 63 characters are accepted
 			
-			if ($type != "WEP" && $type != "WPA")
+			$validSecurityMethods = array	(
+												WirelessSecurity::WEP,
+												WirelessSecurity::WPA_PSK,
+												WirelessSecurity::WPA2_PSK
+											);
+											
+			if (!in_array($securityMethod, $validSecurityMethods))
 				return false;
-				
-			if ($type == "WEP")
+							
+			if ($securityMethod == WirelessSecurity::WEP)
 			{
-				// WEP key (64 or 128 bit)
+				// WEP
 				if (!preg_match("/^([0-9A-Fa-f]{10}|[0-9A-Fa-f]{26})$/", $key))
 					return false;
 					
@@ -286,7 +292,7 @@
 			}
 			else
 			{
-				// WPA passphrase
+				// WPA
 				return (strlen($key) >= self::MIN_PSK_PASSPHRASE_LENGTH && strlen($key) <= self::MAX_PSK_PASSPHRASE_LENGTH); 
 			}
 		}
