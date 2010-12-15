@@ -7,7 +7,7 @@
 		const MAX_SSID_LENGTH = 31;
 		const MIN_PSK_PASSPHRASE_LENGTH = 8;
 		const MAX_PSK_PASSPHRASE_LENGTH = 63;
-		private static $WIRELESS_MODES = array("a", "b", "g", "n");
+		private static $WIRELESS_MODES = array("a", "b", "g");
 		private static $WIRELESS_CHANNELS_24_GHZ = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 		private static $WIRELESS_CHANNELS_5_GHZ = array(36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 136, 140, 149, 153, 157, 161, 165);
 		
@@ -310,6 +310,16 @@
 		public static function getWirelessChannels5()
 		{
 			return self::$WIRELESS_CHANNELS_5_GHZ;
+		}
+		
+		public static function isWpaMethodWithPsk($securityMethod)
+		{
+			$wpaMethods = array	(
+									WirelessSecurity::WPA_PSK,
+									WirelessSecurity::WPA2_PSK
+								);
+								
+			return in_array($securityMethod, $wpaMethods);
 		}
 	}
 ?>
