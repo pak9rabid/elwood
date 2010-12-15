@@ -1,8 +1,16 @@
 <?php
 	require_once "Net/IPv4.php";
+	require_once "WirelessSecurity.class.php";
 	
 	class NetUtils
 	{
+		const MAX_SSID_LENGTH = 31;
+		const MIN_PSK_PASSPHRASE_LENGTH = 8;
+		const MAX_PSK_PASSPHRASE_LENGTH = 63;
+		private static $WIRELESS_MODES = array("a", "b", "g", "n");
+		private static $WIRELESS_CHANNELS_24_GHZ = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+		private static $WIRELESS_CHANNELS_5_GHZ = array(36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 136, 140, 149, 153, 157, 161, 165);
+		
 		public static function mask2CIDR($netmask)
 		{
 			if (!self::isValidNetmask($netmask))
@@ -223,6 +231,79 @@
 				throw new Exception($error->getMessage());
 				
 			return (object) array("network" => $netCalculator->network, "broadcast" => $netCalculator->broadcast);
+		}
+		
+		public static function isValidSsid($ssid)
+		{
+			return (!empty($ssid) && strlen($ssid) <= self::MAX_SSID_LENGTH);
+		}
+		
+		public static function isValidWirelessMode($mode)
+		{
+			return in_array($mode, self::$WIRELESS_MODES);
+		}
+		
+		public static function isValidWirelessChannel($channel, $mode)
+		{
+			if (!self::isValidWirelessMode($mode))
+				return false;
+			
+			$channels = array	(
+									"a" => self::$WIRELESS_CHANNELS_5_GHZ,
+									"b" => self::$WIRELESS_CHANNELS_24_GHZ,
+									"g" => self::$WIRELESS_CHANNELS_24_GHZ,
+									"n" => array_merge(self::$WIRELESS_CHANNELS_24_GHZ, self::$WIRELESS_CHANNELS_5_GHZ)
+								);
+												
+			if (!in_array($channel, $channels[$mode]))
+				return false;
+				
+			return true;
+		}
+		
+		public static function isValidWirelessSecurityMethod($method)
+		{
+			$wirelessSecurity = new ReflectionClass("WirelessSecurity");
+			return in_array($method, $wirelessSecurity->getConstants());
+		}
+		
+		public static function isValidWirelessKey($key, $type)
+		{
+			// $type is one of 'WEP' or 'WPA'
+			// for WEP, only hex values are accepted
+			// for WPA, passphrase (strings) are accepted
+			
+			if ($type != "WEP" && $type != "WPA")
+				return false;
+				
+			if ($type == "WEP")
+			{
+				// WEP key (64 or 128 bit)
+				if (!preg_match("/^([0-9A-Fa-f]{10}|[0-9A-Fa-f]{26})$/", $key))
+					return false;
+					
+				return true;
+			}
+			else
+			{
+				// WPA passphrase
+				return (strlen($key) >= self::MIN_PSK_PASSPHRASE_LENGTH && strlen($key) <= self::MAX_PSK_PASSPHRASE_LENGTH); 
+			}
+		}
+		
+		public static function getWirelessModes()
+		{
+			return self::$WIRELESS_MODES;
+		}
+		
+		public static function getWirelessChannels24()
+		{
+			return self::$WIRELESS_CHANNELS_24_GHZ;
+		}
+		
+		public static function getWirelessChannels5()
+		{
+			return self::$WIRELESS_CHANNELS_5_GHZ;
 		}
 	}
 ?>
