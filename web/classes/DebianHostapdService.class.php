@@ -18,16 +18,26 @@
 		// Override
 		public function stop()
 		{
-			Console::execute("sudo /etc/init.d/hostapd stop");
+			if ($this->isRunning())
+			{
+				Console::execute("sudo /etc/init.d/hostapd stop");
+				sleep(3);
+			}
 		}
 		
 		// Override
 		public function start()
 		{
+			if ($this->isRunning())
+				return;
+				
 			Console::execute("sudo /etc/init.d/hostapd start");
+			sleep(3);
 			
+			// hostapd init.d seems to always return an exit status of 0, even if it fails
+			// checking if it failed to start this way
 			if (!$this->isRunning())
-				throw new Exception("The hostapd service failed to start...this is probably due to a bad config option in " . $this->service->config);
+				throw new Exception("The hostapd service failed to start");
 		}
 		
 		// Override
@@ -35,8 +45,10 @@
 		{
 			Console::execute("sudo /etc/init.d/hostapd restart");
 			
+			// hostapd init.d seems to always return an exit status of 0, even if it fails
+			// checking if it failed to start this way
 			if (!$this->isRunning())
-				throw new Exception("The hostapd service failed to retart...this is probably due to a bad config option in " . $this->service->config);
+				throw new Exception("The hostapd service failed to retart");
 		}
 		
 		// Override
