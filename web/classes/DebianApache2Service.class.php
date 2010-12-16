@@ -12,26 +12,42 @@
 		// Override
 		public function stop()
 		{
-			Console::execute("sudo /etc/init.d/apache2 stop");
+			if ($this->isRunning())
+			{
+				Console::execute("sudo /etc/init.d/apache2 stop");
+				sleep(3);
+			}
 		}
 		
 		// Override
 		public function start()
 		{
-			Console::execute("sudo /etc/init.d/apache2 start");
+			if (!$this->isRunning())
+			{
+				Console::execute("sudo /etc/init.d/apache2 start");
+				sleep(3);
+			}
 		}
 		
 		// Override
 		public function restart()
 		{
-			try
+			if (!$this->isRunning())
+				$this->start();
+			else
 			{
-				Console::execute("sudo /etc/init.d/apache2 reload");
-			}
-			catch (Exception $ex)
-			{
-				// Compensating for a bug when running '/etc/init.d/apache2 reload' where
-				// it returns an exit status of 1, even though the command runs ok
+				try
+				{
+					Console::execute("sudo /etc/init.d/apache2 reload");
+				}
+				catch (Exception $ex)
+				{
+					/* HACK: For some reason, when issuing '/etc/init.d/apache2 reload' from within PHP,
+					 * it gets an exit code of 1 back, signifiying an error, when there were no errors.
+					 * This is a hacky workaround for that situation.  Be aware that this may cause legitimate
+					 * errors to go unnoticed.
+					 */
+				}
 			}
 		}
 		

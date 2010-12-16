@@ -17,19 +17,42 @@
 		// Override
 		public function stop()
 		{
-			Console::execute("sudo /etc/init.d/dnsmasq stop");
+			if ($this->isRunning())
+			{
+				Console::execute("sudo /etc/init.d/dnsmasq stop");
+				sleep(3);
+			}
 		}
 		
 		// Override
 		public function start()
 		{
-			Console::execute("sudo /etc/init.d/dnsmasq start");
+			if ($this->isRunning())
+				return;
+			
+			try
+			{
+				Console::execute("sudo /etc/init.d/dnsmasq start");
+				sleep(3);
+			}
+			catch (Exception $ex)
+			{
+				throw new Exception("The dnsmasq service failed to start");
+			}
 		}
 		
 		// Override
 		public function restart()
 		{
-			Console::execute("sudo /etc/init.d/dnsmasq restart");
+			try
+			{
+				Console::execute("sudo /etc/init.d/dnsmasq restart");
+				sleep(3);
+			}
+			catch (Exception $ex)
+			{
+				throw new Exception("The dnsmasq service failed to restart");
+			}
 		}
 		
 		// Override

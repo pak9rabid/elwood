@@ -12,19 +12,42 @@
 		// Override
 		public function stop()
 		{
-			Console::execute("sudo /etc/init.d/ssh stop");
+			if ($this->isRunning())
+			{
+				Console::execute("sudo /etc/init.d/ssh stop");
+				sleep(3);
+			}
 		}
 		
 		// Override
 		public function start()
 		{
-			Console::execute("sudo /etc/init.d/ssh start");
+			if ($this->isRunning())
+				return;
+				
+			try
+			{
+				Console::execute("sudo /etc/init.d/ssh start");
+				sleep(3);
+			}
+			catch (Exception $ex)
+			{
+				throw new Exception("The sshd service failed to start");
+			}
 		}
 		
 		// Override
 		public function restart()
 		{
-			Console::execute("sudo /etc/init.d/ssh restart");
+			try
+			{
+				Console::execute("sudo /etc/init.d/ssh restart");
+				sleep(3);
+			}
+			catch (Exception $ex)
+			{
+				throw new Exception("The sshd service failed to restart");
+			}
 		}
 		
 		// Override

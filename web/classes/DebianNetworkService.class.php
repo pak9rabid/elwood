@@ -13,13 +13,27 @@
 		// Override
 		public function start()
 		{
-			Console::execute("sudo /etc/init.d/networking start");
+			try
+			{
+				Console::execute("sudo /etc/init.d/networking start");
+			}
+			catch (Exception $ex)
+			{
+				throw new Exception("The network service failed to start");
+			}
 		}
 		
 		// Override
 		public function restart()
 		{
-			Console::execute("sudo /etc/init.d/networking restart");
+			try
+			{
+				Console::execute("sudo /etc/init.d/networking restart");
+			}
+			catch (Exception $ex)
+			{
+				throw new Exception("The network service failed to restart");
+			}
 		}
 		
 		// Override
