@@ -7,6 +7,7 @@
 		const MAX_SSID_LENGTH = 31;
 		const MIN_PSK_PASSPHRASE_LENGTH = 8;
 		const MAX_PSK_PASSPHRASE_LENGTH = 63;
+		const MAX_WEP_KEY_LENGTH = 26;
 		private static $WIRELESS_MODES = array("a", "b", "g");
 		private static $WIRELESS_CHANNELS_24_GHZ = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 		private static $WIRELESS_CHANNELS_5_GHZ = array(36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 136, 140, 149, 153, 157, 161, 165);
@@ -263,8 +264,24 @@
 		
 		public static function isValidWirelessSecurityMethod($method)
 		{
-			$wirelessSecurity = new ReflectionClass("WirelessSecurity");
-			return in_array($method, $wirelessSecurity->getConstants());
+			foreach (self::getWirelessSecurityMethods() as $validMethod)
+			{
+				if ($method == eval("return WirelessSecurity::$validMethod;"))
+					return true;
+			}
+			
+			return false;
+		}
+		
+		public static function isValidWirelessAuthMethod($method)
+		{
+			foreach (self::getWirelessAuthMethods() as $validMethod)
+			{
+				if ($method == eval("return WirelessSecurity::$validMethod;"))
+					return true;
+			}
+			
+			return false;
 		}
 		
 		public static function isValidWirelessKey($key, $securityMethod)
@@ -292,9 +309,29 @@
 			}
 			else
 			{
-				// WPA
+				// WPA passphrase
 				return (strlen($key) >= self::MIN_PSK_PASSPHRASE_LENGTH && strlen($key) <= self::MAX_PSK_PASSPHRASE_LENGTH); 
 			}
+		}
+		
+		public static function getWirelessSecurityMethods()
+		{			
+			return array	(
+								"NONE",
+								"WEP",
+								"WPA_PSK",
+								"WPA_EAP",
+								"WPA2_PSK",
+								"WPA2_EAP"
+							);
+		}
+		
+		public static function getWirelessAuthMethods()
+		{			
+			return array	(
+								"AUTH_OPEN",
+								"AUTH_SHARED_KEY"
+							);
 		}
 		
 		public static function getWirelessModes()

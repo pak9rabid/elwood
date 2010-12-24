@@ -5,15 +5,25 @@
 	require_once "RouterSettings.class.php";
 	require_once "WirelessSecurity.class.php";
 	require_once "FileUtils.class.php";
+	require_once "NetworkInterface.class.php";
 	
 	class DebianHostapdService extends Service implements WirelessService
 	{
 		private $ssid;
-		private $mode;
+		private $mode = "b";
 		private $isSsidHidden;
-		private $channel;
+		private $channel = 1;
 		private $securityMethod;
-		private $keys = array();
+		private $wpaPassphrase;
+		private $wepKeys = array();
+		private $authMethod = WirelessSecurity::AUTH_OPEN;
+		private $defaultWepKeyIndex = 0;
+		private $authServerAddr;
+		private $authServerPort;
+		private $authServerSharedSecret;
+		private $acctServerAddr;
+		private $acctServerPort;
+		private $acctServerSharedSecret;
 		
 		// Override
 		public function stop()
@@ -48,7 +58,7 @@
 			// hostapd init.d seems to always return an exit status of 0, even if it fails
 			// checking if it failed to start this way
 			if (!$this->isRunning())
-				throw new Exception("The hostapd service failed to retart");
+				throw new Exception("The hostapd service failed to restart");
 		}
 		
 		// Override
@@ -70,40 +80,63 @@
 								"hw_mode=" . $this->mode,
 								"channel=" . $this->channel,
 								"ignore_broadcast_ssid=" . ($this->isSsidHidden ? "1" : "0"),
-								"auth_algs=3",
 								"eapol_key_index_workaround=0",
 							);
-							
-			switch ($this->securityMethod)
+
+			if ($this->securityMethod == WirelessSecurity::WEP)
 			{
-				case WirelessSecurity::NONE:
-					// no security...nothing else to do
-					break;
-				case WirelessSecurity::WEP:
-					$config[] = "wep_default_key=0";
+				$config[] = "auth_algs=" . $this->authMethod;
+				$config[] = "wep_default_key=" . $this->defaultWepKeyIndex;
+				
+				foreach ($this->wepKeys as $key => $value)
+					$config[] = "wep_key$key=$value";
+			}
+			else
+			{
+				if ($this->securityMethod != WirelessSecurity::NONE)
+					$config[] = "auth_algs=1";
 					
-					foreach ($this->keys as $key => $value)
-						$config[] = "wep_key$key=$value";
-						
-					break;
-				case WirelessSecurity::WPA_PSK:
+				if	(in_array($this->securityMethod, array	(
+																WirelessSecurity::WPA_EAP,
+																WirelessSecurity::WPA_PSK
+															)))
+				{
 					$config[] = "wpa=1";
-					$config[] = "wpa_passphrase=" . $this->keys[0];
-					$config[] = "wpa_key_mgmt=WPA-PSK";
-					$config[] = "wpa_pairwise=TKIP CCMP";
-					break;
-				case WirelessSecurity::WPA_EAP:
-					// TODO: implement this later
-					break;
-				case WirelessSecurity::WPA2_PSK:
+					$config[] = "wpa_pairwise=TKIP";
+				}
+				else if (in_array($this->securityMethod, array	(
+																WirelessSecurity::WPA2_EAP,
+																WirelessSecurity::WPA2_PSK
+															)))
+				{
 					$config[] = "wpa=2";
-					$config[] = "wpa_passphrase=" . $this->keys[0];
+					$config[] = "rsn_pairwise=CCMP";
+					$config[] = "auth_algs=1";
+				}
+				
+				if (in_array($this->securityMethod, array	(
+																WirelessSecurity::WPA_PSK,
+																WirelessSEcurity::WPA2_PSK
+															)))
+				{
+					$config[] = "wpa_passphrase=" . $this->wpaPassphrase;
 					$config[] = "wpa_key_mgmt=WPA-PSK";
-					$config[] = "wpa_pairwise=CCMP";
-					break;
-				case WirelessSecurity::WPA2_EAP:
-					// TODO: implement this later
-					break;
+				}
+				else if (in_array($this->securityMethod, array	(
+																WirelessSecurity::WPA_EAP,
+																WirelessSecurity::WPA2_EAP
+															)))
+				{
+					$config[] = "own_ip_addr=" . NetworkInterface::getInstance("lan")->getIp();
+					$config[] = "ieee8021x=1";
+					$config[] = "auth_server_addr=" . $this->authServerAddr;
+					$config[] = "auth_server_port=" . $this->authServerPort;
+					$config[] = "auth_server_shared_secret=" . $this->authServerSharedSecret;
+					$config[] = "acct_server_addr=" . $this->acctServerAddr;
+					$config[] = "acct_server_port=" . $this->acctServerPort;
+					$config[] = "acct_server_shared_secret=" . $this->acctServerSharedSecret;
+					$config[] = "wpa_key_mgmt=WPA-EAP";
+				}
 			}
 			
 			FileUtils::writeToFile($this->service->config, implode("\n",$config));
@@ -115,6 +148,8 @@
 			$config = FileUtils::readFileAsArray($this->service->config);
 			$wpaVersion = "";
 			$wpaMethod = "";
+			$wepKeys = array();
+			$wepDefaultKeyIndex = "";
 			
 			foreach ($config as $line)
 			{
@@ -137,7 +172,8 @@
 						$this->setChannel($optionValue);
 						break;
 					case "wep_default_key":
-						$this->securityMethod = WirelessSecurity::WEP;
+						$this->setSecurityMethod(WirelessSecurity::WEP);
+						$wepDefaultKeyIndex = $optionValue;
 						break;
 					case "wpa":
 						
@@ -151,32 +187,59 @@
 						list($temp, $wpaMethod) = explode("-", $optionValue);
 						break;
 					case "wep_key0":
-						$this->keys[0] = $optionValue;
+						$wepKeys[0] = $optionValue;
 						break;
 					case "wep_key1":
-						$this->keys[1] = $optionValue;
+						$wepKeys[1] = $optionValue;
 						break;
 					case "wep_key2":
-						$this->keys[2] = $optionValue;
+						$wepKeys[2] = $optionValue;
 						break;
 					case "wep_key3":
-						$this->keys[3] = $optionValue;
+						$wepKeys[3] = $optionValue;
 						break;
 					case "wpa_passphrase":
-						$this->keys = array($optionValue);
+						$this->setWpaPassphrase($optionValue);
+						break;
+					case "auth_algs":
+						$this->setAuthMethod($optionValue);
+						break;
+					case "auth_server_addr":
+						$this->setAuthServerAddr($optionValue);
+						break;
+					case "auth_server_port":
+						$this->setAuthServerPort($optionValue);
+						break;
+					case "auth_server_shared_secret":
+						$this->setAuthServerSharedSecret($optionValue);
+						break;
+					case "acct_server_addr":
+						$this->setAcctServerAddr($optionValue);
+						break;
+					case "acct_server_port":
+						$this->setAcctServerPort($optionValue);
+						break;
+					case "acct_server_shared_secret":
+						$this->setAcctServerSharedSecret($optionValue);
 						break;
 				}
 			}
+			
+			if (!empty($wepKeys))
+				$this->setWepKeys($wepKeys);
+				
+			if (!empty($wepDefaultKeyIndex))
+				$this->setDefaultWepKeyIndex($wepDefaultKeyIndex);
 			
 			if (empty($this->securityMethod))
 			{
 				if (!empty($wpaVersion) && !empty($wpaMethod))
 				{
 					$securityMethod = $wpaVersion . "_" . $wpaMethod;
-					eval("\$this->securityMethod = WirelessSecurity::$securityMethod;");
+					eval("\$this->setSecurityMethod(WirelessSecurity::$securityMethod);");
 				}
 				else
-					$this->securityMethod = WirelessSecurity::NONE;
+					$this->setSecurityMethod(WirelessSecurity::NONE);
 			}
 		}
 		
@@ -217,9 +280,63 @@
 		}
 		
 		// Override
-		public function	getKeys()
+		public function	getWepKeys()
 		{
-			return $this->keys;
+			return $this->wepKeys;
+		}
+		
+		// Override
+		public function getWpaPassphrase()
+		{
+			return $this->wpaPassphrase;
+		}
+		
+		// Override
+		public function getAuthMethod()
+		{
+			return $this->authMethod;
+		}
+		
+		// Override
+		public function getDefaultWepKeyIndex()
+		{
+			return $this->defaultWepKeyIndex;
+		}
+		
+		// Override
+		public function getAuthServerAddr()
+		{
+			return $this->authServerAddr;
+		}
+		
+		// Override
+		public function getAuthServerPort()
+		{
+			return $this->authServerPort;
+		}
+		
+		// Override
+		public function getAuthServerSharedSecret()
+		{
+			return $this->authServerSharedSecret;
+		}
+		
+		// Override
+		public function getAcctServerAddr()
+		{
+			return $this->acctServerAddr;
+		}
+		
+		// Override
+		public function getAcctServerPort()
+		{
+			return $this->acctServerPort;
+		}
+		
+		// Override
+		public function getAcctServerSharedSecret()
+		{
+			return $this->acctServerSharedSecret;
 		}
 				
 		// Override
@@ -271,33 +388,108 @@
 		}
 		
 		// Override
-		public function setKeys(array $keys)
+		public function setWepKeys(array $wepKeys)
 		{
-			if (empty($this->securityMethod) || $this->securityMethod == WirelessSecurity::NONE)
-				throw new Exception("A wireless security method must be specified before keys can be set");
-								
 			$temp = array();
 			
-			foreach ($keys as $key)
+			foreach ($wepKeys as $key)
 			{
-				if (NetUtils::isWpaMethodWithPsk($this->securityMethod) && count($temp) == 1)
-					// WPA_PSK only uses a single passphrase
+				if (count($temp) == 4)
+					// Max of 4 keys accepted..others are simply dropped
 					break;
 					
-				if ($this->securityMethod == WirelessSecurity::WEP && count($temp) == 4)
-					// WEP allows a max of 4 keys to be set
-					break;
-				
 				if (empty($key))
 					continue;
 					
-				if (!NetUtils::isValidWirelessKey($key, $this->securityMethod))
-					throw new Exception("Invalid wireless key specified, or the wireless method set doesn't take keys");
+				if (!NetUtils::isValidWirelessKey($key, WirelessSecurity::WEP))
+					throw new Exception("Invalid WEP key specified");
 					
 				$temp[] = $key;
 			}
 			
-			$this->keys = $temp;
+			$this->wepKeys = $temp;
+		}
+		
+		// Override
+		public function setWpaPassphrase($passphrase)
+		{
+			if (!NetUtils::isValidWirelessKey($passphrase, WirelessSecurity::WPA_PSK))
+				throw new Exception ("Invalid WPA passphrase specified");
+				
+			$this->wpaPassphrase = $passphrase;
+		}
+		
+		// Override
+		public function setAuthMethod($authMethod)
+		{
+			if (!NetUtils::isValidWirelessAuthMethod($authMethod))
+				throw new Exception("Invalid wireless authentication method specified");
+				
+			$this->authMethod = $authMethod;
+		}
+		
+		// Override
+		public function setDefaultWepKeyIndex($index)
+		{
+			// $index can be 0-3, and must be less than the count of the wep keys set
+			if (!preg_match("/^[0-3]$/", $index) || $index >= count($this->wepKeys))
+				throw new Exception("Invalid default key index specified");
+				
+			$this->defaultWepKeyIndex = $index;
+		}
+		
+		// Override
+		public function setAuthServerAddr($addr)
+		{
+			if (empty($addr) || !NetUtils::isValidIp($addr))
+				throw new Exception("Invalid IP address specified for authentication server");
+				
+			$this->authServerAddr = $addr;
+		}
+		
+		// Override
+		public function setAuthServerPort($port)
+		{
+			if (empty($port) || !NetUtils::isValidIanaPortNumber($port))
+				throw new Exception("Invalid port number specified for authentication server");
+				
+			$this->authServerPort = $port;
+		}
+		
+		// Override
+		public function setAuthServerSharedSecret($secret)
+		{
+			if (empty($secret) || !NetUtils::isValidWirelessKey($secret, WirelessSecurity::WPA_PSK))
+				throw new Exception("Invalid shared secret entered for authentication server");
+				
+			$this->authServerSharedSecret = $secret;
+		}
+		
+		// Override
+		public function setAcctServerAddr($addr)
+		{
+			if (empty($addr) || !NetUtils::isValidIp($addr))
+				throw new Exception("Invalid IP address specified");
+				
+			$this->acctServerAddr = $addr;
+		}
+		
+		// Override
+		public function setAcctServerPort($port)
+		{
+			if (empty($port) || !NetUtils::isValidIanaPortNumber($port))
+				throw new Exception("Invalid port number specified for accounting server");
+				
+			$this->acctServerPort = $port;
+		}
+		
+		// Override
+		public function setAcctServerSharedSecret($secret)
+		{
+			if (empty($secret) || !NetUtils::isValidWirelessKey($secret, WirelessSecurity::WPA_PSK))
+				throw new Exception("Invalid shared secret entered for accounting server");
+				
+			$this->acctServerSharedSecret = $secret;
 		}
 	}
 ?>
