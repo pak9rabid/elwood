@@ -3,6 +3,7 @@
 	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterTable.class.php";
 	require_once "NetUtils.class.php";
+	require_once "IPTablesFwFilterTranslator.class.php";
 	require_once "User.class.php";
 	
 	class FirewallPage implements Page
@@ -332,9 +333,10 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
-			TempDatabase::create();
+			$tempDb = new TempDatabase();
+			IPTablesFwFilterTranslator::setDbFromSystem($tempDb);
 			
-			$fwFilter = new FirewallFilterTable();
+			$fwFilter = new FirewallFilterTable($tempDb);
 			$direction = $parameters['dir'] == null ? "in" : $parameters['dir'];
 			
 			return <<<END

@@ -2,13 +2,13 @@
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
 	require_once "RouterSettings.class.php";
-	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterRule.class.php";
 	require_once "Service.class.php";
 	require_once "HTTPService.class.php";
 	require_once "SSHService.class.php";
 	require_once "IPTablesFwFilterTranslator.class.php";
 	require_once "FileUtils.class.php";
+	require_once "TempDatabase.class.php";
 	require_once "User.class.php";
 	
 	class EditAccessMethodsAjaxRequestHandler implements AjaxRequestHandler
@@ -65,30 +65,33 @@
 			$sshService->load();
 			
 			// Create temp database and clear INPUT chain
-			TempDatabase::create();
+			$tempDb = new TempDatabase();
+			IPTablesFwFilterTranslator::setDbFromSystem($tempDb);
+			
 			$rule = new FirewallFilterRule();
+			$rule->setConnection($tempDb);
 			$rule->setAttribute("chain_name", "INPUT");
-			$rule->executeDelete(true);
+			$rule->executeDelete();
 			
 			// We'll allow all ESTABLISHED,RELATED connections
 			$rule->setAllAttributes(array("chain_name" => "INPUT", "state" => "ESTABLISHED,RELATED", "target" => "ACCEPT"));
-			$rule->executeInsert(true);
+			$rule->executeInsert();
 			
 			// HTTP
 			if ($httpLan && $httpWan)
 			{
 				$rule->setAllAttributes(array("chain_Name" => "INPUT", "protocol" => "tcp", "dport" => $httpPort, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			else if ($httpWan && !$httpLan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $extIf, "dport" => $httpPort, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			else if ($httpLan && !$httpWan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $intIf, "dport" => $httpPort, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 
 			RouterSettings::saveSetting("HTTP_PORT", $httpPort);
@@ -99,17 +102,17 @@
 			if ($sshWan && $sshLan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "dport" => $sshPort, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			else if ($sshWan && !$sshLan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $extIf, "dport" => $sshPort, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			else if ($sshLan && !$sshWan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $intIf, "dport" => $sshPort, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			
 			RouterSettings::saveSetting("SSH_PORT", $sshPort);
@@ -120,26 +123,25 @@
 			if ($icmpWan && $icmpLan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "icmp", "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			else if ($icmpWan && !$icmpLan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "icmp", "int_in" => $extIf, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			else if ($icmpLan && !$icmpWan)
 			{
 				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "icmp", "int_in" => $intIf, "target" => "ACCEPT"));
-				$rule->executeInsert(true);
+				$rule->executeInsert();
 			}
 			
 			RouterSettings::saveSetting("WAN_ICMP_ENABLED", $icmpWan ? 1 : 0);
 			RouterSettings::saveSetting("LAN_ICMP_ENABLED", $icmpLan ? 1 : 0);
 			
 			// Save changes to firewall
-			$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb(true);
+			$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb($tempDb);
 			FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");
-			TempDatabase::destroy();
 			
 			// Restart services, if needbe			
 			if ($httpService->getPort() != $httpPort)

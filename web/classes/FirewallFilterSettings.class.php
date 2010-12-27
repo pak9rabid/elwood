@@ -7,12 +7,13 @@
 	
 	class FirewallFilterSettings
 	{
-		public static function getChain($chainName)
+		public static function getChain($chainName, TempDatabase $tempDb)
 		{
 			$selectHash = new FirewallChain();
+			$selectHash->setConnection($tempDb);
 			$selectHash->setAttribute("chain_name", $chainName);
 			
-			$results = $selectHash->executeSelect(true);
+			$results = $selectHash->executeSelect();
 			
 			if (count($results) <= 0)
 				throw new Exception("Specified chain does not exist");
@@ -20,37 +21,27 @@
 			return $results[0];
 		}
 		
-		public static function getChains()
+		public static function getChains(TempDatabase $tempDb)
 		{
 			$selectHash = new FirewallChain();
-			return $selectHash->executeSelect(true);
+			$selectHash->setConnection($tempDb);
+			return $selectHash->executeSelect();
 		}
-		
-		public static function getRule($id)
-		{
-			$selectHash = new FirewallFilterRule();
-			$selectHash->setAttribute("id", $id);
-			
-			$results = $selectHash->executeSelect(true);
-			
-			if (count($results) <= 0)
-				throw new Exception("Specified firewall rules does not exist");
 				
-			return $results[0];
-		}
-		
-		public static function getRules($chain)
+		public static function getRules($chain, TempDatabase $tempDb)
 		{
 			$selectHash = new FirewallFilterRule();
+			$selectHash->setConnection($tempDb);
 			$selectHash->setAttribute("chain_name", $chain);
-			return $selectHash->executeSelect(true);
+			return $selectHash->executeSelect();
 		}
 		
-		public static function clearRules($chain)
+		public static function clearRules($chain, TempDatabase $tempDb)
 		{
 			$deleteHash = new FirewallFilterRule();
+			$deleteHash->setConnection($tempDb);
 			$deleteHash->setAttribute("chain_name", $chain);
-			$deleteHash->executeDelete(true);
+			$deleteHash->executeDelete();
 		}
 	}
 ?>

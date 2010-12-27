@@ -2,6 +2,7 @@
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
 	require_once "FirewallFilterRule.class.php";
+	require_once "NetUtils.class.php";
 	require_once "User.class.php";
 	
 	class AddEditFwFilterRuleAjaxRequestHandler implements AjaxRequestHandler

@@ -8,6 +8,7 @@
 		protected $table = "";
 		protected $primaryKey = "id";
 		protected $hashMap = array();
+		protected $conn;
 
 		// Constructors
 		public function __construct($table)
@@ -24,6 +25,11 @@
 				$elements[] = "$key=$value";
 
 			return "{" . implode(", ", $elements) . "}";
+		}
+		
+		public function setConnection(Database $conn)
+		{
+			$this->conn = $conn;
 		}
 
 		public function setTable($table)
@@ -86,36 +92,48 @@
 			$this->hashMap = array();
 		}
 		
-		public function executeSelect($isTemp = false)
-		{
-			if ($isTemp)
-				return TempDatabase::executeSelect($this);
-				
-			return Database::executeSelect($this);
+		public function executeSelect()
+		{			
+			if (!empty($this->conn))
+				return $this->conn->executeSelect($this);
+			else
+			{
+				$db = new Database();
+				return $db->executeSelect($this);
+			}
 		}
 
-		public function executeInsert($isTemp = false)
-		{
-			if ($isTemp)
-				TempDatabase::executeInsert($this);
+		public function executeInsert()
+		{			
+			if (!empty($this->conn))
+				$this->conn->executeInsert($this);
 			else
-				Database::executeInsert($this);
+			{
+				$db = new Database();
+				$db->executeInsert($this);
+			}
 		}
 
-		public function executeUpdate($isTemp = false)
-		{
-			if ($isTemp)
-				TempDatabase::executeUpdate($this);
+		public function executeUpdate()
+		{			
+			if (!empty($this->conn))
+				$this->conn->executeUpdate($this);
 			else
-				Database::executeUpdate($this);
+			{
+				$db = new Database();
+				$db->executeUpdate($this);
+			}
 		}
 
-		public function executeDelete($isTemp = false)
-		{
-			if ($isTemp)
-				TempDatabase::executeDelete($this);
+		public function executeDelete()
+		{			
+			if (!empty($this->conn))
+				$this->conn->executeDelete($this);
 			else
-				Database::executeDelete($this);
+			{
+				$db = new Database();
+				$db->executeDelete($this);
+			}
 		}
 		
 		public function getAttributeDisp($attribute)

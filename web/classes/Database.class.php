@@ -6,22 +6,25 @@
 	{
 		// Constants
 		const DB_FILE = "/etc/elwood/elwood.db";
-	
-		// Public methods
-		public static function executeQuery(DbQueryPreper $prep)
+		
+		protected $pdo;
+		
+		public function __construct()
 		{
-			// Open database at DB_FILE, execute $query and return
-			// results
 			if (!file_exists(self::DB_FILE))
 				throw new Exception(self::DB_FILE . " does not exist");
-
+			
+			$this->pdo = new PDO("sqlite:" . self::DB_FILE);
+			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->pdo->exec("PRAGMA foreign_keys = ON");
+		}
+	
+		// Public methods
+		public function executeQuery(DbQueryPreper $prep)
+		{
 			try
-			{				
-				$conn = new PDO("sqlite:" . self::DB_FILE);
-				$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$conn->query("PRAGMA foreign_keys = ON");
-				
-				$stmt = $conn->prepare($prep->getQuery());
+			{
+				$stmt = $this->pdo->prepare($prep->getQuery());
 				$stmt->execute($prep->getBindVars());
 				return $stmt->fetchAll(PDO::FETCH_ASSOC);
 			}
@@ -31,7 +34,7 @@
 			}
 		}
 		
-		public static function executeSelect(DataHash $data, $isTemp = false)
+		public function executeSelect(DataHash $data)
 		{
 			$classType = get_class($data);
 			
@@ -45,12 +48,8 @@
 				$prep->addVariablesNoPlaceholder($data->getAttributeValues());
 			}
 			
-			$prep->addSql(" ORDER BY id");
-						
-			if ($isTemp)
-				$result = TempDatabase::executeQuery($prep);
-			else
-				$result = self::executeQuery($prep);
+			$prep->addSql(" ORDER BY id");			
+			$result = $this->executeQuery($prep);
 					
 			$resultHashes = array();
 				
@@ -69,21 +68,17 @@
 			return " $key = ? ";
 		}
 
-		public static function executeInsert(DataHash $data, $isTemp = false)
+		public function executeInsert(DataHash $data)
 		{
 			// Insert new row into the database
 			$prep = new DbQueryPreper("INSERT INTO " . $data->getTable() . " (");
 			$prep->addSql(implode(",", $data->getAttributeKeys()) . ") VALUES (");
 			$prep->addVariables($data->getAttributeValues());
-			$prep->addSql(")");
-			
-			if ($isTemp)
-				TempDatabase::executeQuery($prep);
-			else
-				self::executeQuery($prep);
+			$prep->addSql(")");			
+			$this->executeQuery($prep);
 		}
 
-		public static function executeUpdate(DataHash $data, $isTemp = false)
+		public function executeUpdate(DataHash $data)
 		{
 			// Update row in the database
 			$primaryKey = $data->getPrimaryKey();
@@ -107,15 +102,11 @@
 			}
 			
 			$prep->addSql(" WHERE $primaryKey = ");
-			$prep->addVariable($primaryKeyValue);
-			
-			if ($isTemp)
-				TempDatabase::executeQuery($prep);
-			else
-				self::executeQuery($prep);
+			$prep->addVariable($primaryKeyValue);			
+			$this->executeQuery($prep);
 		}
 
-		public static function executeDelete(DataHash $data, $isTemp = false)
+		public function executeDelete(DataHash $data, $isTemp = false)
 		{
 			// Deletes rows from the database based on the criteria specified in $data
 			$prep = new DbQueryPreper("DELETE FROM " . $data->getTable());
@@ -126,16 +117,13 @@
 				$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
 				$prep->addVariablesNoPlaceHolder($data->getAttributeValues());
 			}
-
-			if ($isTemp)
-				TempDatabase::executeQuery($prep);
-			else
-				self::executeQuery($prep);
+						
+			$this->executeQuery($prep);
 		}
 		
-		public static function getDbPath()
+		public function getPdo()
 		{
-			return self::DB_FILE;
+			return $this->pdo;
 		}
 	}
 ?>

@@ -272,6 +272,8 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
+			$db = new Database();
+			
 			$httpPort = RouterSettings::getSettingValue("HTTP_PORT");
 			$sshPort = RouterSettings::getSettingValue("SSH_PORT");
 			$lanHttpEnabled = RouterSettings::getSettingValue("LAN_HTTP_ENABLED") ? "checked" : "";
@@ -280,7 +282,7 @@ END;
 			$wanSshEnabled = RouterSettings::getSettingValue("WAN_SSH_ENABLED") ? "checked" : "";
 			$lanIcmpEnabled = RouterSettings::getSettingValue("LAN_ICMP_ENABLED") ? "checked" : "";
 			$wanIcmpEnabled = RouterSettings::getSettingValue("WAN_ICMP_ENABLED") ? "checked" : "";
-			$users = Database::executeSelect(new User());
+			$users = $db->executeSelect(new User());
 			
 			$out = <<<END
 			

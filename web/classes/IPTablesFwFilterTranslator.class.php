@@ -1,5 +1,6 @@
 <?php
 	require_once "Database.class.php";
+	require_once "TempDatabase.class.php";
 	require_once "FirewallFilterSettings.class.php";
 	require_once "FirewallChain.class.php";
 	require_once "FirewallFilterRule.class.php";
@@ -9,21 +10,12 @@
 	
 	class IPTablesFwFilterTranslator
 	{
-		public static function setDbFromSystem()
+		public static function setDbFromSystem(TempDatabase $db)
 		{
 			// Reads the current system firewall settings by running and
 			// parsing the results of iptables-save on the 'filter' table
 			$output = Console::execute("sudo /sbin/iptables-save -t filter");
-			
-			// Clear chains and rules related to filtering
-			$deleteChainHash = new FirewallChain();
-			$deleteRulesHash = new FirewallFilterRule();
-			
-			$deleteChainHash->setAttribute("table_name", "filter");
-			
-			$deleteChainHash->executeDelete(true);
-			$deleteRulesHash->executeDelete(true);
-			
+						
 			foreach ($output as $line)
 			{
 				$lineElements = explode(" ", $line);
@@ -33,16 +25,18 @@
 					case ":":
 						// Chain
 						$newChain = new FirewallChain();
+						$newChain->setConnection($db);
 						$newChain->setAttribute("table_name", "filter");
 						$newChain->setAttribute("chain_name", trim($lineElements[0], ":"));
 						$newChain->setAttribute("policy", $lineElements[1]);
-						$newChain->executeInsert(true);
+						$newChain->executeInsert();
 						
 						// Add entry into the counters array
 						break;
 					case "-":
 						// Rule
 						$newRule = new FirewallFilterRule();
+						$newRule->setConnection($db);
 						$newRule->setAttribute("chain_name", $lineElements[1]);
 						
 						for ($i = 2 ; $i<count($lineElements) ; $i++)
@@ -123,23 +117,23 @@
 							}
 						}
 						
-						$newRule->executeInsert(true);
+						$newRule->executeInsert();
 						break;
 				}
 			}
 		}
 		
-		public static function setSystemFromDb($writeChanges)
+		public static function setSystemFromDb(TempDatabase $tempDb)
 		{
 			// Syncs the system filter firewall to what's specified in the
 			// database by generating and executing an iptables-restore script
 			$rules = array();
 			$iptablesRestore = array("*filter");
 			
-			foreach (FirewallFilterSettings::getChains() as $chain)
+			foreach (FirewallFilterSettings::getChains($tempDb) as $chain)
 			{
 				$chainName = $chain->getAttribute("chain_name");
-				$rules[$chainName] = FirewallFilterSettings::getRules($chainName);
+				$rules[$chainName] = FirewallFilterSettings::getRules($chainName, $tempDb);
 				$iptablesRestore[] = ":$chainName " . $chain->getAttribute("policy");
 			}
 			
@@ -314,13 +308,7 @@
 			}
 			
 			$iptablesRestore[] = "COMMIT";
-			
-			// If specified, write changes to the active firewall
-			if ($writeChanges)
-			{
-				Console::execute("echo \"" . implode("\n", $iptablesRestore) . "\" | sudo /sbin/iptables-restore");
-			}
-			
+			Console::execute("echo \"" . implode("\n", $iptablesRestore) . "\" | sudo /sbin/iptables-restore");
 			return $iptablesRestore;
 		}
 		

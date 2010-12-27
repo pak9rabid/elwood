@@ -1,6 +1,7 @@
 <?php
 	require_once "FirewallFilterSettings.class.php";
-	require_once"NetUtils.class.php";
+	require_once "NetUtils.class.php";
+	require_once "TempDatabase.class.php";
 	
 	class FirewallFilterTable
 	{
@@ -9,14 +10,14 @@
 		protected $rules = array();
 		
 		// Constructors
-		public function __construct()
+		public function __construct(TempDatabase $tempDb)
 		{
 			// Initialize with rules stored in the database
-			foreach (FirewallFilterSettings::getChains() as $chain)
+			foreach (FirewallFilterSettings::getChains($tempDb) as $chain)
 			{
 				$chainName = $chain->getAttribute("chain_name");
 				$this->chains[$chainName] = $chain;
-				$this->rules[$chainName] = FirewallFilterSettings::getRules($chainName);
+				$this->rules[$chainName] = FirewallFilterSettings::getRules($chainName, $tempDb);
 			}
 		}
 		
