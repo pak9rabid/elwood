@@ -31,6 +31,10 @@
 			require_once "$className.class.php";
 			
 			$interface = new $className();
+			
+			if (!$interface instanceof self)
+				throw new Exception("$className is not a subclass of NetworkInterface");
+			
 			$interface->load();
 			return $interface;
 		}
