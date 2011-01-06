@@ -16,19 +16,20 @@ CREATE TABLE users
 	CHECK (usergroup IN ('admins', 'users'))
 );
 
-CREATE TABLE firewall_chains
+CREATE TABLE services
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	table_name VARCHAR(32) NOT NULL,
-	chain_name VARCHAR(32) NOT NULL,
-	policy VARCHAR(32),
+	service_name VARCHAR(32) NOT NULL,
+	is_enabled VARCHAR(1) NOT NULL,
 
-	CONSTRAINT u_table_chain UNIQUE (table_name, chain_name)
+	CHECK (is_enabled IN ('Y', 'N'))
 );
 
-CREATE TABLE firewall_filter_rules
+CREATE TABLE firewall_rules
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	service_id INTEGER,
+	table_name VARCHAR(32) NOT NULL,
 	chain_name VARCHAR(32) NOT NULL,
 	rule_number INTEGER,
 	int_in VARCHAR(16),
@@ -43,32 +44,31 @@ CREATE TABLE firewall_filter_rules
  	icmp_type VARCHAR(16),
 	target VARCHAR(16),
 
-	CONSTRAINT u_chain_rulenum UNIQUE (chain_name, rule_number)
-);
-
-CREATE TABLE firewall_dnat_rules
-(
-	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
-	in_port VARCHAR(16) UNIQUE NOT NULL,
-	out_address VARCHAR(64) NOT NULL,
-	out_port VARCHAR(16),
-
-	CONSTRAINT u_forward_rule UNIQUE (in_port, out_address, out_port)
+	CONSTRAINT u_chain_rulenum UNIQUE (table_name, chain_name, rule_number),
+	CHECK (table_name IN ('filter', 'nat', 'mangle')),
+	FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /* Create triggers */
-CREATE TRIGGER set_filter_rule_num AFTER INSERT ON firewall_filter_rules
+CREATE TRIGGER set_firewall_rule_num AFTER INSERT ON firewall_rules
 BEGIN
-	UPDATE firewall_filter_rules
-	SET rule_number =	CASE (SELECT count(*) FROM firewall_filter_rules WHERE chain_name = new.chain_name)
+	UPDATE firewall_rules
+	SET rule_number =	CASE (SELECT count(*) FROM firewall_rules WHERE table_name = new.table_name AND chain_name = new.chain_name)
 				WHEN 1 THEN 1
 				ELSE	(
 						SELECT max(rule_number)
-						FROM firewall_filter_rules
-						WHERE chain_name = new.chain_name
+						FROM firewall_rules
+						WHERE table_name = new.table_name AND chain_name = new.chain_name
 					) + 1
 				END
 	WHERE rowid = new.rowid;
+END;
+
+CREATE TRIGGER renumber_firewall_rules AFTER DELETE ON firewall_rules
+BEGIN
+	UPDATE firewall_rules
+	SET rule_number = rule_number - 1
+	WHERE table_name = old.table_name AND chain_name = old.chain_name AND rule_number > old.rule_number;
 END;
 
 /* Initialize settings table */
@@ -78,17 +78,27 @@ INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
 INSERT INTO settings VALUES (null, 'LAN_WLAN', null);
 INSERT INTO settings VALUES (null, 'EXTIF', 'eth0');
 INSERT INTO settings VALUES (null, 'INTIF', 'br0');
-INSERT INTO settings VALUES (null, 'HTTP_PORT', '80');
-INSERT INTO settings VALUES (null, 'SSH_PORT', '22');
-INSERT INTO settings VALUES (null, 'LAN_HTTP_ENABLED', 1);
-INSERT INTO settings VALUES (null, 'WAN_HTTP_ENABLED', 1);
-INSERT INTO settings VALUES (null, 'LAN_SSH_ENABLED', 1);
-INSERT INTO settings VALUES (null, 'WAN_SSH_ENABLED', 1);
 INSERT INTO settings VALUES (null, 'LAN_ICMP_ENABLED', 1);
 INSERT INTO settings VALUES (null, 'WAN_ICMP_ENABLED', 1);
 INSERT INTO settings VALUES (null, 'ELWOOD_CFG_DIR', '/etc/elwood');
 INSERT INTO settings VALUES (null, 'ELWOOD_WEBROOT', '/var/www');
 INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');
+
+/* Initialize services table */
+INSERT INTO services VALUES (null, "http", "Y");
+INSERT INTO services VALUES (null, "ssh", "Y");
+INSERT INTO services VALUES (null, "dhcp", "Y");
+
+/* Initialize firewall_rules table */
+INSERT INTO firewall_rules (table_name, chain_name, state, target) VALUES ('filter', 'INPUT', 'ESTABLISHED,RELATED', 'ACCEPT');
+INSERT INTO firewall_rules (service_id, table_name, chain_name, dport, target) VALUES ((SELECT id FROM services WHERE service_name = 'http'), 'filter', 'INPUT', 80, 'ACCEPT');
+INSERT INTO firewall_rules (service_id, table_name, chain_name, dport, target) VALUES ((SELECT id FROM services WHERE service_name = 'ssh'), 'filter', 'INPUT', 22, 'ACCEPT');
+INSERT INTO firewall_rules (table_name, chain_name, int_in, protocol, target) VALUES ('filter', 'INPUT', (SELECT value FROM settings WHERE key = 'INTIF'), 'icmp', 'ACCEPT');
+INSERT INTO firewall_rules (table_name, chain_name, int_in, protocol, target) VALUES ('filter', 'INPUT', (SELECT value FROM settings WHERE key = 'EXTIF'), 'icmp', 'ACCEPT');
+INSERT INTO firewall_rules (table_name, chain_name, int_in, target) VALUES ('filter', 'FORWARD', (SELECT value FROM settings WHERE key = 'EXTIF'), 'forward_in');
+INSERT INTO firewall_rules (table_name, chain_name, int_in, target) VALUES ('filter', 'FORWARD', (SELECT value FROM settings WHERE key = 'INTIF'), 'forward_out');
+INSERT INTO firewall_rules (table_name, chain_name, state, target) VALUES ('filter', 'forward_in', 'ESTABLISHED,RELATED', 'ACCEPT');
+INSERT INTO firewall_rules (table_name, chain_name, target) VALUES ('filter', 'forward_out', 'ACCEPT');
 
 /* Initialize users */
 INSERT INTO users VALUES (null, 'admin', 'admins', 'da942a52feff28ee63725f388318641d67a4dbe4');
