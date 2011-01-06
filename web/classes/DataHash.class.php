@@ -27,6 +27,11 @@
 			return "{" . implode(", ", $elements) . "}";
 		}
 		
+		public function toJson()
+		{
+			return json_encode($this->hashMap);
+		}
+		
 		public function setConnection(Database $conn)
 		{
 			$this->conn = $conn;
