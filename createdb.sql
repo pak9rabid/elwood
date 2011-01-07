@@ -46,6 +46,7 @@ CREATE TABLE firewall_rules
 
 	CONSTRAINT u_chain_rulenum UNIQUE (table_name, chain_name, rule_number),
 	CHECK (table_name IN ('filter', 'nat', 'mangle')),
+	CHECK (fragmented IN ('Y', 'N')),
 	FOREIGN KEY(service_id) REFERENCES services(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
