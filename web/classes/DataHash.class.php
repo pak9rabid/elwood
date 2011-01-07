@@ -7,6 +7,7 @@
 		// Attributes
 		protected $table = "";
 		protected $primaryKey = "id";
+		protected $orderBy = "id";
 		protected $hashMap = array();
 		protected $conn;
 
@@ -50,6 +51,20 @@
 		public function setPrimaryKey($primaryKey)
 		{
 			$this->primaryKey = $primaryKey;
+		}
+		
+		public function setOrderBy($field, $direction = "")
+		{
+			if (!empty($field))
+				$this->orderBy = $field;
+				
+			if (!empty($direction))
+				$this->orderBy .= " $direction";
+		}
+		
+		public function getOrderBy()
+		{
+			return $this->orderBy;
 		}
 	
 		public function getPrimaryKey()

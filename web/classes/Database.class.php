@@ -48,7 +48,7 @@
 				$prep->addVariablesNoPlaceholder($data->getAttributeValues());
 			}
 			
-			$prep->addSql(" ORDER BY id");			
+			$prep->addSql(" ORDER BY " . $data->getOrderBy());
 			$result = $this->executeQuery($prep);
 					
 			$resultHashes = array();
@@ -76,6 +76,29 @@
 			$prep->addVariables($data->getAttributeValues());
 			$prep->addSql(")");			
 			$this->executeQuery($prep);
+		}
+		
+		public function executeInserts(array $data)
+		{
+			$this->pdo->beginTransaction();
+						
+			try
+			{
+				foreach ($data as $row)
+				{
+					if (!($row instanceof DataHash))
+						throw new Exception("Invalid type: must be of type DataHash");
+						
+					$this->executeInsert($row);
+				}
+			}
+			catch (Exception $ex)
+			{
+				$this->pdo->rollBack();
+				throw $ex;
+			}
+			
+			$this->pdo->commit();
 		}
 
 		public function executeUpdate(DataHash $data)
