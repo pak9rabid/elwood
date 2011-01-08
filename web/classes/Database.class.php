@@ -47,8 +47,8 @@
 				$prep->addSql(implode(" AND ", array_map(array("self", "datahashToParamaterizedWhereClause"), $data->getAttributeKeys())));
 				$prep->addVariablesNoPlaceholder($data->getAttributeValues());
 			}
-			
-			$prep->addSql(" ORDER BY " . $data->getOrderBy());
+						
+			$prep->addSql(" ORDER BY " . implode(", ", $data->getOrderBy()));
 			$result = $this->executeQuery($prep);
 					
 			$resultHashes = array();

@@ -7,7 +7,7 @@
 		// Attributes
 		protected $table = "";
 		protected $primaryKey = "id";
-		protected $orderBy = "id";
+		protected $orderBy = array();
 		protected $hashMap = array();
 		protected $conn;
 
@@ -15,6 +15,7 @@
 		public function __construct($table)
 		{
 			$this->table = $table;
+			$this->orderBy = array("id");
 		}
 
 		// Methods
@@ -53,13 +54,9 @@
 			$this->primaryKey = $primaryKey;
 		}
 		
-		public function setOrderBy($field, $direction = "")
-		{
-			if (!empty($field))
-				$this->orderBy = $field;
-				
-			if (!empty($direction))
-				$this->orderBy .= " $direction";
+		public function setOrderBy(array $orderByList)
+		{			
+			$this->orderBy = $orderByList;
 		}
 		
 		public function getOrderBy()
