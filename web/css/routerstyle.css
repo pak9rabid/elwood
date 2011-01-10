@@ -130,6 +130,12 @@ fieldset
 	border: 0px;
 }
 
+#firewall-table th
+{
+	background-color: #A8A8A8;
+	text-align: center;
+}
+
 #port-forward-table
 {
    width:        500px;
