@@ -1,12 +1,9 @@
 <?php
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
-	require_once "IPTablesFwFilterTranslator.class.php";
-	require_once "TempDatabase.class.php";
-	require_once "FirewallFilterRule.class.php";
-	require_once "FirewallFilterSettings.class.php";
+	require_once "FirewallChain.class.php";
+	require_once "FirewallRule.class.php";
 	require_once "FileUtils.class.php";
-	require_once "RouterSettings.class.php";
 	require_once "User.class.php";
 	
 	class ApplyFwFilterRulesAjaxRequestHandler implements AjaxRequestHandler
@@ -23,46 +20,31 @@
 			}
 			
 			$direction = trim($parameters['direction']);
-			$policy = trim($parameters['policy']);
-			$rulesIn = isset($parameters['rules']) ? $parameters['rules'] : array();
 			
-			$tempDb = new TempDatabase();
-			IPTablesFwFilterTranslator::setDbFromSystem($tempDb);
-			FirewallFilterSettings::clearRules("forward_$direction", $tempDb);
-	
-			$rules = array();
-	
+			if (!in_array($direction, array("in", "out")))
+			{
+				$this->response = new AjaxResponse("", array("Invalid direction specified"));
+				return;
+			}
+			
+			$rulesIn = isset($parameters['rules']) ? $parameters['rules'] : array();
+			$chain = new FirewallChain("filter", "forward_$direction");
+			$rule = new FirewallRule();
+			
 			foreach ($rulesIn as $ruleIn)
 			{
-				$tempRule = new FirewallFilterRule();
-				$tempRule->setConnection($tempDb);
-		
 				foreach ($ruleIn as $key => $value)
 				{
-					$tempRule->setAttribute("chain_name", "forward_" . $direction);
-			
 					if ($value != "*" && !preg_match("/^new/", $value))
-						$tempRule->setAttribute($key, $value);
+						$rule->setAttribute($key, $value);
 				}
-		
-				$rules[] = $tempRule;
-			}
-	
-			// Set policy
-			$forwardChain = FirewallFilterSettings::getChain("FORWARD", $tempDb);
-			$forwardChain->setConnection($tempDb);
-			$forwardChain->setAttribute("policy", $policy);
-			$forwardChain->executeUpdate();
-		
-			// Set rules
-			foreach ($rules as $rule)
-				$rule->executeInsert();
-
-			$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb($tempDb);
-		
-			// Write file
-			FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");
 				
+				$chain->add($rule);
+			}
+			
+			$chain->save();
+			$chain->apply();
+			
 			$this->response = new AjaxResponse();
 		}
 		

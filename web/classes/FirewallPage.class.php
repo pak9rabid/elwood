@@ -1,9 +1,7 @@
 <?php
 	require_once "Page.class.php";
-	require_once "TempDatabase.class.php";
-	require_once "FirewallFilterTable.class.php";
+	require_once "FirewallChain.class.php";
 	require_once "NetUtils.class.php";
-	require_once "IPTablesFwFilterTranslator.class.php";
 	require_once "User.class.php";
 	
 	class FirewallPage implements Page
@@ -47,7 +45,6 @@ END;
 				if (!isAdminUser)
 				{
 					$("#addRuleBtn").attr("disabled", "disabled");
-					$("#changePolicyBtn").attr("disabled", "disabled");
 					$("[id $= editRuleBtn]").attr("disabled", "disabled");
 				}
 			
@@ -128,30 +125,7 @@ END;
 					});
 					
 				});
-			
-				$("#changePolicyBtn").click(function()
-				{
-					$("#firewall-table tr[class *= 'fwPolicy']").each(function()
-					{
-								
-									
-						if ($(this).hasClass("fwPolicyDrop"))
-						{
-							$(this)
-								.removeClass("fwPolicyDrop")
-								.addClass("fwPolicyAccept");
-						}
-						else
-						{
-							$(this)
-								.removeClass("fwPolicyAccept")
-								.addClass("fwPolicyDrop");
-						}
-					});
-					
-					showSaveButton();
-				});
-			
+						
 				$("#addRuleBtn").click(function(){addEditFilterRuleDlg(false);});
 			
 				$("#saveBtn").click(function()
@@ -164,7 +138,6 @@ END;
 										parameters:
 										{
 											direction:	$("#dir").val(),
-											policy:		$("#firewall-table tr[class *= 'fwPolicy']").attr("class").indexOf("Drop") != -1 ? "DROP" : "ACCEPT",
 											rules: 		getClientRules()
 										}
 									};
@@ -332,12 +305,10 @@ END;
 		
 		// Override
 		public function content(array $parameters)
-		{
-			$tempDb = new TempDatabase();
-			IPTablesFwFilterTranslator::setDbFromSystem($tempDb);
-			
-			$fwFilter = new FirewallFilterTable($tempDb);
+		{			
 			$direction = $parameters['dir'] == null ? "in" : $parameters['dir'];
+			$chain = new FirewallChain("filter", "forward_$direction");
+			$chain->load();
 			
 			return <<<END
 			
@@ -346,9 +317,8 @@ END;
 			<a href="elwoodPage.php?page=Firewall&dir=out">Outgoing</a>
 			<br /><br />
 			<button id="addRuleBtn">Add Rule</button>
-			<button id="changePolicyBtn">Change Policy</button>
 			<div id="fwTable">
-				{$fwFilter->out($direction)}
+				{$chain->toHtml(($direction == "in" ? "Incoming " : "Outgoing ") . "Traffic")}
 			</div>
 			<div id="fwActions">
 				<input id="saveBtn" type="button" value="Save Rules" />
