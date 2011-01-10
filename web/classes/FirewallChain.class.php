@@ -22,6 +22,8 @@
 									"filter.INPUT" => "DROP",
 									"filter.OUTPUT" => "ACCEPT",
 									"filter.FORWARD" => "DROP",
+									"filter.forward_in" => "-",
+									"filter.forward_out" => "-",
 			
 									"nat.PREROUTING" => "ACCEPT",
 									"nat.INPUT" => "ACCEPT",
