@@ -358,5 +358,10 @@
 								
 			return in_array($securityMethod, $wpaMethods);
 		}
+		
+		public static function isValidIPTablesTable($table)
+		{
+			return in_array($table, array("filter", "nat", "mangle"));
+		}
 	}
 ?>
