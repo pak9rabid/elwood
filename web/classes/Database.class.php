@@ -34,7 +34,7 @@
 			}
 		}
 		
-		public function executeSelect(DataHash $data)
+		public function executeSelect(DataHash $data, $filterNullValues = false)
 		{
 			$classType = get_class($data);
 			
@@ -56,7 +56,12 @@
 			foreach ($result as $row)
 			{
 				$resultHash = new $classType($data->getTable());
-				$resultHash->setAllAttributes($row);
+				
+				if ($filterNullValues)
+					$resultHash->setAllAttributes(array_filter($row, array("self", "filterNullValues")));
+				else
+					$resultHash->setAllAttributes($row);
+					
 				$resultHashes[] = $resultHash;
 			}
 				
@@ -147,6 +152,11 @@
 		public function getPdo()
 		{
 			return $this->pdo;
+		}
+		
+		private static function filterNullValues($val)
+		{
+			return isset($val);
 		}
 	}
 ?>
