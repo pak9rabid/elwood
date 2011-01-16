@@ -109,14 +109,14 @@
 			$this->hashMap = array();
 		}
 		
-		public function executeSelect()
+		public function executeSelect($filterNullValues = false)
 		{			
 			if (!empty($this->conn))
-				return $this->conn->executeSelect($this);
+				return $this->conn->executeSelect($this, $filterNullValues);
 			else
 			{
 				$db = new Database();
-				return $db->executeSelect($this);
+				return $db->executeSelect($this, $filterNullValues);
 			}
 		}
 
