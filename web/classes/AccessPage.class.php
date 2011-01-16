@@ -2,6 +2,7 @@
 	require_once "Page.class.php";
 	require_once "RouterSettings.class.php";
 	require_once "Database.class.php";
+	require_once "Service.class.php";
 	require_once "User.class.php";
 	
 	class AccessPage implements Page
@@ -272,17 +273,33 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
-			$db = new Database();
+			$extIf = RouterSettings::getSettingValue("EXTIF");
+			$intIf = RouterSettings::getSettingValue("INTIF");
 			
-			$httpPort = RouterSettings::getSettingValue("HTTP_PORT");
-			$sshPort = RouterSettings::getSettingValue("SSH_PORT");
-			$lanHttpEnabled = RouterSettings::getSettingValue("LAN_HTTP_ENABLED") ? "checked" : "";
-			$wanHttpEnabled = RouterSettings::getSettingValue("WAN_HTTP_ENABLED") ? "checked" : "";
-			$lanSshEnabled = RouterSettings::getSettingValue("LAN_SSH_ENABLED") ? "checked" : "";
-			$wanSshEnabled = RouterSettings::getSettingValue("WAN_SSH_ENABLED") ? "checked" : "";
+			$httpService = Service::getInstance("http");
+			$sshService = Service::getInstance("ssh");
+			$httpService->load();
+			$sshService->load();
+			
+			foreach ($httpService->getAccessRules() as $rule)
+			{
+				$httpPort = $rule->getAttribute("dport");
+				$lanHttpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf) ? "checked" : "";
+				$wanHttpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
+			}
+			
+			foreach ($sshService->getAccessRules() as $rule)
+			{
+				$sshPort = $rule->getAttribute("dport");
+				$lanSshEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf) ? "checked" : "";
+				$wanSshEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
+			}
+			
 			$lanIcmpEnabled = RouterSettings::getSettingValue("LAN_ICMP_ENABLED") ? "checked" : "";
 			$wanIcmpEnabled = RouterSettings::getSettingValue("WAN_ICMP_ENABLED") ? "checked" : "";
-			$users = $db->executeSelect(new User());
+			
+			$selectHash = new User();
+			$users = $selectHash->executeSelect();
 			
 			$out = <<<END
 			

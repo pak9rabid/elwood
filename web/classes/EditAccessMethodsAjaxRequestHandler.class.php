@@ -2,13 +2,10 @@
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
 	require_once "RouterSettings.class.php";
-	require_once "FirewallFilterRule.class.php";
+	require_once "FirewallChain.class.php";
 	require_once "Service.class.php";
 	require_once "HTTPService.class.php";
 	require_once "SSHService.class.php";
-	require_once "IPTablesFwFilterTranslator.class.php";
-	require_once "FileUtils.class.php";
-	require_once "TempDatabase.class.php";
 	require_once "User.class.php";
 	
 	class EditAccessMethodsAjaxRequestHandler implements AjaxRequestHandler
@@ -39,10 +36,10 @@
 			// Validate
 			$errors = array();
 			
-			if (!NetUtils::isValidIanaPortNumber($httpPort))
+			if (($httpWan || $httpLan) && !NetUtils::isValidIanaPortNumber($httpPort))
 				$errors[] = "Invalid HTTP port number specified";
 				
-			if (!NetUtils::isValidIanaPortNumber($sshPort))
+			if (($sshWan || $sshLan) && !NetUtils::isValidIanaPortNumber($sshPort))
 				$errors[] = "Invalid SSH port number specified";
 				
 			if (!empty($errors))
@@ -63,100 +60,125 @@
 				
 			$httpService->load();
 			$sshService->load();
+			$httpService->clearAccessRules();
+			$sshService->clearAccessRules();
 			
-			// Create temp database and clear INPUT chain
-			$tempDb = new TempDatabase();
-			IPTablesFwFilterTranslator::setDbFromSystem($tempDb);
+			$inputChain = new FirewallChain("filter", "INPUT");
+			$rule = new FirewallRule();
 			
-			$rule = new FirewallFilterRule();
-			$rule->setConnection($tempDb);
-			$rule->setAttribute("chain_name", "INPUT");
-			$rule->executeDelete();
+			// allow any ESTABLISHED or RELATED traffic
+			$rule->setAttribute("state", "ESTABLISH,RELATED");
+			$rule->setAttribute("target", "ACCEPT");
+			$inputChain->add($rule);
+						
+			$rule->clear();
+			$rule->setAttribute("protocol", "tcp");
+			$rule->setAttribute("target", "ACCEPT");
 			
-			// We'll allow all ESTABLISHED,RELATED connections
-			$rule->setAllAttributes(array("chain_name" => "INPUT", "state" => "ESTABLISHED,RELATED", "target" => "ACCEPT"));
-			$rule->executeInsert();
-			
-			// HTTP
-			if ($httpLan && $httpWan)
+			// http		
+			if ($httpWan || $httpLan)
 			{
-				$rule->setAllAttributes(array("chain_Name" => "INPUT", "protocol" => "tcp", "dport" => $httpPort, "target" => "ACCEPT"));
-				$rule->executeInsert();
-			}
-			else if ($httpWan && !$httpLan)
-			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $extIf, "dport" => $httpPort, "target" => "ACCEPT"));
-				$rule->executeInsert();
-			}
-			else if ($httpLan && !$httpWan)
-			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $intIf, "dport" => $httpPort, "target" => "ACCEPT"));
-				$rule->executeInsert();
-			}
+				$httpService->setAttribute("is_enabled", "Y");
+				$rule->setAttribute("dport", $httpPort);
+				$rule->setAttribute("service_id", $httpService->getAttribute("id"));
+				
+				if ($httpWan && !$httpLan)
+					$rule->setAttribute("int_in", $extIf);
+				else if ($httpLan && !$httpWan)
+					$rule->setAttribute("int_in", $intIf);
 
-			RouterSettings::saveSetting("HTTP_PORT", $httpPort);
-			RouterSettings::saveSetting("WAN_HTTP_ENABLED", $httpWan ? 1 : 0);
-			RouterSettings::saveSetting("LAN_HTTP_ENABLED", $httpLan ? 1 : 0);
-			
-			// SSH
-			if ($sshWan && $sshLan)
-			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "dport" => $sshPort, "target" => "ACCEPT"));
-				$rule->executeInsert();
+				$httpService->addAccessRule($rule);
 			}
-			else if ($sshWan && !$sshLan)
+			else
+				$httpService->setAttribute("is_enabled", "N");
+			
+			$rule->clear();
+			$rule->setAttribute("protocol", "tcp");
+			$rule->setAttribute("target", "ACCEPT");
+			
+			// ssh
+			if ($sshWan || $sshLan)
 			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $extIf, "dport" => $sshPort, "target" => "ACCEPT"));
-				$rule->executeInsert();
+				$sshService->setAttribute("is_enabled", "Y");
+				$rule->setAttribute("dport", $sshPort);
+				$rule->setAttribute("service_id", $sshService->getAttribute("id"));
+				
+				if ($sshWan && !$sshLan)
+					$rule->setAttribute("int_in", $extIf);
+				else if ($sshLan && !$sshWan)
+					$rule->setAttribute("int_in", $intIf);
+					
+				$sshService->addAccessRule($rule);
 			}
-			else if ($sshLan && !$sshWan)
+			else
+				$sshService->setAttribute("is_enabled", "N");
+				
+				
+			$rule->clear();
+			$rule->setAttribute("protocol", "icmp");
+			$rule->setAttribute("target", "ACCEPT");
+				
+			// icmp
+			if ($icmpWan || $icmpLan)
 			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "tcp", "int_in" => $intIf, "dport" => $sshPort, "target" => "ACCEPT"));
-				$rule->executeInsert();
+				if ($icmpWan && !$icmpLan)
+				{
+					$rule->setAttribute("int_in", $extIf);
+					RouterSettings::saveSetting("LAN_ICMP_ENABLED", 0);
+					RouterSettings::saveSetting("WAN_ICMP_ENABLED", 1);
+				}
+				else if ($icmpLan && !$icmpWan)
+				{
+					$rule->setAttribute("int_in", $intIf);
+					RouterSettings::saveSetting("LAN_ICMP_ENABLED", 1);
+					RouterSettings::saveSetting("WAN_ICMP_ENABLED", 0);
+				}
+				else
+				{
+					RouterSettings::saveSetting("LAN_ICMP_ENABLED", 1);
+					RouterSettings::saveSetting("WAN_ICMP_ENABLED", 1);
+				}
+					
+				$inputChain->add($rule);
+			}
+			else
+			{
+				RouterSettings::saveSetting("LAN_ICMP_ENABLED", 0);
+				RouterSettings::saveSetting("WAN_ICMP_ENABLED", 0);
+			}
+						
+			$inputChain->addRulesForService($httpService);
+			$inputChain->addRulesForService($sshService);
+			
+			// load rules for other active services
+			foreach (Service::getRegisteredServices() as $service)
+			{
+				$serviceName = $service->getAttribute("service_name");
+				
+				if ($serviceName == "http" || $serviceName == "ssh")
+					continue;
+					
+				$service->load();
+				
+				if ($service->getAttribute("is_enabled") == "Y")
+					$inputChain->addRulesForService($service);
 			}
 			
-			RouterSettings::saveSetting("SSH_PORT", $sshPort);
-			RouterSettings::saveSetting("WAN_SSH_ENABLED", $sshWan ? 1 : 0);
-			RouterSettings::saveSetting("LAN_SSH_ENABLED", $sshLan ? 1 : 0);
+			$inputChain->save();
+			$inputChain->apply();
 			
-			// ICMP
-			if ($icmpWan && $icmpLan)
-			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "icmp", "target" => "ACCEPT"));
-				$rule->executeInsert();
-			}
-			else if ($icmpWan && !$icmpLan)
-			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "icmp", "int_in" => $extIf, "target" => "ACCEPT"));
-				$rule->executeInsert();
-			}
-			else if ($icmpLan && !$icmpWan)
-			{
-				$rule->setAllAttributes(array("chain_name" => "INPUT", "protocol" => "icmp", "int_in" => $intIf, "target" => "ACCEPT"));
-				$rule->executeInsert();
-			}
-			
-			RouterSettings::saveSetting("WAN_ICMP_ENABLED", $icmpWan ? 1 : 0);
-			RouterSettings::saveSetting("LAN_ICMP_ENABLED", $icmpLan ? 1 : 0);
-			
-			// Save changes to firewall
-			$iptablesRestore = IPTablesFwFilterTranslator::setSystemFromDb($tempDb);
-			FileUtils::writeToFile(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/firewall/filter.rules", implode("\n", $iptablesRestore) . "\n");
-			
-			// Restart services, if needbe			
-			if ($httpService->getPort() != $httpPort)
-			{
-				$httpService->setPort($httpPort);
-				$httpService->save();
-				$httpService->restart();
-			}
-			
-			if ($sshService->getPort() != $sshPort)
-			{
-				$sshService->setPort($sshPort);
-				$sshService->save();
+			$httpService->save();
+			$sshService->save();
+											
+			if ($sshService->getAttribute("is_enabled") == "Y")
 				$sshService->restart();
-			}
+			else
+				$sshService->stop();
+				
+			if ($httpService->getAttribute("is_enabled") == "Y")
+				$httpService->restart();
+			else
+				$httpService->stop();
 			
 			// Finished, set success response
 			$this->response = new AjaxResponse();

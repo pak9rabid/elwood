@@ -18,6 +18,7 @@
 		
 		public static function getPolicies($table = "")
 		{
+			// default chains & policies
 			$policies = array	(
 									"filter.INPUT" => "DROP",
 									"filter.OUTPUT" => "ACCEPT",
@@ -95,9 +96,19 @@
 			// this will allow re-use of a single FirewallRule object when adding multiple rules
 			$ruleToAdd  = clone $rule;
 			
+			// initialize rule
 			$ruleToAdd->setAttribute("table_name", $this->table);
 			$ruleToAdd->setAttribute("chain_name", $this->chain);
+			$ruleToAdd->removeAttribute("id");
+			$ruleToAdd->removeAttribute("rule_number");
+			
 			$this->rules[] = $ruleToAdd;
+		}
+		
+		public function addRulesForService(Service $service)
+		{
+			foreach ($service->getAccessRules() as $rule)
+				$this->add($rule);
 		}
 		
 		// load rules from the database
@@ -119,15 +130,30 @@
 			// save loaded rules into the database
 			if (!self::isInitialized())
 				throw new Exception("Table name or chain name not specified");
-					
-			// clear out the old rules and replace them with these
+			
+			$db = new Database();
+			
+			// clear out old rules for this chain
 			$deleteHash = new FirewallRule();
 			$deleteHash->setAttribute("table_name", $this->table);
 			$deleteHash->setAttribute("chain_name", $this->chain);
-			$deleteHash->executeDelete();
 			
-			$db = new Database();
-			$db->executeInserts($this->rules);
+			$db->getPdo()->beginTransaction();
+			
+			try
+			{
+				$db->executeDelete($deleteHash);
+				
+				foreach ($this->rules as $rule)
+					$db->executeInsert($rule);
+			}
+			catch(Exception $ex)
+			{
+				$db->getPdo()->rollBack();
+				throw $ex;
+			}
+			
+			$db->getPdo()->commit();
 		}
 		
 		public function apply()
