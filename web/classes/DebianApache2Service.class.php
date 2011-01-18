@@ -78,7 +78,8 @@
 			$defaultRule->setAllAttributes(array	(
 														"service_id" => $this->getAttribute("id"),
 														"protocol" => "tcp",
-														"dport" => 80
+														"dport" => 80,
+														"target" => "ACCEPT"
 													));
 												
 			return array($defaultRule);

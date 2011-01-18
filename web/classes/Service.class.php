@@ -1,5 +1,6 @@
 <?php
 	require_once "DataHash.class.php";
+	require_once "Database.class.php";
 	require_once "SystemProfile.class.php";
 	require_once "FirewallRule.class.php";
 	
@@ -70,12 +71,39 @@
 		{
 			$accessRule = clone $accessRule;
 			$accessRule->setAttribute("service_id", $this->getAttribute("id"));
+			$accessRule->setAttribute("table_name", "filter");
+			$accessRule->setAttribute("chain_name", "INPUT");
+			
 			$this->accessRules[] = $accessRule;
 		}
 		
 		public function clearAccessRules()
 		{
 			$this->accessRules = array();
+		}
+		
+		public function saveAccessRules()
+		{
+			$db = new Database();
+			$deleteHash = new FirewallRule();
+			$deleteHash->setAttribute("service_id", $this->getAttribute("id"));
+			
+			$db->getPdo()->beginTransaction();
+			
+			try
+			{
+				$db->executeDelete($deleteHash);
+				
+				foreach ($this->accessRules as $accessRule)
+					$db->executeInsert($accessRule);
+			}
+			catch (Exception $ex)
+			{
+				$db->getPdo()->rollBack();
+				throw $ex;
+			}
+			
+			$db->getPdo()->commit();
 		}
 		
 		public function load()
