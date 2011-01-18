@@ -98,5 +98,6 @@
 		abstract public function start();
 		abstract public function restart();
 		abstract public function isRunning();
+		abstract public function getDefaultAccessRules();
 	}
 ?>

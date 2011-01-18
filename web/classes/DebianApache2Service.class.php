@@ -3,6 +3,7 @@
 	require_once "HTTPService.class.php";
 	require_once "Console.class.php";
 	require_once "FileUtils.class.php";
+	require_once "FirewallRule.class.php";
 	
 	class DebianApache2Service extends Service implements HTTPService
 	{
@@ -68,6 +69,19 @@
 		public function isRunning()
 		{
 			return file_exists($this->service->pid);
+		}
+		
+		// Override
+		public function getDefaultAccessRules()
+		{
+			$defaultRule = new FirewallRule();
+			$defaultRule->setAllAttributes(array	(
+														"service_id" => $this->getAttribute("id"),
+														"protocol" => "tcp",
+														"dport" => 80
+													));
+												
+			return array($defaultRule);
 		}
 	}
 ?>

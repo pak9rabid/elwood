@@ -4,6 +4,11 @@
 	
 	class DebianNetworkService extends Service
 	{
+		public function __construct()
+		{
+			parent::__construct();
+		}
+		
 		// Override
 		public function stop()
 		{
@@ -58,6 +63,12 @@
 		public function isRunning()
 		{
 			return true;
+		}
+		
+		// Override
+		public function getDefaultAccessRules()
+		{
+			return array();
 		}
 	}
 ?>

@@ -71,6 +71,19 @@
 		{
 			return file_exists($this->service->pid);
 		}
+		
+		// Override
+		public function getDefaultAccessRules()
+		{
+			$defaultRule = new FirewallRule();
+			$defaultRule->setAllAttributes(array(
+													"service_id" => $this->getAttribute("id"),
+													"protocol" => "tcp",
+													"dport" => 22
+												));
+												
+			return array($defaultRule);
+		}
 						
 		private static function configFilter($line)
 		{

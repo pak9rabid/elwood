@@ -25,6 +25,11 @@
 		private $acctServerPort;
 		private $acctServerSharedSecret;
 		
+		public function __construct()
+		{
+			parent::__construct();
+		}
+		
 		// Override
 		public function stop()
 		{
@@ -64,6 +69,8 @@
 		// Override
 		public function save()
 		{
+			parent::save();
+			
 			$config = array	(
 								"interface=" . RouterSettings::getSettingValue("LAN_WLAN"),
 								"bridge=" . RouterSettings::getSettingValue("INTIF"),
@@ -145,6 +152,8 @@
 		// Override
 		public function load()
 		{
+			parent::load();
+			
 			$config = FileUtils::readFileAsArray($this->service->config);
 			$wpaVersion = "";
 			$wpaMethod = "";
@@ -490,6 +499,12 @@
 				throw new Exception("Invalid shared secret entered for accounting server");
 				
 			$this->acctServerSharedSecret = $secret;
+		}
+		
+		// Override
+		public function getDefaultAccessRules()
+		{
+			return array();
 		}
 	}
 ?>

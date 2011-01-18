@@ -6,6 +6,7 @@
 	require_once "RouterSettings.class.php";
 	require_once "NetworkInterface.class.php";
 	require_once "NetUtils.class.php";
+	require_once "FirewallRule.class.php";
 	
 	class DebianDnsmasqService extends Service implements DHCPService
 	{
@@ -13,6 +14,11 @@
 		private $stickyIps = array();
 		private $domain;
 		private $nameservers = array();
+		
+		public function __construct()
+		{
+			parent::__construct();
+		}
 		
 		// Override
 		public function stop()
@@ -58,6 +64,8 @@
 		// Override
 		public function save()
 		{
+			parent::save();
+			
 			$out =	"interface=" . RouterSettings::getSettingValue("INTIF") . "\n" .
 					"no-hosts\n" .
 					"no-resolv\n" .
@@ -84,6 +92,8 @@
 		// Override
 		public function load()
 		{
+			parent::load();
+			
 			$config = FileUtils::readFileAsArray($this->service->config);
 			
 			foreach ($config as $line)
@@ -215,6 +225,20 @@
 			}
 			
 			$this->nameservers = $temp;
+		}
+		
+		// Override
+		public function getDefaultAccessRules()
+		{
+			$defaultRule = new FirewallRule();
+			
+			$defaultRule->setAllAttributes(array	(
+														"service_id" => $this->getAttribute("id"),
+														"protocol" => "udp",
+														"dport" => 67
+													));
+													
+			return array($defaultRule);
 		}
 	}
 ?>
