@@ -234,6 +234,7 @@
 			
 			$defaultRule->setAllAttributes(array	(
 														"service_id" => $this->getAttribute("id"),
+														"int_in" => RouterSettings::getSettingValue("INTIF"),
 														"protocol" => "udp",
 														"dport" => 67,
 														"target" => "ACCEPT"
