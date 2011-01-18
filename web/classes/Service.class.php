@@ -77,6 +77,20 @@
 			$this->accessRules[] = $accessRule;
 		}
 		
+		public function setAccessRules(array $accessRules)
+		{
+			foreach ($accessRules as $accessRule)
+			{
+				if (!($accessRule instanceof FirewallRule))
+					throw new Exception("Invalid type, should be of type FirewallRule");
+			}
+			
+			$this->clearAccessRules();
+			
+			foreach ($accessRules as $accessRule)
+				$this->addAccessRule($accessRule);
+		}
+		
 		public function clearAccessRules()
 		{
 			$this->accessRules = array();
