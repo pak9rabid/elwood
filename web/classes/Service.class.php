@@ -3,6 +3,7 @@
 	require_once "Database.class.php";
 	require_once "SystemProfile.class.php";
 	require_once "FirewallRule.class.php";
+	require_once "Firewall.class.php";
 	
 	abstract class Service extends DataHash
 	{
