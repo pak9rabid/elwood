@@ -28,7 +28,7 @@
 		// Override
 		public function javascript()
 		{
-			$isWlanEnabled = $this->wlanService->isRunning() ? "true" : "false";
+			$isWlanEnabled = $this->wlanService->getAttribute("is_enabled") == "Y" ? "true" : "false";
 			$isSsidHidden = $this->wlanService->isSsidHidden() ? "true" : "false";
 			$wlanMode = $this->wlanService->getMode();
 			$channel = $this->wlanService->getChannel();

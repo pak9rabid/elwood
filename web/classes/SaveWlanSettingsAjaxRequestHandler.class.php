@@ -11,6 +11,7 @@
 		public function processRequest(array $parameters)
 		{
 			$wlanService = Service::getInstance("wlan");
+			$wlanService->load();
 			$errors = array();
 			
 			foreach ($parameters as $key => $value)
@@ -83,13 +84,19 @@
 				$this->response = new AjaxResponse("", $errors);
 				return;
 			}
-			
-			$wlanService->save();
-			
+						
 			if ($parameters['isEnabled'] == "true")
+			{
+				$wlanService->setAttribute("is_enabled", "Y");
+				$wlanService->save();
 				$wlanService->restart();
+			}
 			else
+			{
+				$wlanService->setAttribute("is_enabled", "N");
+				$wlanService->save();
 				$wlanService->stop();
+			}
 				
 			$this->response = new AjaxResponse("Wireless settings saved successfully");
 		}
