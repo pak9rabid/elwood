@@ -21,8 +21,13 @@
 			$lanInt = NetworkInterface::getInstance("lan");
 			$dhcpService = Service::getInstance("dhcp");
 			$lanInt->load();
+			$dhcpService->load();
+			$dhcpService->clearAccessRules();
 			
 			$errors = array();
+			
+			if (!isset($parameters['ipRanges']))
+				$errors[] = "At least one IP range must be specified";
 			
 			foreach ($parameters as $key => $value)
 			{
@@ -76,6 +81,12 @@
 							$dhcpService->setStickyIps($value);
 							break;
 					}
+					
+					if (!isset($parameters['nameservers']))
+						$dhcpService->setNameservers(array());
+												
+					if (!isset($parameters['stickyIps']))
+						$dhcpService->setStickyIps(array());
 				}
 				catch (Exception $ex)
 				{
@@ -93,12 +104,21 @@
 			$lanInt->save();
 			$lanInt->apply();
 			
-			$dhcpService->save();
-			
 			if ($parameters['isDhcpServerEnabled'] == "true")
+			{
+				$dhcpService->setAttribute("is_enabled", "Y");
+				$dhcpService->save();
 				$dhcpService->restart();
+				$dhcpService->setAccessRules($dhcpService->getDefaultAccessRules());
+			}
 			else
+			{
+				$dhcpService->setAttribute("is_enabled", "N");
+				$dhcpService->save();
 				$dhcpService->stop();
+			}
+			
+			$dhcpService->applyAccessRules();
 			
 			$this->response = new AjaxResponse("LAN settings saved successfully");
 		}

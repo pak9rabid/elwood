@@ -30,7 +30,7 @@
 		// Override
 		public function javascript()
 		{
-			$isDhcpRunning = $this->dhcpService->isRunning() ? "true" : "false";
+			$isDhcpEnabled = $this->dhcpService->getAttribute("is_enabled") == "Y" ? "true" : "false";
 			
 			return <<<END
 			
@@ -180,7 +180,7 @@
 				$("#saveLanSettingsBtn").hide();
 				$("#lanMessages").hide();
 				
-				if ($isDhcpRunning)
+				if ($isDhcpEnabled)
 					$("#dhcpEnabled").click();
 				else
 					$("#dhcpDisabled").click();

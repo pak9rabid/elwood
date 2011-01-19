@@ -163,6 +163,9 @@
 		// Override
 		public function setIpRanges(array $ipRanges)
 		{
+			if (empty($ipRanges))
+				throw new Exception("At least one IP range must be specified");	
+			
 			$temp = array();
 			
 			foreach ($ipRanges as $ipRange)

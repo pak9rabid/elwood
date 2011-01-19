@@ -120,6 +120,12 @@
 			$db->getPdo()->commit();
 		}
 		
+		public function applyAccessRules()
+		{
+			$this->saveAccessRules();
+			Firewall::applyRulesInDatabase("filter");
+		}
+		
 		public function load()
 		{
 			foreach ($this->executeSelect() as $resultHash)
