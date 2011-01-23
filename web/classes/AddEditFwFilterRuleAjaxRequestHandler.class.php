@@ -63,7 +63,7 @@
 		
 			// Destination port
 			if (($protocol == "tcp" || $protocol == "udp") && NetUtils::isValidIanaPortNumber($dstPort))
-				$rule->setAttribute("dport", $srcPort);
+				$rule->setAttribute("dport", $dstPort);
 			else if (!empty($dstPort) && ($protocol == "tcp" || $protocol == "udp"))
 				$errors[] = "Invalid destination port specified";
 		
