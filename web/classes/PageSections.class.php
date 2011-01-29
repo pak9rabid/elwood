@@ -27,16 +27,16 @@ END;
 END;
 		}
 		
-		public static function navigation()
+		public static function navigation(Page $page)
 		{
 			return	<<<END
 			
-			<a href="elwoodPage.php?page=Status">Status</a>
-			<a href="elwoodPage.php?page=Access">Access</a>
-			<a href="elwoodPage.php?page=Wan">WAN</a>
-			<a href="elwoodPage.php?page=Lan">LAN</a>
-			<a href="elwoodPage.php?page=Wireless">Wireless</a>
-			<a href="elwoodPage.php?page=Firewall">Firewall</a>
+			<a id="statusPageLink" href="elwoodPage.php?page=Status">Status</a>
+			<a id="accessPageLink" href="elwoodPage.php?page=Access">Access</a>
+			<a id="wanPageLink" href="elwoodPage.php?page=Wan">WAN</a>
+			<a id="lanPageLink" href="elwoodPage.php?page=Lan">LAN</a>
+			<a id="wirelessPageLink" href="elwoodPage.php?page=Wireless">Wireless</a>
+			<a id="firewallPageLink" href="elwoodPage.php?page=Firewall">Firewall</a>
 END;
 		}
 	}

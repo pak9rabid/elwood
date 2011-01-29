@@ -2,7 +2,13 @@
 	require_once "Page.class.php";
 	
 	class DefaultPage implements Page
-	{				
+	{	
+		// Override
+		public function id()
+		{			
+			return "default";
+		}
+		
 		// Override
 		public function name()
 		{
@@ -11,6 +17,11 @@
 		
 		// Override
 		public function head()
+		{
+		}
+		
+		// Override
+		public function style()
 		{
 		}
 		

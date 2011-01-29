@@ -7,6 +7,12 @@
 	class FirewallPage implements Page
 	{
 		// Override
+		public function id()
+		{
+			return "firewall";
+		}
+		
+		// Override
 		public function name()
 		{
 			return "Firewall";
@@ -22,6 +28,11 @@ END;
 		}
 		
 		// Override
+		public function style()
+		{
+		}
+		
+		// Override
 		public function javascript()
 		{
 			$isAdminUser = User::getUser()->isAdminUser();
@@ -32,6 +43,7 @@ END;
 			
 			$(document).ready(function()
 			{
+				$(".navLink[href$='{$this->name()}']").addClass("navLinkSelected");
 				// Initialize elements
 				$.initElwoodPopups();
 				$("#saveBtn").hide();

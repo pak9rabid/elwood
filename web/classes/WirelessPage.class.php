@@ -15,6 +15,12 @@
 		}
 		
 		// Override
+		public function id()
+		{
+			return "wireless";
+		}
+		
+		// Override
 		public function name()
 		{
 			return "Wireless Setup";
@@ -22,6 +28,11 @@
 		
 		// Override
 		public function head()
+		{
+		}
+		
+		// Override
+		public function style()
 		{
 		}
 		

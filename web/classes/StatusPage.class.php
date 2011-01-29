@@ -7,6 +7,12 @@
 	class StatusPage implements Page
 	{
 		// Override
+		public function id()
+		{
+			return "status";
+		}
+		
+		// Override
 		public function name()
 		{
 			return "Status";
@@ -20,6 +26,11 @@
 			<rel="StyleSheet" type="text/css" href="css/jquery.countdown.css">
 			<script src="js/jquery.countdown.pack.js" type="text/javascript"></script>
 END;
+		}
+		
+		// Override
+		public function style()
+		{
 		}
 		
 		// Override

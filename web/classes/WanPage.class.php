@@ -13,6 +13,12 @@
 		}
 		
 		// Override
+		public function id()
+		{
+			return "wan";
+		}
+		
+		// Override
 		public function name()
 		{
 			return "WAN Setup";
@@ -20,6 +26,11 @@
 		
 		// Override
 		public function head()
+		{
+		}
+		
+		// Override
+		public function style()
 		{
 		}
 		

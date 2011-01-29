@@ -16,9 +16,20 @@
 		}
 		
 		// Override
+		public function id()
+		{
+			return "lan";
+		}
+		
+		// Override
 		public function name()
 		{
 			return "LAN Setup";
+		}
+		
+		// Override
+		public function style()
+		{
 		}
 		
 		// Override

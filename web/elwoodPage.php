@@ -34,12 +34,15 @@
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
 	<?=$pageObj->head()?>
+	<style>
+		<?=$pageObj->style()?>
+	</style>
 	<script type="text/javascript">
 	<?=$pageObj->javascript()?>
 	</script>
 </head>
 
-<body>
+<body id="<?=$pageObj->id()?>">
 	<div id="container">
 		<div id="title">
 			<?=PageSections::title($pageObj->name())?>

@@ -8,6 +8,12 @@
 	class AccessPage implements Page
 	{
 		// Override
+		public function id()
+		{
+			return "access";
+		}
+		
+		// Override
 		public function name()
 		{
 			return "Access";
@@ -15,6 +21,11 @@
 		
 		// Override
 		public function head()
+		{
+		}
+		
+		// Override
+		public function style()
 		{
 		}
 				
