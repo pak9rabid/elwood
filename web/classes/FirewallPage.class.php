@@ -17,9 +17,7 @@
 		{
 			return <<<END
 			
-			<link rel="StyleSheet" type="text/css", href="css/elwoodpopup.css" />
 			<script src="js/jquery.tablednd_0_5.js" type="text/javascript"></script>
-			<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
 END;
 		}
 		

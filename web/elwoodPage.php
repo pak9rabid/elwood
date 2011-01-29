@@ -1,7 +1,7 @@
 <?php
 	require_once "Page.class.php";
 	require_once "DefaultPage.class.php";
-	require_once "PageElements.class.php";
+	require_once "PageSections.class.php";
 	
 	$page = $_REQUEST['page'];
 	
@@ -21,7 +21,7 @@
 		$pageObj = new DefaultPage();
 		
 	if ($pageObj->isRestricted())
-		require_once "accessControl.php";
+		require_once "inc/accessControl.php";
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -30,7 +30,9 @@
 <head>
 	<title><?=$pageObj->name()?></title>
 	<link rel="StyleSheet" type="text/css" href="css/routerstyle.css" />
+	<link rel="StyleSheet" type="text/css" href="css/elwoodpopup.css" />
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
+	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
 	<?=$pageObj->head()?>
 	<script type="text/javascript">
 	<?=$pageObj->javascript()?>
@@ -39,12 +41,17 @@
 
 <body>
 	<div id="container">
-		<?=PageElements::title($pageObj->name())?>
-		<?=PageElements::navigation()?>
+		<div id="title">
+			<?=PageSections::title($pageObj->name())?>
+		</div>
+		
+		<div id="navigation">
+			<?=PageSections::navigation($pageObj)?>
+		</div>
+		
 		<div id="content">
 			<?=$pageObj->content($_REQUEST)?>
 		</div>
-		
 		<?=$pageObj->popups($_REQUEST)?>
 	</div>
 </body>

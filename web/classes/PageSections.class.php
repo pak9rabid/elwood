@@ -1,7 +1,7 @@
 <?php
 	require_once "User.class.php";
 	
-	class PageElements
+	class PageSections
 	{
 		public static function title($title)
 		{
@@ -9,8 +9,7 @@
 			
 			$out = <<<END
 			
-			<div id="title">
-				<font id="usertxt">
+			<font id="usertxt">
 END;
 			
 			if (!empty($user))
@@ -23,9 +22,8 @@ END;
 				
 			return $out .= <<<END
 			
-				</font>
+			</font>
 				$title
-			</div>
 END;
 		}
 		
@@ -33,14 +31,12 @@ END;
 		{
 			return	<<<END
 			
-			<div id="navigation">
-				<a href="elwoodPage.php?page=Status">Status</a>
-				<a href="elwoodPage.php?page=Access">Access</a>
-				<a href="elwoodPage.php?page=Wan">WAN</a>
-				<a href="elwoodPage.php?page=Lan">LAN</a>
-				<a href="elwoodPage.php?page=Wireless">Wireless</a>
-				<a href="elwoodPage.php?page=Firewall">Firewall</a>
-			</div>
+			<a href="elwoodPage.php?page=Status">Status</a>
+			<a href="elwoodPage.php?page=Access">Access</a>
+			<a href="elwoodPage.php?page=Wan">WAN</a>
+			<a href="elwoodPage.php?page=Lan">LAN</a>
+			<a href="elwoodPage.php?page=Wireless">Wireless</a>
+			<a href="elwoodPage.php?page=Firewall">Firewall</a>
 END;
 		}
 	}
