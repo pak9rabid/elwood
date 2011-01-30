@@ -35,7 +35,6 @@
 		// Override
 		public function head()
 		{
-			
 		}
 		
 		// Override
@@ -113,7 +112,7 @@
 					var saveButton = $(this);
 					
 					saveButton
-						.html("Please wait...")
+						.html("Saving...&nbsp;<img class='loading' src='images/loading.gif' />")
 						.attr("disabled", "disabled");
 
 					var nameservers = new Array();

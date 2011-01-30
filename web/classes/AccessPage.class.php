@@ -37,6 +37,17 @@
 			
 			return <<<END
 			
+			var showSaveAccessButton = function()
+			{
+				if (!$("#saveAccessBtn").is(":visible"))
+				{
+					$("#saveAccessBtn")
+						.html("Save")
+						.removeAttr("disabled")
+						.fadeIn();
+				}
+			}
+						
 			var addEditUserAction;
 			var currentUser = "$user";
 			var currentGroup = "$group";
@@ -70,11 +81,7 @@
 					$("#addEditUserPopup").closeElwoodPopup();
 				});
 	
-				$(".accessInput").change(function()
-				{
-					if (!$("#saveAccessBtn").is(":visible"))
-						$("#saveAccessBtn").fadeIn();
-				});
+				$(".accessInput").change(showSaveAccessButton);
 
 				$(".usersInput").change(function()
 				{
@@ -84,6 +91,12 @@
 			
 				$("#saveAccessBtn").click(function()
 				{
+					var saveButton = $(this);
+					
+					saveButton
+						.html("Saving...&nbsp;<img src='images/loading.gif' />")
+						.attr("disabled", "disabled");
+						
 					var params =	{
 										handler: "EditAccessMethods",
 										parameters:
@@ -107,6 +120,10 @@
 								.css("color", "red")
 								.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
 								.show();
+								
+							saveButton
+								.html("Save")
+								.removeAttr("disabled");
 						}
 						else
 						{

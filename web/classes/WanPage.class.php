@@ -107,7 +107,7 @@
 					var saveButton = $(this);
 					
 					saveButton
-						.html("Please wait...")
+						.html("Saving...&nbsp;<img src='images/loading.gif' />")
 						.attr("disabled", "disabled");
 						
 					var nameservers = new Array();
