@@ -36,6 +36,11 @@
 			"class": "DebianHostapdService",
 			"config": "/etc/hostapd/hostapd.conf",
 			"pid": "/var/run/hostapd.pid"
+		},
+
+		"icmp":
+		{
+			"class": "ICMPService"
 		}
 	},
 

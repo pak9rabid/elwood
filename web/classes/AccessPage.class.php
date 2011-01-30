@@ -284,8 +284,10 @@ END;
 			
 			$httpService = Service::getInstance("http");
 			$sshService = Service::getInstance("ssh");
+			$icmpService = Service::getInstance("icmp");
 			$httpService->load();
 			$sshService->load();
+			$icmpService->load();
 			
 			foreach ($httpService->getAccessRules() as $rule)
 			{
@@ -301,9 +303,12 @@ END;
 				$wanSshEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
 			}
 			
-			$lanIcmpEnabled = RouterSettings::getSettingValue("LAN_ICMP_ENABLED") ? "checked" : "";
-			$wanIcmpEnabled = RouterSettings::getSettingValue("WAN_ICMP_ENABLED") ? "checked" : "";
-			
+			foreach ($icmpService->getAccessRules() as $rule)
+			{
+				$lanIcmpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf) ? "checked" : "";
+				$wanIcmpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
+			}
+						
 			$selectHash = new User();
 			$users = $selectHash->executeSelect();
 			

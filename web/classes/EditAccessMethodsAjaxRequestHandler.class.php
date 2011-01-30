@@ -51,6 +51,7 @@
 			
 			$httpService = Service::getInstance("http");
 			$sshService = Service::getInstance("ssh");
+			$icmpService = Service::getInstance("icmp");
 			
 			if (!($httpService instanceof HTTPService))
 				throw new Exception("HTTP service class does not implement the HTTPService interface");
@@ -60,22 +61,13 @@
 				
 			$httpService->load();
 			$sshService->load();
-			$httpService->clearAccessRules();
-			$sshService->clearAccessRules();
+			$icmpService->load();
 			
-			$inputChain = new FirewallChain("filter", "INPUT");
 			$rule = new FirewallRule();
-			
-			// allow any ESTABLISHED or RELATED traffic
-			$rule->setAttribute("state", "ESTABLISH,RELATED");
-			$rule->setAttribute("target", "ACCEPT");
-			$inputChain->add($rule);
-						
-			$rule->clear();
 			$rule->setAttribute("protocol", "tcp");
 			$rule->setAttribute("target", "ACCEPT");
 			
-			// http		
+			// http
 			if ($httpWan || $httpLan)
 			{
 				$httpService->setAttribute("is_enabled", "Y");
@@ -87,10 +79,13 @@
 				else if ($httpLan && !$httpWan)
 					$rule->setAttribute("int_in", $intIf);
 
-				$httpService->addAccessRule($rule);
+				$httpService->setAccessRules(array($rule));
 			}
 			else
+			{
+				$httpService->clearAccessRules();
 				$httpService->setAttribute("is_enabled", "N");
+			}
 			
 			$rule->clear();
 			$rule->setAttribute("protocol", "tcp");
@@ -108,68 +103,44 @@
 				else if ($sshLan && !$sshWan)
 					$rule->setAttribute("int_in", $intIf);
 					
-				$sshService->addAccessRule($rule);
+				$sshService->setAccessRules(array($rule));
 			}
 			else
+			{
+				$sshService->clearAccessRules();
 				$sshService->setAttribute("is_enabled", "N");
-				
-				
+			}
+			
 			$rule->clear();
 			$rule->setAttribute("protocol", "icmp");
 			$rule->setAttribute("target", "ACCEPT");
-				
+			
 			// icmp
 			if ($icmpWan || $icmpLan)
 			{
+				$icmpService->setAttribute("is_enabled", "Y");
+				$rule->setAttribute("service_id", $icmpService->getAttribute("id"));
+				
 				if ($icmpWan && !$icmpLan)
-				{
 					$rule->setAttribute("int_in", $extIf);
-					RouterSettings::saveSetting("LAN_ICMP_ENABLED", 0);
-					RouterSettings::saveSetting("WAN_ICMP_ENABLED", 1);
-				}
 				else if ($icmpLan && !$icmpWan)
-				{
 					$rule->setAttribute("int_in", $intIf);
-					RouterSettings::saveSetting("LAN_ICMP_ENABLED", 1);
-					RouterSettings::saveSetting("WAN_ICMP_ENABLED", 0);
-				}
-				else
-				{
-					RouterSettings::saveSetting("LAN_ICMP_ENABLED", 1);
-					RouterSettings::saveSetting("WAN_ICMP_ENABLED", 1);
-				}
 					
-				$inputChain->add($rule);
+				$icmpService->setAccessRules(array($rule));
 			}
 			else
 			{
-				RouterSettings::saveSetting("LAN_ICMP_ENABLED", 0);
-				RouterSettings::saveSetting("WAN_ICMP_ENABLED", 0);
+				$icmpService->clearAccessRules();
+				$icmpService->setAttribute("is_enabled", "N");
 			}
-						
-			$inputChain->addRulesForService($httpService);
-			$inputChain->addRulesForService($sshService);
-			
-			// load rules for other active services
-			foreach (Service::getRegisteredServices() as $service)
-			{
-				$serviceName = $service->getAttribute("service_name");
-				
-				if ($serviceName == "http" || $serviceName == "ssh")
-					continue;
-					
-				$service->load();
-				
-				if ($service->getAttribute("is_enabled") == "Y")
-					$inputChain->addRulesForService($service);
-			}
-			
-			$inputChain->save();
-			$inputChain->apply();
 			
 			$httpService->save();
 			$sshService->save();
-											
+			$icmpService->save();
+			$httpService->applyAccessRules();
+			$sshService->applyAccessRules();
+			$icmpService->applyAccessRules();
+			
 			if ($sshService->getAttribute("is_enabled") == "Y")
 				$sshService->restart();
 			else
