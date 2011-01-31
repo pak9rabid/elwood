@@ -155,16 +155,6 @@ body#firewall #navigation a#firewallPageLink
 	text-align: right;
 }
 
-.fwRuleDrop
-{
-	background-color: #FFAAAA;
-}
-
-.fwRuleAccept
-{
-	background-color: #99FF99;
-}
-
 .tabInputLabel
 {
 	text-align: right;

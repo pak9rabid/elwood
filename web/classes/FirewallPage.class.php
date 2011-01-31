@@ -88,6 +88,16 @@ END;
 			{
 				border: 0px;
 			}
+			
+			.fwRuleDrop
+			{
+				background-color: #FFAAAA;
+			}
+
+			.fwRuleAccept
+			{
+				background-color: #99FF99;
+			}
 END;
 		}
 		
