@@ -43,7 +43,6 @@ END;
 			
 			$(document).ready(function()
 			{
-				$(".navLink[href$='{$this->name()}']").addClass("navLinkSelected");
 				// Initialize elements
 				$.initElwoodPopups();
 				$("#saveBtn").hide();
