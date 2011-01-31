@@ -1,8 +1,8 @@
 body
 {
-   font-family:      Arial, sans-serif;
+   font-family: Arial, sans-serif;
    background-color: #888888;
-   text-align:       center;
+   text-align: center;
 }
 
 img
@@ -19,35 +19,35 @@ fieldset
 #container
 {
    background-color: #6495ED;
-   border-style:     solid;
-   border-width:     2px;
-   width:            800px;
-   margin-left:      auto;
-   margin-right:     auto;
-   margin-bottom:    200px;
-   padding-bottom:   16px;
-   text-align:       center;
+   border-style: solid;
+   border-width: 2px;
+   width: 800px;
+   margin-left: auto;
+   margin-right: auto;
+   margin-bottom: 200px;
+   padding-bottom: 16px;
+   text-align: center;
 }
 
 #title
 {
    background-color: #00008B;
-   color:            #FFF;
-   font-size:        35px;
-   font-weight:      bold;
-   padding-top:      5px;
-   padding-bottom:   30px;
-   padding-right:    10px;
-   padding-left:     10px;
-   border-bottom:    solid #000;
-   border-width:     2px;
+   color: #FFF;
+   font-size: 35px;
+   font-weight: bold;
+   padding-top: 5px;
+   padding-bottom: 30px;
+   padding-right: 10px;
+   padding-left: 10px;
+   border-bottom: solid #000;
+   border-width: 2px;
 }
 
 #navigation
 {
-   position:         relative;
-   text-align:       center;
-   display:          block;
+   position: relative;
+   text-align: center;
+   display: block;
    background-color: #6495ED;
 }
 
@@ -84,29 +84,29 @@ body#firewall #navigation a#firewallPageLink
 
 #content
 {
-   z-index:          0;
+   z-index: 0;
    display: block;
-   text-align:       center;
+   text-align: center;
    background-color: #DCDCDC;
-   width:            700px;
-   border-style:     solid;
-   border-width:     2px;
-   margin-left:      auto;
-   margin-right:     auto;
-   word-wrap:        break-word;
-   padding:          15px;
+   width: 700px;
+   border-style: solid;
+   border-width: 2px;
+   margin-left: auto;
+   margin-right: auto;
+   word-wrap: break-word;
+   padding: 15px;
 }
 
 #content a
 {
    text-decoration: none;
-   color:           #00008B;
+   color: #00008B;
 }
 
 #content a:visited
 {
    text-decoration: none;
-   color:           #00008B;
+   color: #00008B;
 }
 
 #content a:hover
@@ -116,83 +116,9 @@ body#firewall #navigation a#firewallPageLink
 
 #content h4
 {
-   font-size:     15px;
-   margin-top:    0px;
+   font-size: 15px;
+   margin-top: 0px;
    margin-bottom: 0px;
-}
-
-#firewall-table
-{
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
-	width: 90%;
-	border-style: solid;
-	border: 0px;
-}
-
-#firewall-table th
-{
-	background-color: #A8A8A8;
-	text-align: center;
-}
-
-#port-forward-table
-{
-   width:        500px;
-   margin-left:  auto;
-   margin-right: auto;
-}
-
-#port-forward-table th
-{
-   background-color: #A8A8A8;
-   text-align:       center;
-}
-
-#port-forward-table td
-{
-   text-align:       center;
-   background-color: #D0D0D0;
-}
-
-#cmd-output
-{
-   background-color: #A8A8A8;
-   text-align:       left;
-   font-size:        10px;
-   width:            655px;
-   border-style:     solid;
-   border-width:     1px;
-   margin-left:      auto;
-   margin-right:     auto;
-   word-wrap:        break-word;
-   padding:          15px;
-}
-
-#cmd-input
-{
-   width:            100%;
-   background-color: #A8A8A8;
-   border-style:     solid;
-   border-width:     1px;
-   margin-top:       5px;
-}
-
-#cmd-input form
-{
-   text-align: center;
-   padding:    0px;
-}
-
-#cmd-list
-{
-   width: 236px;
-}
-
-#smalllink
-{
-   font-size: 10px;
 }
 
 #usertxt
@@ -203,125 +129,30 @@ body#firewall #navigation a#firewallPageLink
    text-align: right;
 }
 
-#fwTable
-{
-	margin-top: 10px;
-}
-
-#fwActions
-{
-	margin-top: 15px;
-}
-
-.status-table
-{
-   background-color: #D0D0D0;
-   margin-left:      auto;
-   margin-right:     auto;
-   border:           0px;
-   border-collapse:  collapse;
-}
-
-.status-table th
-{
-   background-color: #A8A8A8;
-   text-align:       right;
-}
-
-.status-table td
-{
-   text-align: center;
-}
-
-.access-table
-{
-   background-color: #D0D0D0;
-   margin-left:      auto;
-   margin-right:     auto;
-}
-
-.access-table th
-{
-   background-color: #A8A8A8;
-   text-align:       center;
-   padding-left: 15px;
-   padding-right: 15px;
-}
-
-.access-table td
-{
-   text-align: center;
-}
-
 .ip-table
 {
    background-color: #D0D0D0;
-   border:           0px;
-   border-collapse:  collapse;  
-   margin-left:      auto;
-   margin-right:     auto;
+   border: 0px;
+   border-collapse: collapse;  
+   margin-left: auto;
+   margin-right: auto;
 }
 
 .ip-table th
 {
    background-color: #A8A8A8;
-   text-align:       center;
+   text-align: center;
 }
 
 .textfield
 {
-   border:  #C0C0C0 1px solid;
+   border: #C0C0C0 1px solid;
    padding: 1px;
-}
-
-.firewall-table-protocol-col
-{
-	width: 17%;
-}
-
-.firewall-table-address-col
-{
-	width: 25%;
-}
-
-.firewall-table-port-col
-{
-	width: 16%;
-}
-
-.fwRuleDetails
-{
-	background-color: #FFFF00;
-	padding: 10px;
-	border-style: solid;
-	border-width: 1px;
-	font-size: 12px;
-	z-index: 1;
-}
-
-.fwDetailsTable
-{
-	border: 0px;
 }
 
 .label
 {
 	text-align: right;
-}
-
-.value
-{
-	text-align: center;
-}
-
-.fwPolicyDrop
-{
-	background-color: #FF0000;
-}
-
-.fwPolicyAccept
-{
-	background-color: #00FF00;
 }
 
 .fwRuleDrop
@@ -334,11 +165,6 @@ body#firewall #navigation a#firewallPageLink
 	background-color: #99FF99;
 }
 
-.tableRowMove
-{
-	background-color: #EEE;
-}
-
 .tabInputLabel
 {
 	text-align: right;
@@ -347,22 +173,6 @@ body#firewall #navigation a#firewallPageLink
 .tabInputValue
 {
 	text-align: left;
-}
-
-.error-font
-{
-   display:     block;
-   color:       red;
-   font-size:   11px;
-   font-weight: bold;
-}
-
-.success-font
-{
-   display:     block;
-   color:       green;
-   font-size:   11px;
-   font-weight: bold;
 }
 
 .section-header

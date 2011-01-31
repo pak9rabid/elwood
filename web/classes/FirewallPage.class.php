@@ -24,12 +24,71 @@
 			return <<<END
 			
 			<script src="js/jquery.tablednd_0_5.js" type="text/javascript"></script>
+			<link rel="StyleSheet" type="text/css" href="css/tablednd.css" />
 END;
 		}
 		
 		// Override
 		public function style()
 		{
+			return <<<END
+			
+			#fwTable
+			{
+				margin-top: 10px;
+			}
+			
+			#firewall-table
+			{
+				text-align: center;
+				margin-left: auto;
+				margin-right: auto;
+				width: 90%;
+				border-style: solid;
+				border: 0px;
+}
+
+			#firewall-table th
+			{
+				background-color: #A8A8A8;
+				text-align: center;
+			}
+			
+			#fwActions
+			{
+				margin-top: 15px;
+			}
+			
+			.firewall-table-protocol-col
+			{
+				width: 17%;
+			}
+
+			.firewall-table-address-col
+			{
+				width: 25%;
+			}
+
+			.firewall-table-port-col
+			{
+				width: 16%;
+			}
+
+			.fwRuleDetails
+			{
+				background-color: #FFFF00;
+				padding: 10px;
+				border-style: solid;
+				border-width: 1px;
+				font-size: 12px;
+				z-index: 1;
+			}
+			
+			.fwDetailsTable
+			{
+				border: 0px;
+			}
+END;
 		}
 		
 		// Override

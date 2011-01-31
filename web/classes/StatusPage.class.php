@@ -31,6 +31,29 @@ END;
 		// Override
 		public function style()
 		{
+			
+			return <<<END
+			
+			.status-table
+			{
+				background-color: #D0D0D0;
+				margin-left: auto;
+				margin-right: auto;
+				border: 0px;
+				border-collapse: collapse;
+			}
+
+			.status-table th
+			{
+				background-color: #A8A8A8;
+				text-align: right;
+			}
+
+			.status-table td
+			{
+				text-align: center;
+			}
+END;
 		}
 		
 		// Override
