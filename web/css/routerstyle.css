@@ -75,7 +75,8 @@ body#access #navigation a#accessPageLink,
 body#wan #navigation a#wanPageLink,
 body#lan #navigation a#lanPageLink,
 body#wireless #navigation a#wirelessPageLink,
-body#firewall #navigation a#firewallPageLink
+body#firewall #navigation a#firewallPageLink,
+body#nat #navigation a#natPageLink
 {
 	text-decoration: none;
 	color: #000;
@@ -182,4 +183,24 @@ body#firewall #navigation a#firewallPageLink
 {
 	font-size: 8px;
 	height: 17px;
+}
+
+.access-table
+{
+	background-color: #D0D0D0;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.access-table th
+{
+	background-color: #A8A8A8;
+	text-align: center;
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.access-table td
+{
+	text-align: center;
 }

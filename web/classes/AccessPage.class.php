@@ -27,28 +27,6 @@
 		// Override
 		public function style()
 		{
-			return <<<END
-			
-			.access-table
-			{
-				background-color: #D0D0D0;
-				margin-left: auto;
-				margin-right: auto;
-			}
-
-			.access-table th
-			{
-				background-color: #A8A8A8;
-				text-align: center;
-				padding-left: 15px;
-				padding-right: 15px;
-			}
-
-			.access-table td
-			{
-				text-align: center;
-			}
-END;
 		}
 				
 		// Override
