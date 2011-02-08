@@ -388,19 +388,36 @@ END;
 			$chain = new FirewallChain("filter", "forward_$direction");
 			$chain->load();
 			
+			$inSelect = "";
+			$outSelect = "";
+			
+			switch ($direction)
+			{
+				case "in":
+					$inSelect = "-selected";
+					break;
+				default:
+					$outSelect = "-selected";
+					break;
+			}
+			
 			return <<<END
 			
-			<a href="elwoodPage.php?page=Firewall&dir=in">Incoming </a>
-			&nbsp;
-			<a href="elwoodPage.php?page=Firewall&dir=out">Outgoing</a>
-			<br /><br />
-			<button id="addRuleBtn">Add Rule</button>
-			<div id="fwTable">
-				{$chain->toHtml(($direction == "in" ? "Incoming " : "Outgoing ") . "Traffic")}
-			</div>
-			<div id="fwActions">
-				<input id="saveBtn" type="button" value="Save Rules" />
-				<div id="fwResults"></div>
+			<div style="margin: 15px;">
+				<div class="tab-panel">
+					<a class="tab$inSelect" href="elwoodPage.php?page=Firewall&dir=in">Incoming</a>
+					<a class="tab$outSelect" href="elwoodPage.php?page=Firewall&dir=out">Outgoing</a>
+				</div>
+				<div class="tab-content">
+					<button id="addRuleBtn">Add Rule</button>
+					<div id="fwTable">
+						{$chain->toHtml(($direction == "in" ? "Incoming " : "Outgoing ") . "Traffic")}
+					</div>
+					<div id="fwActions">
+						<input id="saveBtn" type="button" value="Save Rules" />
+						<div id="fwResults"></div>
+					</div>
+				</div>
 			</div>
 END;
 		}

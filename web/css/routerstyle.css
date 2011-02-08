@@ -204,3 +204,42 @@ body#nat #navigation a#natPageLink
 {
 	text-align: center;
 }
+
+div.tab-panel
+{
+	font-size: 14px;
+	padding: 3px;
+	border-color: #00008B;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	margin: 0px;
+}
+
+div.tab-content
+{
+	margin: 0px;
+	border-color: #00008B;
+	border-style: solid;
+	border-width: 1px;
+	margin-top: 0px;
+	padding-top: 0px;
+	border-top-style: none;
+	padding: 15px;
+}
+
+a.tab
+{
+	padding: 3px 6px 3px 6px;
+}
+
+a.tab-selected
+{
+	padding: 3px;
+	font-weight: bold;
+	border-style: solid;
+	border-left-width: 1px;
+	border-right-width: 1px;
+	border-top-width: 1px;
+	border-bottom-color: #DCDCDC;
+	border-bottom-width: 1px;
+}
