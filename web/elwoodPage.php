@@ -33,12 +33,12 @@
 	<link rel="StyleSheet" type="text/css" href="css/elwoodpopup.css" />
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
-	<?=$pageObj->head()?>
+	<?=$pageObj->head($_REQUEST)?>
 	<style>
-		<?=$pageObj->style()?>
+		<?=$pageObj->style($_REQUEST)?>
 	</style>
 	<script type="text/javascript">
-	<?=$pageObj->javascript()?>
+	<?=$pageObj->javascript($_REQUEST)?>
 	</script>
 </head>
 

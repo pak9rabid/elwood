@@ -20,17 +20,17 @@
 		}
 		
 		// Override
-		public function head()
+		public function head(array $parameters)
 		{
 		}
 		
 		// Override
-		public function style()
+		public function style(array $parameters)
 		{
 		}
 				
 		// Override
-		public function javascript()
+		public function javascript(array $parameters)
 		{
 			$user = User::getUser();
 			$group = !empty($user) ? $user->getGroup() : null;

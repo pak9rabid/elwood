@@ -27,17 +27,17 @@
 		}
 		
 		// Override
-		public function head()
+		public function head(array $parameters)
 		{
 		}
 		
 		// Override
-		public function style()
+		public function style(array $parameters)
 		{
 		}
 		
 		// Override
-		public function javascript()
+		public function javascript(array $parameters)
 		{
 			$isWlanEnabled = $this->wlanService->getAttribute("is_enabled") == "Y" ? "true" : "false";
 			$isSsidHidden = $this->wlanService->isSsidHidden() ? "true" : "false";
