@@ -44,13 +44,22 @@ END;
 				margin-left: auto;
 				margin-right: auto;
 				width: 90%;
-				border-style: solid;
-				border: 0px;
-}
-
+				border-collapse: collapse;
+			}
+			
 			#firewall-table th
 			{
 				background-color: #A8A8A8;
+				text-align: center;
+			}
+			
+			#firewall-table td
+			{
+				border-top-style: solid;
+				border-bottom-style: solid;
+				border-top-width: 1px;
+				border-top-color: #DCDCDC;
+				border-bottom-width: 1px;
 				text-align: center;
 			}
 			
