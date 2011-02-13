@@ -47,22 +47,16 @@ END;
 				border-collapse: collapse;
 			}
 			
+			#firewall-table tr
+			{
+				border: 1px solid;
+			}
+			
 			#firewall-table th
 			{
 				background-color: #A8A8A8;
-				text-align: center;
 			}
-			
-			#firewall-table td
-			{
-				border-top-style: solid;
-				border-bottom-style: solid;
-				border-top-width: 1px;
-				border-top-color: #DCDCDC;
-				border-bottom-width: 1px;
-				text-align: center;
-			}
-			
+						
 			#fwActions
 			{
 				margin-top: 15px;
