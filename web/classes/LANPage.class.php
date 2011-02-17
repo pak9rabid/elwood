@@ -3,7 +3,7 @@
 	require_once "NetworkInterface.class.php";
 	require_once "Service.class.php";
 	
-	class LanPage implements Page
+	class LANPage implements Page
 	{
 		private $lanInt;
 		private $dhcpService;
