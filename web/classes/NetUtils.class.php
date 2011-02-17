@@ -1,6 +1,7 @@
 <?php
 	require_once "Net/IPv4.php";
 	require_once "WirelessSecurity.class.php";
+	require_once "SystemProfile.class.php";
 	
 	class NetUtils
 	{
@@ -362,6 +363,11 @@
 		public static function isValidIPTablesTable($table)
 		{
 			return in_array($table, array("filter", "nat", "mangle"));
+		}
+		
+		public static function getInterfaces()
+		{
+			return array_keys((array)SystemProfile::getProfile()->interfaces);
 		}
 	}
 ?>

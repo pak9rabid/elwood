@@ -17,7 +17,7 @@
 		// Override
 		public function id()
 		{
-			return "wireless";
+			return "Wireless";
 		}
 		
 		// Override

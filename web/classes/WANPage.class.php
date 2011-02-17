@@ -15,7 +15,7 @@
 		// Override
 		public function id()
 		{
-			return "wan";
+			return "WAN";
 		}
 		
 		// Override

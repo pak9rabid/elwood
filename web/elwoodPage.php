@@ -15,7 +15,7 @@
 	if (!class_exists($pageClass))
 		$pageClass = "DefaultPage";
 		
-	$pageObj = new $pageClass();
+	$pageObj = new $pageClass($_REQUEST);
 	
 	if (!($pageObj instanceof Page))
 		$pageObj = new DefaultPage();

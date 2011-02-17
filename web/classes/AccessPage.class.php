@@ -10,7 +10,7 @@
 		// Override
 		public function id()
 		{
-			return "access";
+			return "Access";
 		}
 		
 		// Override

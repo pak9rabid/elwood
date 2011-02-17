@@ -1,5 +1,6 @@
 <?php
 	require_once "User.class.php";
+	require_once "Page.class.php";
 	
 	class PageSections
 	{
@@ -27,17 +28,55 @@ END;
 END;
 		}
 		
-		public static function navigation(Page $page)
+		public static function navigation(Page $selectedPage)
 		{
-			return	<<<END
+			$pages = array("Status", "Access", "WAN", "LAN", "Wireless", "Firewall", "NAT");
+			$out = "";
 			
-			<a id="statusPageLink" href="elwoodPage.php?page=Status">Status</a>
-			<a id="accessPageLink" href="elwoodPage.php?page=Access">Access</a>
-			<a id="wanPageLink" href="elwoodPage.php?page=Wan">WAN</a>
-			<a id="lanPageLink" href="elwoodPage.php?page=Lan">LAN</a>
-			<a id="wirelessPageLink" href="elwoodPage.php?page=Wireless">Wireless</a>
-			<a id="firewallPageLink" href="elwoodPage.php?page=Firewall">Firewall</a>
+			foreach ($pages as $page)
+			{
+				$cssClass = $page == $selectedPage->id() ? "selected" : "";
+				$out .= <<<END
+				
+				<a class="$cssClass" href="elwoodPage.php?page=$page">$page</a>
 END;
+			}
+
+			return $out;
+			
+		}
+		
+		public static function subPages(Page $parentPage, Page $selectedPage, array $subPages, array $parameters)
+		{
+			$out = <<<END
+			
+			<div style="margin: 15px">
+				<div class="tab-panel">
+END;
+
+			foreach ($subPages as $subPage)
+			{
+				if (!($subPage instanceof Page))
+					throw new Exception("The specified page object does not implement the Page interface");
+					
+				$cssClass = ($subPage === $selectedPage ? "tab-selected" : "tab");
+					
+				$out .= <<<END
+				
+					<a class="$cssClass" href="elwoodPage.php?page={$parentPage->id()}&tab={$subPage->id()}">{$subPage->name()}</a>
+END;
+			}
+			
+			$out .= <<<END
+			
+				</div>
+				<div class="tab-content">
+					{$selectedPage->content($parameters)}
+				</div>
+			</div>
+			
+END;
+			return $out;
 		}
 	}
 ?>

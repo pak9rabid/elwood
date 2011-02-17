@@ -9,7 +9,7 @@
 		// Override
 		public function id()
 		{
-			return "firewall";
+			return "Firewall";
 		}
 		
 		// Override

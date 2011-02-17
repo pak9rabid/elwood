@@ -70,13 +70,7 @@ fieldset
 	background: #FFF;
 }
 
-body#status #navigation a#statusPageLink,
-body#access #navigation a#accessPageLink,
-body#wan #navigation a#wanPageLink,
-body#lan #navigation a#lanPageLink,
-body#wireless #navigation a#wirelessPageLink,
-body#firewall #navigation a#firewallPageLink,
-body#nat #navigation a#natPageLink
+#navigation a.selected
 {
 	text-decoration: none;
 	color: #000;

@@ -18,7 +18,7 @@
 		// Override
 		public function id()
 		{
-			return "lan";
+			return "LAN";
 		}
 		
 		// Override

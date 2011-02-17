@@ -9,7 +9,7 @@
 		// Override
 		public function id()
 		{
-			return "status";
+			return "Status";
 		}
 		
 		// Override
