@@ -42,7 +42,7 @@
 	</script>
 </head>
 
-<body id="<?=$pageObj->id()?>">
+<body>
 	<div id="container">
 		<div id="title">
 			<?=PageSections::title($pageObj->name())?>
