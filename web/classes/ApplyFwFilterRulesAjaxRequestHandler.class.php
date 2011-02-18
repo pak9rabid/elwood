@@ -33,6 +33,8 @@
 			
 			foreach ($rulesIn as $ruleIn)
 			{
+				$rule->clear();
+				
 				foreach ($ruleIn as $key => $value)
 				{
 					if ($value != "*" && !preg_match("/^new/", $value))
