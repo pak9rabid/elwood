@@ -1,15 +1,15 @@
 <?php
-	require_once "Database.class.php";
-	require_once "DbQueryPreper.class.php";
-	require_once "SessionUtils.class.php";
-	require_once "User.class.php";
+	require_once "classes/Database.class.php";
+	require_once "classes/DbQueryPreper.class.php";
+	require_once "classes/SessionUtils.class.php";
+	require_once "classes/User.class.php";
 	
 	session_start();
 	
 	if (isset($_REQUEST['logout']))
 	{
 		SessionUtils::logout();
-		header("Location: ../elwoodPage.php?page=Status");
+		header("Location: elwoodPage.php?page=Status");
 	}
 
 	$user = SessionUtils::getUser();

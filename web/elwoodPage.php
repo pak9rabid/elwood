@@ -1,7 +1,7 @@
 <?php
-	require_once "Page.class.php";
-	require_once "DefaultPage.class.php";
-	require_once "PageSections.class.php";
+	require_once "classes/Page.class.php";
+	require_once "classes/DefaultPage.class.php";
+	require_once "classes/PageSections.class.php";
 	
 	$page = $_REQUEST['page'];
 	
@@ -10,7 +10,7 @@
 	else
 		$pageClass = $page . "Page";
 		
-	@include_once "$pageClass.class.php";
+	@include_once "classes/$pageClass.class.php";
 	
 	if (!class_exists($pageClass))
 		$pageClass = "DefaultPage";
@@ -21,7 +21,7 @@
 		$pageObj = new DefaultPage();
 		
 	if ($pageObj->isRestricted())
-		require_once "inc/accessControl.php";
+		require_once "accessControl.php";
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">

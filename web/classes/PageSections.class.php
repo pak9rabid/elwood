@@ -17,7 +17,7 @@ END;
 			{
 				$out .= <<<END
 				Logged in: {$user->getAttribute("username")}<br />
-				<a href="inc/accessControl.php?logout=true">Logout</a>
+				<a href="accessControl.php?logout=true">Logout</a>
 END;
 			}
 				

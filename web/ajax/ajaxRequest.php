@@ -1,6 +1,6 @@
 <?php
-	require_once "AjaxResponse.class.php";
-	require_once "AjaxRequestHandler.class.php";
+	require_once "../classes/AjaxResponse.class.php";
+	require_once "../classes/AjaxRequestHandler.class.php";
 	
 	session_start();
 	header("Content-Type: application/json");
@@ -28,7 +28,7 @@
 		}
 	
 		$requestHandlerClass = $requestHandler . "AjaxRequestHandler";
-		@include_once "$requestHandlerClass.class.php";
+		@include_once "../classes/$requestHandlerClass.class.php";
 	
 		if (!class_exists($requestHandlerClass))
 		{
