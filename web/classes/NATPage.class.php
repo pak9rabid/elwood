@@ -2,38 +2,27 @@
 	require_once "Page.class.php";
 	require_once "RouterSettings.class.php";
 	require_once "FirewallChain.class.php";
-	require_once "OutgoingNatPage.class.php";
-	require_once "PortForwardNatPage.class.php";
-	require_once "OneToOneNatPage.class.php";
+	require_once "NATOutgoingPage.class.php";
+	require_once "NATPortForwardingPage.class.php";
+	require_once "NATOneToOnePage.class.php";
 	require_once "PageSections.class.php";
 	
-	class NatPage implements Page
+	class NATPage implements Page
 	{
-		private $natOutPage;
-		private $natPforwardPage;
-		private $natOneToOnePage;
-		private $activePage;
+		private $tabs = array();
+		private $activeTab;
 		
 		public function __construct(array $parameters = array())
-		{
-			$this->natOutPage = new OutgoingNatPage();
-			$this->natPforwardPage = new PortForwardNatPage();
-			$this->natOneToOnePage = new OneToOneNatPage();
+		{			
+			$this->tabs = array	(
+									"NATOutgoing" => new NATOutgoingPage(),
+									"NATPortForwarding" => new NATPortForwardingPage(),
+									"NATOneToOne" => new NATOneToOnePage()
+								);
+								
+			$tab = $parameters['tab'];
 			
-			$tab = in_array($parameters['tab'], array("nat-pforward", "nat-121")) ? $parameters['tab'] : "nat-out";
-			
-			switch ($tab)
-			{
-				case "nat-out":
-					$this->activePage = $this->natOutPage;
-					break;
-				case "nat-pforward":
-					$this->activePage = $this->natPforwardPage;
-					break;
-				case "nat-121":
-					$this->activePage = $this->natOneToOnePage;
-					break;
-			}
+			$this->activeTab = in_array($tab, array_keys($this->tabs)) ? $this->tabs[$tab] : $this->tabs['NATOutgoing'];
 		}
 		
 		// Override
@@ -51,12 +40,13 @@
 		// Override
 		public function head(array $parameters)
 		{
+			return $this->activeTab->head($parameters);
 		}
 		
 		// Override
 		public function style(array $parameters)
 		{
-			return <<<END
+			return $this->activeTab->style($parameters) . <<<END
 			
 			.nat-table
 			{
@@ -81,13 +71,13 @@ END;
 		// Override
 		public function javascript(array $parameters)
 		{
-			return $this->activePage->javascript($parameters);
+			return $this->activeTab->javascript($parameters);
 		}
 		
 		// Override
 		public function content(array $parameters)
-		{			
-			return PageSections::subPages($this, $this->activePage, array($this->natOutPage, $this->natPforwardPage, $this->natOneToOnePage), $parameters)
+		{
+			return PageSections::subPages($this, $this->activeTab, $this->tabs, $parameters)
 			. <<<END
 			
 			<button type="button" id="saveBtn">Save</button>
@@ -97,7 +87,7 @@ END;
 		// Override
 		public function popups(array $parameters)
 		{
-			return $this->activePage->popups($parameters);
+			return $this->activeTab->popups($parameters);
 		}
 		
 		// Override

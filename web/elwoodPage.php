@@ -54,6 +54,8 @@
 		
 		<div id="content">
 			<?=$pageObj->content($_REQUEST)?>
+			<div id="messages">
+			</div>
 		</div>
 		<?=$pageObj->popups($_REQUEST)?>
 	</div>

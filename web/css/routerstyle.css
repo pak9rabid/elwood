@@ -116,6 +116,11 @@ fieldset
    margin-bottom: 0px;
 }
 
+#messages
+{
+	display: none;
+}
+
 #usertxt
 {
    font-size: 12px;
