@@ -35,7 +35,7 @@ END;
 		// Override
 		public function javascript(array $parameters)
 		{
-			$isAdminUser = User::getuser()->isAdminUser();
+			$isAdminUser = User::getUser()->isAdminUser();
 			$ipMasqEnabled = RouterSettings::getSettingValue("ENABLE_IPMASQUERADE") == "true" ? "true" : "false";
 			$ipMasqCustEnabled = RouterSettings::getSettingValue("ENABLE_IPMASQUERADE_CUSTOM") == "true" ? "true" : "false";
 
