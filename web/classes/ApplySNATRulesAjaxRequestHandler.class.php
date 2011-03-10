@@ -5,7 +5,6 @@
 	require_once "FirewallChain.class.php";
 	require_once "User.class.php";
 	require_once "RouterSettings.class.php";
-	require_once "NetworkInterface.class.php";
 	
 	class ApplySNATRulesAjaxRequestHandler implements AjaxRequestHandler
 	{
@@ -20,7 +19,6 @@
 				return;
 			}
 			
-			$wanInterface = NetworkInterface::getInstance("wan");
 			$chain = new FirewallChain("nat", "ip_masquerade");
 			$natOutEnabledSetting = RouterSettings::getSetting("ENABLE_IPMASQUERADE");
 			$natOutCustEnabledSetting = RouterSettings::getSetting("ENABLE_IPMASQUERADE_CUSTOM");
@@ -38,7 +36,6 @@
 					foreach ($rulesIn as $ruleIn)
 					{
 						$rule->clear();
-						$rule->setAttribute("int_out", $wanInterface->getName());
 						
 						foreach ($ruleIn as $key => $value)
 						{
@@ -51,8 +48,7 @@
 				}
 				else
 				{
-					$natOutCustEnabledSetting->setAttribute("value", "false");				
-					$rule->setAttribute("int_out", $wanInterface->getName());
+					$natOutCustEnabledSetting->setAttribute("value", "false");
 					$rule->setAttribute("target", "MASQUERADE");
 					$chain->add($rule);
 				}
