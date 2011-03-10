@@ -21,7 +21,7 @@
 			}
 			
 			$wanInterface = NetworkInterface::getInstance("wan");
-			$chain = new FirewallChain("nat", "POSTROUTING");
+			$chain = new FirewallChain("nat", "ip_masquerade");
 			$natOutEnabledSetting = RouterSettings::getSetting("ENABLE_IPMASQUERADE");
 			$natOutCustEnabledSetting = RouterSettings::getSetting("ENABLE_IPMASQUERADE_CUSTOM");
 			

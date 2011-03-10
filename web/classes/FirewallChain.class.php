@@ -31,6 +31,10 @@
 									"nat.INPUT" => "ACCEPT",
 									"nat.OUTPUT" => "ACCEPT",
 									"nat.POSTROUTING" => "ACCEPT",
+									"nat.one2one_in" => "-",
+									"nat.one2one_out" => "-",
+									"nat.port_forward" => "-",
+									"nat.ip_masquerade" => "-",
 								
 									"mangle.PREROUTING" => "ACCEPT",
 									"mangle.INPUT" => "ACCEPT",

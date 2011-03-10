@@ -76,12 +76,13 @@ END;
 INSERT INTO settings VALUES (null, 'SYSTEM_PROFILE', 'debian4');
 INSERT INTO settings VALUES (null, 'IS_INITIALIZED', 0);
 INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
-INSERT INTO settings VALUES (null, 'LAN_WLAN', null);
+INSERT INTO settings VALUES (null, 'LAN_WLAN', 'wlan0');
 INSERT INTO settings VALUES (null, 'EXTIF', 'eth0');
 INSERT INTO settings VALUES (null, 'INTIF', 'br0');
 INSERT INTO settings VALUES (null, 'ELWOOD_CFG_DIR', '/etc/elwood');
 INSERT INTO settings VALUES (null, 'ELWOOD_WEBROOT', '/var/www');
 INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');
+INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE_CUSTOM', 'false');
 
 /* Initialize services table */
 INSERT INTO services VALUES (null, "http", "Y");
@@ -92,6 +93,8 @@ INSERT INTO services VALUES (null, "network", "Y");
 INSERT INTO services VALUES (null, "icmp", "Y");
 
 /* Initialize firewall_rules table */
+
+/* filter table */
 INSERT INTO firewall_rules (table_name, chain_name, state, target) VALUES ('filter', 'INPUT', 'ESTABLISHED,RELATED', 'ACCEPT');
 INSERT INTO firewall_rules (service_id, table_name, chain_name, protocol, dport, target) VALUES ((SELECT id FROM services WHERE service_name = 'http'), 'filter', 'INPUT', 'tcp', 80, 'ACCEPT');
 INSERT INTO firewall_rules (service_id, table_name, chain_name, protocol, dport, target) VALUES ((SELECT id FROM services WHERE service_name = 'ssh'), 'filter', 'INPUT', 'tcp', 22, 'ACCEPT');
@@ -101,6 +104,14 @@ INSERT INTO firewall_rules (table_name, chain_name, int_in, target) VALUES ('fil
 INSERT INTO firewall_rules (table_name, chain_name, int_in, target) VALUES ('filter', 'FORWARD', (SELECT value FROM settings WHERE key = 'INTIF'), 'forward_out');
 INSERT INTO firewall_rules (table_name, chain_name, state, target) VALUES ('filter', 'forward_in', 'ESTABLISHED,RELATED', 'ACCEPT');
 INSERT INTO firewall_rules (table_name, chain_name, target) VALUES ('filter', 'forward_out', 'ACCEPT');
+
+/* nat table */
+INSERT INTO firewall_rules (table_name, chain_name, int_in, target) VALUES ('nat', 'PREROUTING', (SELECT value FROM settings WHERE key = 'EXTIF'), 'one2one_in');
+INSERT INTO firewall_rules (table_name, chain_name, int_in, target) VALUES ('nat', 'PREROUTING', (SELECT value FROM settings WHERE key = 'EXTIF'), 'port_forward');
+INSERT INTO firewall_rules (table_name, chain_name, int_out, target) VALUES ('nat', 'POSTROUTING', (SELECT value FROM settings WHERE key = 'EXTIF'), 'one2one_out');
+INSERT INTO firewall_rules (table_name, chain_name, int_out, target) VALUES ('nat', 'POSTROUTING', (SELECT value FROM settings WHERE key = 'EXTIF'), 'ip_masquerade');
+INSERT INTO firewall_rules (table_name, chain_name, target) VALUES ('nat', 'ip_masquerade', 'MASQUERADE');
+
 
 /* Initialize users */
 INSERT INTO users VALUES (null, 'admin', 'admins', 'da942a52feff28ee63725f388318641d67a4dbe4');

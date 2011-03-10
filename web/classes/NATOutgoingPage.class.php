@@ -306,7 +306,7 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
-			$natPostroutingChain = new FirewallChain("nat", "POSTROUTING");
+			$natPostroutingChain = new FirewallChain("nat", "ip_masquerade");
 			$natPostroutingChain->load();
 					
 			$content = <<<END
