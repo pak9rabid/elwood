@@ -15,7 +15,7 @@
 	}
 	
 	$requestHandler = $_REQUEST['handler'];
-	$requestParams = $_REQUEST['parameters'];
+	$requestParams = isset($_REQUEST['parameters']) ? $_REQUEST['parameters'] : array();
 	
 	try
 	{
