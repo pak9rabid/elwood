@@ -211,6 +211,12 @@ END;
 			
 				$("#saveBtn").click(function()
 				{
+					var saveButton = $(this);
+					
+					saveButton
+						.html("Saving...<img src='images/loading.gif' />")
+						.attr("disabled", "disabled");
+
 					// Save firewall rules on the server
 					reorderRules();
 					
@@ -231,10 +237,15 @@ END;
 								.css("color", "red")
 								.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
 								.show();
+								
+							saveButton
+								.html("Save")
+								.removeAttr("disabled");
 						}
 						else
 						{
-							$("#saveBtn").hide();
+							saveButton.hide();
+							
 							$("#fwResults")
 								.css("color", "green")
 								.html("Firewall settings saved successfully")
@@ -337,7 +348,12 @@ END;
 			function showSaveButton()
 			{
 				if (!$("#saveBtn").is(":visible"))
-					$("#saveBtn").fadeIn();
+				{
+					$("#saveBtn")
+						.html("Save")
+						.removeAttr("disabled")	
+						.fadeIn();
+				}
 			}
 			
 			function reorderRules()
@@ -417,7 +433,7 @@ END;
 						{$chain->toHtml(($direction == "in" ? "Incoming " : "Outgoing ") . "Traffic")}
 					</div>
 					<div id="fwActions">
-						<input id="saveBtn" type="button" value="Save Rules" />
+						<button id="saveBtn" type="button">Save</button>
 						<div id="fwResults"></div>
 					</div>
 				</div>
