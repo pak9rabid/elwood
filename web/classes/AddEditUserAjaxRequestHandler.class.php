@@ -90,6 +90,8 @@
 						else
 							$editUser->setPassword($passwd);
 					}
+					else
+						$errors[] = "No password specified";
 					
 					if (!User::isValidGroup($groupname))
 						$errors[] = "Invalid group name specified";
