@@ -89,10 +89,18 @@
 		
 		public function setNetmask($netmask)
 		{
-			if (empty($netmask) || NetUtils::isValidNetmask($netmask))
+			// $netmask can be in either regular notation (xxx.xxx.xxx.xxx), or CIDR notation (xx)
+			if ($netmask != 0 && empty($netmask))
 				$this->netmask = $netmask;
 			else
-				throw new Exception("Invalid netmask specified");
+			{
+				if (NetUtils::isValidNetmask($netmask))
+					$this->netmask = $netmask;
+				else if (NetUtils::isValidCidr($netmask))
+					$this->netmask = NetUtils::cidr2Mask($netmask);
+				else
+					throw new Exception("Invalid subnet mask specified");
+			}
 		}
 		
 		public function setMtu($mtu)

@@ -41,10 +41,20 @@
 						switch ($key)
 						{
 							case "ipAddress":
-								$wanInt->setIp(trim($value));
+								$ip = trim($value);
+								
+								if (empty($ip))
+									throw new Exception("Invalid IP address specified");
+									
+								$wanInt->setIp($ip);
 								break;
 							case "netmask":
-								$wanInt->setNetmask(trim($value));
+								$netmask = trim($value);
+								
+								if (empty($netmask))
+									throw new Exception("Invalid subnet mask specified");
+									
+								$wanInt->setNetmask($netmask);
 								break;
 							case "gateway":
 								$wanInt->setGateway(trim($value));
@@ -76,6 +86,9 @@
 			// interface settings
 			try
 			{
+				if (empty($mtu))
+					throw new Exception("Invalid MTU specified");
+					
 				$wanInt->setMtu($mtu);
 			}
 			catch (Exception $ex)

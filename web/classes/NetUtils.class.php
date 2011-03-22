@@ -23,6 +23,17 @@
 			return 32-log(($long ^ $base)+1, 2);
 		}
 		
+		public static function cidr2Mask($cidr)
+		{
+			if (!self::isValidCidr($cidr))
+				throw new Exception("Invalid CIDR suffix to convert");
+				
+			if ($cidr == 0)
+				return "0.0.0.0";
+				
+			return long2ip(-1 << (32 - (int)$cidr));
+		}
+		
 		public static function net2CIDR($fullAddress)
 		{
 			list($ip, $netmask) = preg_split("/\//", $fullAddress);
@@ -47,7 +58,18 @@
 			// and 'xxx.xxx.xxx.xxx/xx' are valid
 			list($ip, $netmask) = preg_split("/\//", $network);
 			
-			if (!self::isValidIp($ip) || !self::isValidNetmask($netmask))
+			if (!self::isValidIp($ip) || (!self::isValidNetmask($netmask) && !self::isValidCidr($netmask)))
+				return false;
+				
+			return true;
+		}
+		
+		public static function isValidCidr($cidr)
+		{
+			if (!preg_match("/^[0-9]{1,2}$/", $cidr))
+				return false;
+					
+			if ($cidr < 0 || $cidr > 32)
 				return false;
 				
 			return true;
@@ -55,26 +77,16 @@
 		
 		public static function isValidNetmask($netmask)
 		{
-			if (self::isValidIp($netmask))
-			{	
-				// IP notation (xxx.xxx.xxx.xxx)
- 				if(strlen(decbin(ip2long($netmask))) != 32 && ip2long($netmask) != 0)
-  					return false;
+			if (!self::isValidIp($netmask))
+				return false;
+				
+			if(strlen(decbin(ip2long($netmask))) != 32 && ip2long($netmask) != 0)
+  				return false;
   				
-				if(preg_match("/01/", decbin(ip2long($netmask))) || (!preg_match("/0/", decbin(ip2long($netmask))) && $netmask != "255.255.255.255"))
-  					return false;
-			}
-			else
-			{
-				// CIDR notation (/xx)
-				if (!preg_match("/^[0-9]{1,2}$/", $netmask))
-					return false;
-					
-				if ($netmask < 0 || $netmask > 32)
-					return false;
-			}
-			
-			return true;
+  			if(preg_match("/01/", decbin(ip2long($netmask))) || (!preg_match("/0/", decbin(ip2long($netmask))) && $netmask != "255.255.255.255"))
+  				return false;
+  				
+  			return true;
 		}
 		
 		public static function isValidIanaPortNumber($port)
