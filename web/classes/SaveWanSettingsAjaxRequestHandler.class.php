@@ -23,6 +23,7 @@
 			$nameservers = $parameters['nameservers'];
 			$mtu = trim($parameters['mtu']);
 			
+			$nameservers = empty($nameservers) ? array() : $nameservers; 
 			$wanInt = NetworkInterface::getInstance("wan");
 			$dns = new DNSSettings();
 			$errors = array();
