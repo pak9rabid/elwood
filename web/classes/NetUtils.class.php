@@ -12,6 +12,7 @@
 		private static $WIRELESS_MODES = array("a", "b", "g");
 		private static $WIRELESS_CHANNELS_24_GHZ = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 		private static $WIRELESS_CHANNELS_5_GHZ = array(36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 136, 140, 149, 153, 157, 161, 165);
+		private static $IP_STATES = array("ESTABLISHED", "INVALID", "NEW", "RELATED");
 		
 		public static function mask2CIDR($netmask)
 		{
@@ -380,6 +381,17 @@
 		public static function getInterfaces()
 		{
 			return array_keys((array)SystemProfile::getProfile()->interfaces);
+		}
+		
+		public static function isValidIpState(array $states)
+		{
+			foreach ($states as $state)
+			{
+				if (!in_array($state, self::$IP_STATES))
+					return false;
+			}
+			
+			return true;
 		}
 	}
 ?>

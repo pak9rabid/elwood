@@ -302,5 +302,67 @@
 										"div" => $div
 									);
 		}
+		
+		public function validate()
+		{
+			// returns a list of any errors that exist,
+			// or an empty array if no errors exist
+			$errors = array();
+			
+			foreach ($this->hashMap as $key => $value)
+			{
+				switch ($key)
+				{
+					case "src_addr":
+						if (!NetUtils::isValidIp($value) && !NetUtils::isValidNetwork($value))
+							$errors[] = "Invalid source address specified";
+						break;
+					case "dst_addr":
+						if (!NetUtils::isValidIp($value) && !NetUtils::isValidNetwork($value))
+							$errors[] = "Invalid destination address specified";
+						break;
+					case "fragmented":
+						if ($value != "Y" && $value != "N")
+							$errors[] = "Invalid fragmented value specified";
+						break;
+					case "protocol":
+						if (!NetUtils::isValidProtocol($value))
+							$errors[] = "Invalid protocol specified";
+						break;
+					case "dport":
+						$protocol = $this->getAttribute("protocol");
+						
+						if (empty($protocol) || !in_array($protocol, array("tcp", "udp")))
+							$errors[] = "Protocol must be either tcp or udp if a destination port is to be specified";
+							
+						if (!NetUtils::isValidIanaPortNumber(($value)))
+							$errors[] = "Invalid destination port specified";
+						break;
+					case "sport":
+						$protocol = $this->getAttribute("protocol");
+						
+						if (empty($protocol) || !in_array($protocol, array("tcp", "udp")))
+							$errors[] = "Protocol must be either tcp or udp if a source port is to be specified";
+							
+						if (!NetUtils::isValidIanaPortNumber(($value)))
+							$errors[] = "Invalid source port specified";
+						break;
+					case "icmp_type":
+						if (!NetUtils::isValidIcmpType($value))
+							$errors[] = "Invalid ICMP type specified";
+						break;
+					case "state":
+						if (!NetUtils::isValidIpState(explode(",", $value)))
+							$errors[] = "Invalid IP state specified";
+						break;
+					case "table_name":
+						if (!NetUtils::isValidIPTablesTable($value))
+							$errors[] = "Invalid IPTables table specified";
+						break;
+				}
+			}
+			
+			return $errors;
+		}
 	}
 ?>

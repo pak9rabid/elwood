@@ -41,6 +41,14 @@
 						$rule->setAttribute($key, $value);
 				}
 				
+				$errors = $rule->validate();
+				
+				if (!empty($errors))
+				{
+					$this->response = new AjaxResponse("", array("One or more of the firewall rules contains invalid data"));
+					return;
+				}
+				
 				$chain->add($rule);
 			}
 			
