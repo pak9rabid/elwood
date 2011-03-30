@@ -5,6 +5,7 @@
 	require_once "NetUtils.class.php";
 	require_once "FileUtils.class.php";
 	require_once "Service.class.php";
+	require_once "NetworkInterfaceAlias.class.php";
 	
 	abstract class DebianNetworkInterface extends NetworkInterface
 	{
@@ -14,7 +15,7 @@
 		{
 			$out = array();
 			
-			$out[] = "auto " . $this->name;
+			$out[] = "\n" . "auto " . $this->name;
 			$out[] = "iface " . $this->name . " inet " . ($this->usesDhcp ? "dhcp" : "static");
 			
 			if (!$this->usesDhcp)
@@ -38,12 +39,29 @@
 					$out[] = "mtu " . $this->mtu;
 			}
 			
+			// remove any aliased addresses for this interface
+			$out[] = "post-down ip addr flush dev " . $this->name;
+			
+			// add any aliases
+			foreach ($this->aliases as $key => $alias)
+			{
+				$aliasName = $this->name . ":$key";
+				$networkAndBroadcast = NetUtils::calculate($alias->getIp(), $alias->getNetmask());
+				
+				$out[] = "\n" . "auto $aliasName";
+				$out[] = "iface $aliasName inet static";
+				$out[] = "address " . $alias->getIp();
+				$out[] = "netmask " . $alias->getNetmask();
+				$out[] = "network " . $networkAndBroadcast->network;
+				$out[] = "broadcast " . $networkAndBroadcast->broadcast;
+			}
+			
 			return $out;
 		}
 		
 		// Override
 		public function save()
-		{			
+		{
 			$content = $this->readInterfacesFile();
 			$remove = false;
 			
@@ -51,23 +69,25 @@
 			{
 				$line = trim($line);
 				
-				if ($line == "auto " . $this->name)
+				if (preg_match("/^auto " . $this->name . "/", $line))
 					$remove = true;
-				else if (preg_match("/^auto.*$/", $line))
+				else if (preg_match("/^auto [^" . $this->name . "].*/", $line))
+				{
 					$remove = false;
+					$content[$key] = "\n" . $line;
+				}
 					
 				if ($remove)
 					unset($content[$key]);
 			}
 			
 			$out = implode("\n", array_merge($content, $this->generateConfig()));
-			
 			FileUtils::writeToFile("/etc/network/interfaces", $out);
 		}
 		
 		// Override
 		public function load()
-		{
+		{			
 			$ifName = $this->name;
 								
 			// uses dhcp?			
@@ -107,6 +127,22 @@
 			{
 				$this->gateway = $line;
 				break;
+			}
+			
+			// aliases
+			$this->aliases = array();
+			
+			foreach (Console::execute("/sbin/ifconfig | grep 'Link encap' | awk '{print $1}' | grep $ifName:", true) as $aliasInterface)
+			{
+				$alias = new NetworkInterfaceAlias($this);
+				
+				foreach (Console::execute("/sbin/ifconfig $aliasInterface | grep 'inet addr' | awk '{print $2}' | cut -f2 -d':'") as $ip)
+					$alias->setIp($ip);
+					
+				foreach (Console::execute("/sbin/ifconfig $aliasInterface | grep 'inet addr' | awk '{print $4}' | cut -f2 -d':'") as $netmask)
+					$alias->setNetmask($netmask);
+					
+				$this->aliases[] = $alias;
 			}
 		}
 		

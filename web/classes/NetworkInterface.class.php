@@ -1,6 +1,7 @@
 <?php
 	require_once "SystemProfile.class.php";
 	require_once "NetUtils.class.php";
+	require_once "NetworkInterfaceAlias.class.php";
 	
 	abstract class NetworkInterface
 	{
@@ -10,6 +11,7 @@
 		protected $netmask;
 		protected $mtu;
 		protected $gateway;
+		protected $aliases = array();
 		
 		abstract public function save();
 		abstract public function load();
@@ -117,6 +119,46 @@
 				$this->gateway = $gateway;
 			else
 				throw new Exception("Invalid gateway specified");
+		}
+		
+		public function getAliases()
+		{
+			return $this->aliases;
+		}
+		
+		public function addAlias($ip, $netmask)
+		{
+			// ensure an alias with $ip and $netmask doesn't already exist
+			foreach ($this->aliases as $alias)
+			{
+				if ($alias->getIp() == $ip && $alias->getNetmask() == $netmask)
+					throw new Exception("Alias for interface " . $this->name . " with IP $ip and subnet mask $netmask already exists");
+			}
+			
+			$this->aliases[] = new NetworkInterfaceAlias($this, $ip, $netmask);
+		}
+		
+		public function removeAlias($ip, $netmask)
+		{
+			foreach ($this->aliases as $key => $alias)
+			{
+				if ($alias->getIp() == $ip && $alias->getNetmask() == $netmask)
+				{
+					unset($this->aliases[$key]);
+					
+					// should be the only alias with that ip/netmask..no need to continue checking the rest
+					break;
+				}
+			}
+			
+			// re-key array...this ensures that the first alias starts with index 0 and that
+			// there aren't any "holes" in the alias indexes after an alias has been removed
+			$this->aliases = array_values($this->aliases);
+		}
+		
+		public function clearAliases()
+		{
+			$this->aliases = array();
 		}
 	}
 ?>
