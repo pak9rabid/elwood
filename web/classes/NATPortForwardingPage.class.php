@@ -2,6 +2,7 @@
 	require_once "Page.class.php";
 	require_once "NetUtils.class.php";
 	require_once "User.class.php";
+	require_once "FirewallChain.class.php";
 	
 	class NATPortForwardingPage implements Page
 	{
