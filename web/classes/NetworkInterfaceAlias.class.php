@@ -20,6 +20,9 @@
 			if (!NetUtils::isValidIp($ip))
 				throw new Exception("Invalid IP address specified");
 				
+			if ($ip == $this->physicalInterface->getIp())
+				throw new Exception("Alias IP cannot be the same as the interface's physical IP");
+				
 			$this->ip = $ip;
 		}
 		
