@@ -257,7 +257,7 @@ END;
 			<button type="button" id="addRuleBtn">Add Rule</button>
 			<br /><br />
 			<table id="oneToOneNatTable" class="nat-table" style="width: 400px;">
-				<tr>
+				<tr class="nodrag nodrop">
 					<th>Outside IP</th><th>Inside IP</th><th>&nbsp;</th>
 				</tr>
 END;
