@@ -98,6 +98,33 @@
 			return $this->interfaceHash->getAttribute("address");
 		}
 		
+		public function getIp()
+		{
+			$address = $this->interfaceHash->getAttribute("address");
+			
+			if (empty($address))
+				return "";
+			
+			list($ip, $netmask) = explode("/", $address);
+			
+			return $ip;
+		}
+		
+		public function getNetmask($isCidrNotation = false)
+		{
+			$address = $this->interfaceHash->getAttribute("address");
+			
+			if (empty($address))
+				return "";
+				
+			list($ip, $netmask) = explode("/", $address);
+			
+			if ($isCidrNotation)
+				return $netmask;
+				
+			return NetUtils::cidr2Mask($netmask);
+		}
+		
 		public function getMtu()
 		{
 			return $this->interfaceHash->getAttribute("mtu");
