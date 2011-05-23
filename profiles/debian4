@@ -44,21 +44,11 @@
 		}
 	},
 
-	"interfaces":
+	"ClassMappings":
 	{
-		"wan":
+		"NetworkInterface":
 		{
-			"class": "DebianWanNetworkInterface"
-		},
-
-		"lan":
-		{
-			"class": "DebianLanNetworkInterface"
-		},
-
-		"wlan":
-		{
-			"class": "DebianWlanNetowrkInterface"
+			"class": "DebianNetworkInterface"
 		}
 	}
 }

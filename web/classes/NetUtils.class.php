@@ -2,6 +2,7 @@
 	require_once "Net/IPv4.php";
 	require_once "WirelessSecurity.class.php";
 	require_once "SystemProfile.class.php";
+	require_once "DataHash.class.php";
 	
 	class NetUtils
 	{
@@ -51,6 +52,22 @@
 		public static function isValidIp($ip)
 		{
 			return $ip == long2ip(ip2long($ip));
+		}
+		
+		public static function isValidAddress($address)
+		{
+			// address is in form <ip>/<CIDR netmask> (example: 10.0.0.1/24)
+			$address = explode("/", $address);
+			
+			if (count($address) != 2)
+				return false;
+				
+			list($ip, $cidr) = $address;
+			
+			if (!self::isValidIp($ip) || !self::isValidCidr($cidr))
+				return false;
+				
+			return true;
 		}
 		
 		public static function isValidNetwork($network)
@@ -392,6 +409,44 @@
 			}
 			
 			return true;
+		}
+		
+		public static function isInterfaceUsed($interface)
+		{
+			if (empty($interface))
+				return false;
+
+			$selectHash = new DataHash("interfaces");
+			
+			foreach ($selectHash->executeSelect() as $resultHash)
+			{
+				if ($resultHash->getAttribute("physical_int") == $interface)
+					return true;
+					
+				foreach (explode(",", $resultHash->getAttribute("bridged_ints")) as $bridgedInt)
+				{
+					if ($bridgedInt == $interface)
+						return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		public static function isInterfaceNameUsed($name)
+		{
+			if (empty($name))
+				return false;
+				
+			$selectHash = new DataHash("interfaces");
+			
+			foreach ($selectHash->executeSelect() as $resultHash)
+			{
+				if ($resultHash->getAttribute("name") == $name)
+					return true;
+			}
+			
+			return false;
 		}
 	}
 ?>

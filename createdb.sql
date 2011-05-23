@@ -16,6 +16,23 @@ CREATE TABLE users
 	CHECK (usergroup IN ('admins', 'users'))
 );
 
+CREATE TABLE interfaces
+(
+	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
+	name VARCHAR(16) UNIQUE NOT NULL,
+	physical_int VARCHAR(16) UNIQUE NOT NULL,
+	bridged_ints VARCHAR(256),
+	uses_dhcp VARCHAR(1),
+	mtu INTEGER,
+	address VARCHAR(43),
+	address_aliases VARCHAR(4096),
+	gateway VARCHAR(39),
+	description VARCHAR(256),
+
+	CHECK (uses_dhcp = 'Y'),
+	CHECK ((mtu >= 68 AND mtu <= 9018))
+);
+
 CREATE TABLE services
 (
 	id INTEGER PRIMARY KEY UNIQUE NOT NULL,
@@ -75,10 +92,6 @@ END;
 /* Initialize settings table */
 INSERT INTO settings VALUES (null, 'SYSTEM_PROFILE', 'debian4');
 INSERT INTO settings VALUES (null, 'IS_INITIALIZED', 0);
-INSERT INTO settings VALUES (null, 'LAN_ETH', 'eth1');
-INSERT INTO settings VALUES (null, 'LAN_WLAN', 'wlan0');
-INSERT INTO settings VALUES (null, 'EXTIF', 'eth0');
-INSERT INTO settings VALUES (null, 'INTIF', 'br0');
 INSERT INTO settings VALUES (null, 'ELWOOD_CFG_DIR', '/etc/elwood');
 INSERT INTO settings VALUES (null, 'ELWOOD_WEBROOT', '/var/www');
 INSERT INTO settings VALUES (null, 'ENABLE_IPMASQUERADE', 'true');

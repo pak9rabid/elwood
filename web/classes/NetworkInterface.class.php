@@ -1,35 +1,19 @@
 <?php
 	require_once "SystemProfile.class.php";
+	require_once "DataHash.class.php";
 	require_once "NetUtils.class.php";
-	require_once "NetworkInterfaceAlias.class.php";
 	
 	abstract class NetworkInterface
 	{
-		protected $name;
-		protected $usesDhcp;
-		protected $ip;
-		protected $netmask;
-		protected $mtu;
-		protected $gateway;
-		protected $aliases = array();
+		private $interfaceHash;
 		
-		abstract public function save();
-		abstract public function load();
 		abstract public function apply();
 		
-		public static function getInstance($interfaceName)
+		public static function getInstance($interfaceName = "")
 		{
-			$profile = SystemProfile::getProfile();
-			$interface = $profile->interfaces->$interfaceName;
+			$profile = SystemProfile::getProfile();			
+			$className = $profile->ClassMappings->NetworkInterface->class;
 			
-			if (empty($interface))
-				throw new Exception("Interface $interfaceName does not exist in profile " . $profile->name);
-				
-			$className = $interface->class;
-			
-			if (empty($className))
-				throw new Exception("Class $className does not exist in interface $interfaceName in profile " . $profile->name);
-				
 			require_once "$className.class.php";
 			
 			$interface = new $className();
@@ -37,128 +21,248 @@
 			if (!$interface instanceof self)
 				throw new Exception("$className is not a subclass of NetworkInterface");
 			
-			$interface->load();
+			if (!empty($interfaceName))
+				$interface->load($interfaceName);
+			else
+				$interface->interfaceHash = new DataHash("interfaces");
+							
 			return $interface;
 		}
 		
+		public function save()
+		{
+			$id = $this->interfaceHash->getAttribute("id");
+			
+			if (!empty($id))
+				$this->interfaceHash->executeUpdate();
+			else
+			{
+				$this->interfaceHash->executeInsert();
+				
+				// retrieve the newly-inserted interface from the database
+				// (this will effectively set the 'id' attribute for the interfaceHash,
+				// which is unknown until inserted into the database)
+				foreach ($this->interfaceHash->executeSelect() as $resultHash)
+					$this->interfaceHash = $resultHash;
+			}
+		}
+		
+		public function delete()
+		{
+			$id = $this->interfaceHash->getAttribute("id");
+			
+			if (empty($id))
+				throw new Exception("Interface " . $this->getName() . " cannot be deleted because it doesn't exist");
+				
+			$this->interfaceHash->executeDelete();
+		}
+		
+		public function load($interfaceName)
+		{
+			// loads the specified $interfaceName settings from the database
+			$selectHash = new DataHash("interfaces");
+			$selectHash->setAttribute("name", $interfaceName);
+			
+			$results = $selectHash->executeSelect(true);
+			
+			if (empty($results))
+				throw new Exception("Interface $interfaceName does not exist");
+				
+			foreach ($results as $result)
+				$this->interfaceHash = $result;
+		}
+						
 		public function getName()
 		{
-			return $this->name;
+			return $this->interfaceHash->getAttribute("name");
+		}
+		
+		public function getPhysicalInterface()
+		{
+			return $this->interfaceHash->getAttribute("physical_int");
+		}
+		
+		public function getBridgedInterfaces()
+		{
+			$bridgedInts = $this->interfaceHash->getAttribute("bridged_ints");
+			
+			return empty($bridgedInts) ? array() : explode(",", $bridgedInts);
 		}
 		
 		public function usesDhcp()
 		{
-			return $this->usesDhcp;
+			return $this->interfaceHash->getAttribute("uses_dhcp") == "Y" ? true : false;
 		}
 		
-		public function getIp()
+		public function getAddress()
 		{
-			return $this->ip;
-		}
-		
-		public function getNetmask()
-		{
-			return $this->netmask;
+			return $this->interfaceHash->getAttribute("address");
 		}
 		
 		public function getMtu()
 		{
-			return $this->mtu;
+			return $this->interfaceHash->getAttribute("mtu");
 		}
 		
 		public function getGateway()
 		{
-			return $this->gateway;
+			return $this->interfaceHash->getAttribute("gateway");
+		}
+		
+		public function getDescription()
+		{
+			return $this->interfaceHash->getAttribute("description");
 		}
 				
 		public function setName($name)
 		{
-			$this->name = $name;
+			if (empty($name))
+				throw new Exception("Interface name must be specified");
+				
+			if (NetUtils::isInterfaceNameUsed($name))
+				throw new Exception("Interface name is already being used");
+				
+			$this->interfaceHash->setAttribute("name", $name);
+		}
+		
+		public function setPhysicalInterface($interface)
+		{
+			if (empty($interface))
+				throw new Exception("Physical interface name cannot be empty");
+				
+			if (NetUtils::isInterfaceUsed($interface))
+				throw new Exception("The specified physical interface is already being used");
+			
+			$this->interfaceHash->setAttribute("physical_int", $interface);
+		}
+		
+		public function setBridgedInterfaces(array $interfaces)
+		{
+			if (empty($interfaces))
+				$this->interfaceHash->setAttribute("bridged_ints", null);
+			else
+			{
+				foreach ($interfaces as $interface)
+				{
+					if (NetUtils::isInterfaceUsed($interface))
+						throw new Exception("The specified physical interface is already being used");
+				}
+				
+				$this->interfaceHash->setAttribute("bridged_ints", implode(",", $interfaces));
+			}
 		}
 		
 		public function setUsesDhcp($usesDhcp)
 		{
-			$this->usesDhcp = (boolean) $usesDhcp;
-		}
-		
-		public function setIp($ip)
-		{
-			if (empty($ip) || NetUtils::isValidIp($ip))
-				$this->ip = $ip;
+			if ($usesDhcp)
+				$this->interfaceHash->setAttribute("uses_dhcp", "Y");
 			else
-				throw new Exception("Invalid IP address specified");
+				$this->interfaceHash->setAttribute("uses_dhcp", null);
 		}
 		
-		public function setNetmask($netmask)
+		public function setAddress($address)
 		{
-			// $netmask can be in either regular notation (xxx.xxx.xxx.xxx), or CIDR notation (xx)
-			if ($netmask != 0 && empty($netmask))
-				$this->netmask = $netmask;
+			if (empty($address))
+				$this->interfaceHash->setAttribute("address", null);
 			else
 			{
-				if (NetUtils::isValidNetmask($netmask))
-					$this->netmask = $netmask;
-				else if (NetUtils::isValidCidr($netmask))
-					$this->netmask = NetUtils::cidr2Mask($netmask);
-				else
-					throw new Exception("Invalid subnet mask specified");
+				if (!NetUtils::isValidAddress($address))
+					throw new Exception("Invalid address specified");
+					
+				foreach ($this->getAliases() as $alias)
+				{
+					if ($address == $alias)
+						throw new Exception("Address $address is already being used as an alias for interface " . $this->getPhysicalInterface());
+				}
+				
+				$this->interfaceHash->setAttribute("address", $address);
 			}
 		}
 		
 		public function setMtu($mtu)
-		{
-			if (empty($mtu) || NetUtils::isValidMtu($mtu))
-				$this->mtu = $mtu;
+		{			
+			if (empty($mtu))
+				$this->interfaceHash->setAttribute("mtu", null);
 			else
-				throw new Exception("Invalid MTU specified");
+			{
+				if (!NetUtils::isValidMtu($mtu))
+					throw new Exception("Invalid MTU specified");
+					
+				$this->interfaceHash->setAttribute("mtu", $mtu);
+			}
 		}
 		
 		public function setGateway($gateway)
 		{
-			if (empty($gateway) || NetUtils::isValidIp($gateway))
-				$this->gateway = $gateway;
+			if (empty($gateway))
+				$this->interfaceHash->setAttribute("gateway", null);
 			else
-				throw new Exception("Invalid gateway specified");
+			{
+				if (!NetUtils::isValidIp($gateway))
+					throw new Exception("Invalid gateway specified");
+					
+				$this->interfaceHash->setAttribute("gateway", $gateway);
+			}
+		}
+		
+		public function setDescription($description)
+		{
+			if (empty($description))
+				$this->interfaceHash->setAttribute("description", null);
+			else
+				$this->interfaceHash->setAttribute("description", $description);
 		}
 		
 		public function getAliases()
 		{
-			return $this->aliases;
+			$aliases = $this->interfaceHash->getAttribute("address_aliases");
+			
+			return empty($aliases) ? array() : explode(",", $aliases);
 		}
-		
-		public function addAlias($ip, $netmask)
+				
+		public function addAlias($address)
 		{
-			// ensure an alias with $ip and $netmask doesn't already exist
-			foreach ($this->aliases as $alias)
+			if (!NetUtils::isValidAddress($address))
+				throw new Exception("Invalid address specified for alias");
+				
+			$aliases = $this->getAliases();
+			
+			// ensure $address doesn't already exist as the main address or as an alias
+			if ($address == $this->getAddress())
+				throw new Exception("Alias address $address is already being used as the physical interface's address");
+			
+			foreach ($aliases as $alias)
 			{
-				if ($alias->getIp() == $ip && $alias->getNetmask() == $netmask)
-					throw new Exception("Alias for interface " . $this->name . " with IP $ip and subnet mask $netmask already exists");
+				if ($alias == $address)
+					throw new Exception("Alias for interface " . $this->getPhysicalInterface() . " with address $address already exists");
 			}
 			
-			$this->aliases[] = new NetworkInterfaceAlias($this, $ip, $netmask);
+			$aliases[] = $address;
+						
+			$this->interfaceHash->setAttribute("address_aliases", implode(",", $aliases));
 		}
-		
-		public function removeAlias($ip, $netmask)
+				
+		public function removeAlias($address)
 		{
-			foreach ($this->aliases as $key => $alias)
+			$aliases = $this->getAliases();
+			
+			foreach ($aliases as $key => $alias)
 			{
-				if ($alias->getIp() == $ip && $alias->getNetmask() == $netmask)
+				if ($alias == $address)
 				{
-					unset($this->aliases[$key]);
+					unset($aliases[$key]);
 					
-					// should be the only alias with that ip/netmask..no need to continue checking the rest
+					// should be  the only alias with that address..no need to continue checking the rest
 					break;
 				}
 			}
-			
-			// re-key array...this ensures that the first alias starts with index 0 and that
-			// there aren't any "holes" in the alias indexes after an alias has been removed
-			$this->aliases = array_values($this->aliases);
+						
+			$this->interfaceHash->setAttribute("address_aliases", implode(",", $aliases));
 		}
 		
 		public function clearAliases()
 		{
-			$this->aliases = array();
+			$this->interfaceHash->setAttribute("address_aliases", null);
 		}
 	}
 ?>
