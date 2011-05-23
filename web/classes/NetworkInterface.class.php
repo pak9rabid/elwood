@@ -42,8 +42,7 @@
 				// retrieve the newly-inserted interface from the database
 				// (this will effectively set the 'id' attribute for the interfaceHash,
 				// which is unknown until inserted into the database)
-				foreach ($this->interfaceHash->executeSelect() as $resultHash)
-					$this->interfaceHash = $resultHash;
+				$this->load($this->getName());
 			}
 		}
 		
