@@ -18,9 +18,8 @@
 				return;
 			}
 			
-			$lanInt = NetworkInterface::getInstance("lan");
+			$lanInt = NetworkInterface::getInstance("LAN");
 			$dhcpService = Service::getInstance("dhcp");
-			$lanInt->load();
 			$dhcpService->load();
 			$dhcpService->clearAccessRules();
 			
@@ -41,18 +40,9 @@
 							if (empty($ip))
 								$errors[] = "IP address not specified";
 							else
-								$lanInt->setIP($ip);
+								$lanInt->setAddress($ip);
 								
-							break;
-						case "netmask":
-							$netmask = trim($value);
-							
-							if (empty($netmask))
-								$errors[] = "Subnet mask not specified";
-							else
-								$lanInt->setNetmask($netmask);
-								
-							break;					
+							break;				
 						case "mtu":
 							$mtu = trim($value);
 							

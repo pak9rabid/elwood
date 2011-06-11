@@ -9,7 +9,7 @@
 		
 		public function __construct()
 		{
-			$this->wanInt = NetworkInterface::getInstance("wan");
+			$this->wanInt = NetworkInterface::getInstance("WAN");
 		}
 		
 		// Override
@@ -127,7 +127,6 @@
 											ipType: $("#ipTypeDhcp").is(":checked") ? "dhcp" : "static",
 											dnsType: $("#dnsTypeDhcp").is(":checked") ? "dhcp" : "static",
 											ipAddress: $("#ipAddress").val(),
-											netmask: $("#netmask").val(),
 											gateway: $("#gateway").val(),
 											nameservers: nameservers,
 											mtu: $("#mtu").val()
@@ -237,12 +236,7 @@ END;
 				<tr>
 					<td>&nbsp;</td>
 					<td align="right">IP Address:</td>
-					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="ipAddress" name="ipAddress" value="{$this->wanInt->getIp()}" /></td>
-				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td align="right">Subnet Mask:</td>
-					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="15" id="netmask" name="netmask" value="{$this->wanInt->getNetmask()}" /></td>
+					<td align="left"><input class="wanInput textfield staticIpSetting" size="20" maxlength="18" id="ipAddress" name="ipAddress" value="{$this->wanInt->getAddress()}" /></td>
 				</tr>
 				<tr>
 					<td>&nbsp;</td>

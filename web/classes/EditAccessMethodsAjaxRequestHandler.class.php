@@ -1,8 +1,7 @@
 <?php
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
-	require_once "RouterSettings.class.php";
-	require_once "FirewallChain.class.php";
+	require_once "NetworkInterface.class.php";
 	require_once "Service.class.php";
 	require_once "HTTPService.class.php";
 	require_once "SSHService.class.php";
@@ -30,8 +29,8 @@
 			$httpPort = $parameters['httpPort'];
 			$sshPort = $parameters['sshPort'];
 			
-			$extIf = RouterSettings::getSettingValue("EXTIF");
-			$intIf = RouterSettings::getSettingValue("INTIF");
+			$wanIf = NetworkInterface::getInstance("WAN")->getPhysicalInterface();
+			$lanIf = NetworkInterface::getInstance("LAN")->getPhysicalInterface();
 			
 			// Validate
 			$errors = array();
@@ -75,9 +74,9 @@
 				$rule->setAttribute("service_id", $httpService->getAttribute("id"));
 				
 				if ($httpWan && !$httpLan)
-					$rule->setAttribute("int_in", $extIf);
+					$rule->setAttribute("int_in", $wanIf);
 				else if ($httpLan && !$httpWan)
-					$rule->setAttribute("int_in", $intIf);
+					$rule->setAttribute("int_in", $lanIf);
 
 				$httpService->setAccessRules(array($rule));
 			}
@@ -99,9 +98,9 @@
 				$rule->setAttribute("service_id", $sshService->getAttribute("id"));
 				
 				if ($sshWan && !$sshLan)
-					$rule->setAttribute("int_in", $extIf);
+					$rule->setAttribute("int_in", $wanIf);
 				else if ($sshLan && !$sshWan)
-					$rule->setAttribute("int_in", $intIf);
+					$rule->setAttribute("int_in", $lanIf);
 					
 				$sshService->setAccessRules(array($rule));
 			}
@@ -122,9 +121,9 @@
 				$rule->setAttribute("service_id", $icmpService->getAttribute("id"));
 				
 				if ($icmpWan && !$icmpLan)
-					$rule->setAttribute("int_in", $extIf);
+					$rule->setAttribute("int_in", $wanIf);
 				else if ($icmpLan && !$icmpWan)
-					$rule->setAttribute("int_in", $intIf);
+					$rule->setAttribute("int_in", $lanIf);
 					
 				$icmpService->setAccessRules(array($rule));
 			}

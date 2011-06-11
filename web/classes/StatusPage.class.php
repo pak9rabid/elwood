@@ -77,9 +77,9 @@ END;
 		
 		// Override
 		public function content(array $parameters)
-		{			
-			$wanIp = NetworkInterface::getInstance("wan")->getIp();
-			$lanIp = NetworkInterface::getInstance("lan")->getIp();
+		{
+			$wanIp = NetworkInterface::getInstance("WAN")->getAddress();
+			$lanIp = NetworkInterface::getInstance("LAN")->getAddress();
 			$dns = new DNSSettings();
 			
 			$out = <<<END

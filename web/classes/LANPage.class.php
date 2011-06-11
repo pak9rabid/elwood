@@ -10,7 +10,7 @@
 		
 		function __construct()
 		{
-			$this->lanInt = NetworkInterface::getInstance("lan");
+			$this->lanInt = NetworkInterface::getInstance("LAN");
 			$this->dhcpService = Service::getInstance("dhcp");
 			$this->dhcpService->load();
 		}
@@ -150,7 +150,6 @@
 										parameters:
 										{
 											ipAddress: $("#ip").val(),
-											netmask: $("#netmask").val(),
 											mtu: $("#mtu").val(),
 											isDhcpServerEnabled: $("#dhcpEnabled").is(":checked"),
 											domain: $("#domain").val(),
@@ -240,11 +239,7 @@ END;
 				</tr>
 				<tr>
 					<td align="right">IP Address:</td>
-					<td align="left"><input name="ip" id="ip" class="textfield lanInput" size="15" maxlength="15" value="{$this->lanInt->getIp()}" /></td>
-				</tr>
-				<tr>
-					<td align="right">Subnet Mask:</td>
-					<td align="left"><input name="netmask" id="netmask" class="textfield lanInput" size="15" maxlength="15" value="{$this->lanInt->getNetmask()}" /></td>
+					<td align="left"><input name="ip" id="ip" class="textfield lanInput" size="15" maxlength="15" value="{$this->lanInt->getAddress()}" /></td>
 				</tr>
 				<tr>
 					<td align="right">MTU:</td>

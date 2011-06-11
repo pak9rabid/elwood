@@ -3,7 +3,6 @@
 	require_once "DHCPService.class.php";
 	require_once "Console.class.php";
 	require_once "FileUtils.class.php";
-	require_once "RouterSettings.class.php";
 	require_once "NetworkInterface.class.php";
 	require_once "NetUtils.class.php";
 	require_once "FirewallRule.class.php";
@@ -66,7 +65,9 @@
 		{
 			parent::save();
 			
-			$out =	"interface=" . RouterSettings::getSettingValue("INTIF") . "\n" .
+			$lanInt = NetworkInterface::getInstance("LAN");
+			
+			$out =	"interface=" . $lanInt->getPhysicalInterface() . "\n" .
 					"no-hosts\n" .
 					"no-resolv\n" .
 					"domain=" . $this->domain . "\n";
@@ -74,7 +75,7 @@
 			foreach ($this->ipRanges as $ipRange)
 				$out .= "dhcp-range=" . implode(",", (array)$ipRange) . "\n";
 				
-			$out .=	"dhcp-option=3," . NetworkInterface::getInstance("lan")->getIp() . "\n";
+			$out .=	"dhcp-option=3," . $lanInt->getIp() . "\n";
 		
 			if (!empty($this->nameservers))
 				$out .= "dhcp-option=6," . implode(",", $this->nameservers) . "\n";
@@ -237,7 +238,7 @@
 			
 			$defaultRule->setAllAttributes(array	(
 														"service_id" => $this->getAttribute("id"),
-														"int_in" => RouterSettings::getSettingValue("INTIF"),
+														"int_in" => NetworkInterface::getInstance("LAN")->getPhysicalInterface(),
 														"protocol" => "udp",
 														"dport" => 67,
 														"target" => "ACCEPT"

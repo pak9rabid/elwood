@@ -1,7 +1,6 @@
 <?php
 	require_once "Page.class.php";
-	require_once "RouterSettings.class.php";
-	require_once "Database.class.php";
+	require_once "NetworkInterface.class.php";
 	require_once "Service.class.php";
 	require_once "User.class.php";
 	
@@ -296,8 +295,8 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
-			$extIf = RouterSettings::getSettingValue("EXTIF");
-			$intIf = RouterSettings::getSettingValue("INTIF");
+			$extIf = NetworkInterface::getInstance("WAN")->getPhysicalInterface();
+			$intIf = NetworkInterface::getInstance("LAN")->getPhysicalInterface();
 			
 			$httpService = Service::getInstance("http");
 			$sshService = Service::getInstance("ssh");

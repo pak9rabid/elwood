@@ -24,7 +24,7 @@
 			$mtu = trim($parameters['mtu']);
 			
 			$nameservers = empty($nameservers) ? array() : $nameservers; 
-			$wanInt = NetworkInterface::getInstance("wan");
+			$wanInt = NetworkInterface::getInstance("WAN");
 			$dns = new DNSSettings();
 			$errors = array();
 						
@@ -46,16 +46,8 @@
 								
 								if (empty($ip))
 									throw new Exception("Invalid IP address specified");
-									
-								$wanInt->setIp($ip);
-								break;
-							case "netmask":
-								$netmask = trim($value);
 								
-								if (empty($netmask))
-									throw new Exception("Invalid subnet mask specified");
-									
-								$wanInt->setNetmask($netmask);
+								$wanInt->setAddress($ip);
 								break;
 							case "gateway":
 								$wanInt->setGateway(trim($value));

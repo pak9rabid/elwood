@@ -72,8 +72,8 @@
 			parent::save();
 			
 			$config = array	(
-								"interface=" . RouterSettings::getSettingValue("LAN_WLAN"),
-								"bridge=" . RouterSettings::getSettingValue("INTIF"),
+								"interface=" . RouterSettings::getSettingValue("AP_INT"),
+								$this->isApInterfaceBridged() ? "bridge=" . NetworkInterface::getInstance("LAN")->getPhysicalInterface() : "",
 								"driver=nl80211",
 								"logger_syslog=-1",
 								"logger_syslog_level=2",
@@ -505,6 +505,13 @@
 		public function getDefaultAccessRules()
 		{
 			return array();
+		}
+		
+		private function isApInterfaceBridged()
+		{
+			$apInterface = RouterSettings::getSettingValue("AP_INT");
+						
+			return empty($apInterface) ? false : in_array($apInterface, NetworkInterface::getInstance("LAN")->getBridgedInterfaces());
 		}
 	}
 ?>
