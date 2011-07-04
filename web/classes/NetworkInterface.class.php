@@ -2,6 +2,7 @@
 	require_once "SystemProfile.class.php";
 	require_once "DataHash.class.php";
 	require_once "NetUtils.class.php";
+	require_once "Console.class.php";
 	
 	abstract class NetworkInterface
 	{
@@ -27,6 +28,30 @@
 				$interface->interfaceHash = new DataHash("interfaces");
 							
 			return $interface;
+		}
+		
+		public static function getAvailableWiredInterfaces()
+		{
+			return Console::execute("ip link show | egrep 'eth[0-9].*' | awk '{print $2}' | sed 's/://'");
+		}
+		
+		public static function getAvailableWirelessInterfaces()
+		{
+			return Console::execute("iw dev | grep Interface | awk '{print $2}' | grep -v mon.");
+		}
+		
+		public static function getAvailableBridgeInterfaces()
+		{
+			return Console::execute("brctl show | sed '1 d' | egrep '^\b' | awk '{print $1}'");
+		}
+		
+		public static function getAvailableInterfaces()
+		{
+			return array_merge	(
+									self::getAvailableWiredInterfaces(),
+									self::getAvailableWirelessInterfaces(),
+									self::getAvailableBridgeInterfaces()
+								);
 		}
 		
 		public function save()
