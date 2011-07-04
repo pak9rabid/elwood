@@ -1,32 +1,25 @@
 <?php
 	require_once "FileUtils.class.php";
 	require_once "NetUtils.class.php";
+	require_once "RouterSettings.class.php";
 	
 	class DNSSettings
-	{
-		private $nameservers;
-		
-		public function __construct()
+	{		
+		public static function getNameservers()
 		{
-			$this->nameservers = array();
-			$content = FileUtils::readFileAsArray("/etc/resolv.conf");
+			$dnsServers = RouterSettings::getSettingValue("DNS_SERVERS");
 			
-			foreach ($content as $line)
-			{
-				if (preg_match("/^nameserver.*$/", $line))
-				{
-					list($temp, $nameserver) = explode(" ", $line);
-					$this->nameservers[] = $nameserver;
-				}
-			}
+			return (empty($dnsServers) ? array() : explode(",", $dnsServers));
 		}
 		
-		public function getNameservers()
+		public static function getSearchDomains()
 		{
-			return $this->nameservers;
+			$searchDomains = RouterSettings::getSettingValue("DNS_SEARCH_DOMAINS");
+			
+			return (empty($searchDomains) ? array() : explode(",", $searchDomains));
 		}
 		
-		public function setNameservers(array $nameservers)
+		public static function setNameservers(array $nameservers)
 		{
 			foreach ($nameservers as $nameserver)
 			{
@@ -34,14 +27,28 @@
 					throw new Exception("Invalid nameserver specified");
 			}
 			
-			$this->nameservers = $nameservers;
+			$nsSetting = RouterSettings::getSetting("DNS_SERVERS");
+			$nsSetting->setAttribute("value", implode(",", $nameservers));
+			$nsSetting->executeUpdate();
 		}
 		
-		public function save()
+		public static function setSearchDomains(array $domains)
+		{
+			$nsSetting = RouterSettings::getSetting("DNS_SEARCH_DOMAINS");
+			$nsSetting->setAttribute("value", implode(",", $domains));
+			$nsSetting->executeUpdate();
+		}
+		
+		public static function apply()
 		{
 			$out = array();
 			
-			foreach ($this->nameservers as $nameserver)
+			$searchDomains = self::getSearchDomains();
+			
+			if (!empty($searchDomains))
+				$out[] = "search " . implode(" ", $searchDomains);
+				
+			foreach (self::getNameservers() as $nameserver)
 				$out[] = "nameserver $nameserver";
 				
 			FileUtils::writeToFile("/etc/resolv.conf", implode("\n", $out));

@@ -80,7 +80,6 @@ END;
 		{
 			$wanIp = NetworkInterface::getInstance("WAN")->getAddress();
 			$lanIp = NetworkInterface::getInstance("LAN")->getAddress();
-			$dns = new DNSSettings();
 			
 			$out = <<<END
 			
@@ -90,7 +89,7 @@ END;
 				<tr><th>&nbsp;</th><td>&nbsp;</td></tr>
 END;
 
-			foreach ($dns->getNameservers() as $key => $nameserver)
+			foreach (DNSSettings::getNameservers() as $key => $nameserver)
 				$out .= "<tr><th>Nameserver " . ($key + 1) . ":</th><td>" . $nameserver . "</td></tr>\n";
 				
 			return $out .= <<<END
