@@ -25,8 +25,15 @@
 
 		public static function getAllSettings()
 		{
+			// returns all entries from the 'settings' database table in a convenient
+			// associative array (aka hash map)
+			$settings = array();
 			$selectHash = new DataHash("settings");
-			return $selectHash->executeSelect();
+			
+			foreach ($selectHash->executeSelect() as $settingHash)
+				$settings[$settingHash->getAttribute("key")] = $settingHash->getAttribute("value");
+				
+			return $settings;
 		}
 
 		public static function saveSetting($key, $value)
