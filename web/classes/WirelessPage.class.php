@@ -4,7 +4,7 @@
 	require_once "Service.class.php";
 	require_once "WirelessSecurity.class.php";
 	
-	class WirelessPage implements Page
+	class WirelessPage extends Page
 	{
 		private $wlanService;
 		

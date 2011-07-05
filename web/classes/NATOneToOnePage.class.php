@@ -3,7 +3,7 @@
 	require_once "FirewallChain.class.php";
 	require_once "User.class.php";
 	
-	class NATOneToOnePage implements Page
+	class NATOneToOnePage extends Page
 	{
 		// Override
 		public function id()

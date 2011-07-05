@@ -4,7 +4,7 @@
 	require_once "Service.class.php";
 	require_once "User.class.php";
 	
-	class AccessPage implements Page
+	class AccessPage extends Page
 	{
 		// Override
 		public function id()

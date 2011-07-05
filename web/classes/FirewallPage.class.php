@@ -4,7 +4,7 @@
 	require_once "NetUtils.class.php";
 	require_once "User.class.php";
 	
-	class FirewallPage implements Page
+	class FirewallPage extends Page
 	{
 		// Override
 		public function id()

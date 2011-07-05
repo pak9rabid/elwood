@@ -1,13 +1,44 @@
 <?php
-	interface Page
+	require_once "Element.class.php";
+	
+	abstract class Page
 	{
-		public function id();
-		public function name();
-		public function head(array $parameters);
-		public function style(array $parameters);
-		public function javascript(array $parameters);
-		public function content(array $parameters);
-		public function popups(array $parameters);
-		public function isRestricted();
+		protected $elements = array();
+		
+		public function addElement(Element $element)
+		{
+			$this->elements[$element->getName()] = $element;
+		}
+		
+		public function getElement($elementName)
+		{
+			return $this->elements[$elementName];
+		}
+		
+		public function getElements()
+		{
+			return $this->elements;
+		}
+		
+		public function javascript(array $parameters)
+		{
+			if (empty($this->elements))
+				return "";
+				
+			$out = array();
+			
+			foreach ($this->elements as $element)
+				$out[] = $element->javascript();
+			
+			return implode("\n", $out);
+		}
+		
+		abstract public function id();
+		abstract public function name();
+		abstract public function head(array $parameters);
+		abstract public function style(array $parameters);
+		abstract public function content(array $parameters);
+		abstract public function popups(array $parameters);
+		abstract public function isRestricted();
 	}
 ?>

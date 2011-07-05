@@ -4,7 +4,7 @@
 	require_once "User.class.php";
 	require_once "FirewallChain.class.php";
 	
-	class NATPortForwardingPage implements Page
+	class NATPortForwardingPage extends Page
 	{
 		// Override
 		public function id()

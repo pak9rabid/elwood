@@ -4,7 +4,7 @@
 	require_once "DNSSettings.class.php";
 	require_once "RouterStats.class.php";
 	
-	class StatusPage implements Page
+	class StatusPage extends Page
 	{
 		// Override
 		public function id()

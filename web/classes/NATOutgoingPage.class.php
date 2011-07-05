@@ -3,7 +3,7 @@
 	require_once "RouterSettings.class.php";
 	require_once "FirewallChain.class.php";
 	
-	class NATOutgoingPage implements Page
+	class NATOutgoingPage extends Page
 	{
 		// Override
 		public function id()

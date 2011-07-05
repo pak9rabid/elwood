@@ -3,7 +3,7 @@
 	require_once "NetworkInterface.class.php";
 	require_once "DNSSettings.class.php";
 	
-	class WANPage implements Page
+	class WANPage extends Page
 	{
 		private $wanInt;
 		

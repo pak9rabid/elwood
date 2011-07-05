@@ -1,7 +1,7 @@
 <?php
 	require_once "Page.class.php";
 	
-	class DefaultPage implements Page
+	class DefaultPage extends Page
 	{	
 		// Override
 		public function id()

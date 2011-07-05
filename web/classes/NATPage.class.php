@@ -7,7 +7,7 @@
 	require_once "NATOneToOnePage.class.php";
 	require_once "PageSections.class.php";
 	
-	class NATPage implements Page
+	class NATPage extends Page
 	{
 		private $tabs = array();
 		private $activeTab;
