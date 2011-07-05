@@ -2,6 +2,7 @@
 	abstract class Element
 	{
 		protected $name;
+		protected $title;
 		protected $eventHandlers = array();
 		protected $classes = array();
 		protected $styles = array();
@@ -49,6 +50,11 @@
 		{
 			return $this->name;
 		}
+		
+		public function getTitle()
+		{
+			return $this->title;
+		}
 				
 		public function getHandlers()
 		{
@@ -76,6 +82,11 @@
 				throw new Exception("No name specified");
 				
 			$this->name = $name;
+		}
+		
+		public function setTitle($title)
+		{
+			$this->title = $title;
 		}
 		
 		public function setHandlers(array $eventHandlers)

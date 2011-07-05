@@ -28,12 +28,13 @@
 		public function content()
 		{
 			return	"<input " .
-						"type=\"text\"" .
-						(empty($this->styles) ? "" : " style=\"" . $this->stylesOut() . "\"") . " " .
+						"type=\"text\" " .
+						(empty($this->styles) ? "" : "style=\"" . $this->stylesOut() . "\" ") .
 						"name=\"" . $this->getName() . "\" " .
+						(empty($this->title) ? "" : "title=\"" . $this->getTitle() . "\" ") .
 						"id=\"" . $this->getName() . "\" " .
-						"class=\"elwoodInput textfield " . $this->classesOut() . "\"" . 
-						(empty($this->maxLength) ? "" : " maxlength=\"" . $this->maxLength . "\"") . 
+						"class=\"elwoodInput textfield " . $this->classesOut() . "\" " . 
+						(empty($this->maxLength) ? "" : "maxlength=\"" . $this->maxLength . "\"") .
 						" value=\"" . $this->getValue() . "\">";
 		}
 	}

@@ -18,6 +18,7 @@
 				$out .=	"<input " .
 							"type=\"radio\" " .
 							"name=\"" . $this->getName() . "\" " .
+							(empty($this->title) ? "" : "title=\"" . $this->getTitle() . "\" ") .
 							"id=\"" . ($this->getName() . $value) . "\" " .
 							"class=\"elwoodInput " . (empty($this->classes) ? "" : $this->classesOut()) . "\" " .
 							(empty($this->styles) ? "" : "style=\"" . $this->stylesOut() . "\" ") .

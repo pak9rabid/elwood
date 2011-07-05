@@ -16,6 +16,7 @@
 						"type=\"button\" ". 
 						"id=\"" . $this->getName() . "\" " .
 						"name=\"" . $this->getName() . "\"" .
+						(empty($this->title) ? "" : " title=\"" . $this->getTitle() . "\"") .
 						(empty($this->styles) ? "" : " style=\"" . $this->stylesOut() . "\"") .
 						(empty($this->classes) ? "" : " class=\"" . $this->classesOut() . "\"") .
 					">" .
