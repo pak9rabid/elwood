@@ -9,6 +9,7 @@
 		{
 			$this->setName($name);
 			$this->setOptions($options);
+			$this->addClass("elwoodInput");
 		}
 		
 		public function getOptions()
@@ -26,6 +27,11 @@
 			$this->options[$label] = $value;
 		}
 		
+		public function removeOption($label)
+		{
+			unset($this->options[$label]);
+		}
+		
 		public function clearOptions()
 		{
 			$this->options = array();
@@ -34,13 +40,7 @@
 		// Override
 		public function content()
 		{
-			$out =	"<select " .
-						"name=\"" . $this->getName() . "\" " .
-						(empty($this->title) ? "" : " title=\"" . $this->getTitle() . "\" ") .
-						"id=\"" . $this->getName() . "\" " .
-						"class=\"elwoodInput" . (empty($this->classes) ? "" : " " . $this->classesOut()) . "\" " .
-						(empty($this->styles) ? "" : "style=\"" . $this->stylesOut() . "\"") .
-					">";
+			$out = "<select " . $this->attributesOut() . ">";
 			
 			foreach ($this->options as $label => $value)
 				$out .= "<option value=\"$value\"" . ($value == $this->getValue() ? " selected=\"selected\"" : "") . ">$label</option>";

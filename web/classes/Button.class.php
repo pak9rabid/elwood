@@ -7,21 +7,15 @@
 		{
 			$this->setName($name);
 			$this->setValue($value);
+			
+			$this->setAttribute("type", "button");
+			$this->addClass("elwoodInput");
 		}
 		
 		// Override
 		public function content()
 		{
-			return	"<button " .
-						"type=\"button\" ". 
-						"id=\"" . $this->getName() . "\" " .
-						"name=\"" . $this->getName() . "\"" .
-						(empty($this->title) ? "" : " title=\"" . $this->getTitle() . "\"") .
-						(empty($this->styles) ? "" : " style=\"" . $this->stylesOut() . "\"") .
-						(empty($this->classes) ? "" : " class=\"" . $this->classesOut() . "\"") .
-					">" .
-						$this->getValue() .
-					"</button>";
+			return	"<button " . $this->attributesOut() . ">" . $this->getValue() . "</button>";
 		}
 	}
 ?>

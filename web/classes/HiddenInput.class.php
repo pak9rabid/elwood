@@ -7,14 +7,14 @@
 		{
 			$this->setName($name);
 			$this->setValue($value);
+			
+			$this->setAttribute("type", "hidden");
+			$this->setAttribute("value", $value);
 		}
 		
 		public function content()
-		{
-			return <<<END
-			
-			<input type="hidden" name="{$this->getName()}" id="{$this->getName()}" value="{$this->getValue()}" />
-END;
+		{			
+			return "<input " . $this->attributesOut() . ">";
 		}
 	}
 ?>
