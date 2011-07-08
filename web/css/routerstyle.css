@@ -173,13 +173,21 @@ fieldset
 	margin-bottom: 10px;
 }
 
+.removeable
+{
+	padding: 5px;
+	display: inline-block;
+	text-align: center;
+}
+
 .removeable:hover
 {
-	background: #DDD;
+	background: #EEE;
 }
 
 .removeBtn
 {
+	display: none;
 	font-size: 8px;
 	height: 17px;
 }
