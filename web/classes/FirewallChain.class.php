@@ -44,7 +44,7 @@
 								);
 								
 			if (empty($table))
-				return policies;
+				return $policies;
 				
 			$returnArr = array();
 			
