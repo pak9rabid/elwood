@@ -6,8 +6,18 @@
 	
 	class Firewall
 	{
-		public static function applyRulesInDatabase($tableName)
+		public static function applyRulesInDatabase($tableName = "")
 		{
+			if (empty($tableName))
+			{
+				$tables = array("filter", "nat", "mangle");
+				
+				foreach ($tables as $table)
+					self::applyRulesInDatabase($table);
+					
+				return;
+			}
+			
 			if (!NetUtils::isValidIPTablesTable($tableName))
 				throw new Exception("Invalid table specified");
 				
@@ -44,6 +54,42 @@
 			$iptablesRestore[] = "COMMIT";
 						
 			Console::execute("echo \"" . implode("\n", $iptablesRestore) . "\" | sudo /sbin/iptables-restore");
+		}
+		
+		public static function disable($tableName = "")
+		{
+			if (!empty($tableName) && !NetUtils::isValidIpTablesTable($tableName))
+				throw new Exception("Invalid table specified");
+				
+			$currentTable = empty($tableName) ? "filter" : $tableName;
+			
+			// disables the firewall for the specified $tableName, or all tables if
+			// $tableName is empty...all user-defined chains are removed and all built-in
+			// chain policies are set to ACCEPT
+			$iptablesRestore = array("*" . $currentTable);
+			
+			
+			foreach (FirewallChain::getPolicies($tableName) as $chain => $policy)
+			{
+				list($table, $chain) = explode(".", $chain);
+				
+				if ($table != $currentTable)
+				{
+					$iptablesRestore[] = "COMMIT";
+					$iptablesRestore[] = "*" . $table;
+					$currentTable = $table;
+				}
+				
+				if ($policy == "-")
+					// we won't be creating user-defined chains...skip
+					continue;
+					
+				$iptablesRestore[] = ":$chain ACCEPT";
+			}
+			
+			$iptablesRestore[] = "COMMIT";
+			
+			Console::execute("echo \"" . implode("\n", $iptablesRestore). "\" | sudo /sbin/iptables-restore");
 		}
 	}
 ?>
