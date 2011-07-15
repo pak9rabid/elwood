@@ -1,0 +1,129 @@
+#!/usr/bin/php
+
+<?php
+	$dbFile = "/etc/elwood/elwood.db";
+
+	try
+	{
+		$pdo = new PDO("sqlite:$dbFile");
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+						
+		foreach ($pdo->query("SELECT value FROM settings WHERE key = 'ELWOOD_WEBROOT'")->fetch(PDO::FETCH_ASSOC) as $result)
+			$elwoodWebroot = $result;
+	
+		$classPath = "$elwoodWebroot/classes";
+
+		require_once "$classPath/Firewall.class.php";
+		require_once "$classPath/Console.class.php";
+		require_once "$classPath/Service.class.php";
+		require_once "$classPath/DataHash.class.php";
+
+		$iptables = "/sbin/iptables";
+
+		if ($argc < 2)
+		{
+			usage();
+			exit(1);
+		}
+
+		switch ($argv[1])
+		{
+			case "start":
+				start();
+				break;
+
+			case "stop":
+				stop();
+				break;
+
+			case "restart":
+				stop();
+				start();
+				break;
+
+			case "status":
+				status();
+				break;
+
+			default:
+				usage();
+				break;
+		}
+	}
+	catch (Exception $ex)
+	{
+		echo "The following error occured: " . $ex->getMessage() . "\n\n";
+		exit(1);
+	}
+	
+	function usage()
+	{
+		echo "Usage:\n";
+		echo "\t/etc/init.d/elwood {start|stop|restart|status}\n\n";
+	}
+
+	function start()
+	{
+		startFirewall();
+		startServices();
+	}
+
+	function stop()
+	{
+		stopServices();
+		stopFirewall();
+	}
+
+	function startFirewall()
+	{
+		Firewall::applyRulesInDatabase();
+	}
+
+	function stopFirewall()
+	{
+		Firewall::disable();
+	}
+
+	function startServices()
+	{
+		$blacklist = array("ssh", "network", "icmp");
+		$selectHash = new DataHash("services");
+
+		foreach ($selectHash->executeSelect() as $serviceHash)
+		{
+			$serviceName = $serviceHash->getAttribute("service_name");
+
+			if (in_array($serviceName, $blacklist))
+				continue;
+
+			$service = Service::getInstance($serviceName);
+			$service->load();
+
+			if ($service->getAttribute("is_enabled") == "Y")
+				$service->start();
+			else
+				$service->stop();
+		}
+	}
+
+	function stopServices()
+	{
+		$blacklist = array("ssh", "network", "icmp");
+		$selectHash = new DataHash("services");
+
+		foreach ($selectHash->executeSelect() as $serviceHash)
+		{
+			$serviceName = $serviceHash->getAttribute("service_name");
+
+			if (in_array($serviceName, $blacklist))
+				continue;
+
+			$service = Service::getInstance($serviceName);
+			$service->stop();
+		}
+	}
+
+	function status()
+	{
+	}
+?>
