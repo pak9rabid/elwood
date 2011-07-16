@@ -1,11 +1,11 @@
 #!/usr/bin/php
 
 <?php
-	$dbFile = "/etc/elwood/elwood.db";
+	$elwoodCfgDir = "/etc/elwood";
 
 	try
 	{
-		$pdo = new PDO("sqlite:$dbFile");
+		$pdo = new PDO("sqlite:$elwoodCfgDir/elwood.db");
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 						
 		foreach ($pdo->query("SELECT value FROM settings WHERE key = 'ELWOOD_WEBROOT'")->fetch(PDO::FETCH_ASSOC) as $result)
@@ -18,7 +18,6 @@
 		require_once "$classPath/Service.class.php";
 		require_once "$classPath/DataHash.class.php";
 
-		$iptables = "/sbin/iptables";
 
 		if ($argc < 2)
 		{
@@ -41,14 +40,12 @@
 				start();
 				break;
 
-			case "status":
-				status();
-				break;
-
 			default:
 				usage();
-				break;
+				exit(1);
 		}
+
+		exit(0);
 	}
 	catch (Exception $ex)
 	{
@@ -59,7 +56,7 @@
 	function usage()
 	{
 		echo "Usage:\n";
-		echo "\t/etc/init.d/elwood {start|stop|restart|status}\n\n";
+		echo "\t/etc/init.d/elwood {start|stop|restart}\n\n";
 	}
 
 	function start()
@@ -121,9 +118,5 @@
 			$service = Service::getInstance($serviceName);
 			$service->stop();
 		}
-	}
-
-	function status()
-	{
 	}
 ?>
