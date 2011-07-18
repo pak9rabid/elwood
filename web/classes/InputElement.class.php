@@ -25,5 +25,16 @@
 		{
 			return $this->value;
 		}
+		
+		// Override
+		protected function attributesOut()
+		{
+			$out = explode(" ", parent::attributesOut());
+			
+			if (!empty($this->value))
+				$out[] = "value=\"" . $this->getValue() . "\"";
+				
+			return implode(" ", $out);
+		}
 	}
 ?>

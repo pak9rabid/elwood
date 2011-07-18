@@ -20,7 +20,7 @@
 								"name=\"$this->name\"",
 								"id=\"$this->name\""
 							);
-			
+						
 			if (!empty($this->classes))
 				$out[] = "class=\"" . $this->classesOut() . "\"";
 				
@@ -115,10 +115,10 @@
 			$attribute = strtolower($attribute);
 			
 			// blacklisted attributes...usually because there's a dedicated store for them
-			$blacklist = array("id", "name", "class", "style");
+			$blacklist = array("id", "name", "class", "style", "value");
 			
 			if (in_array($attribute, $blacklist))
-				throw new Exception("The specified attribute cannot be added");
+				throw new Exception("The specified attribute cannot be set");
 				
 			$this->attributes[$attribute] = $value;
 		}
