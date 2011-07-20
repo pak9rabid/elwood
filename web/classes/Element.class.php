@@ -1,4 +1,6 @@
 <?php
+	require_once "InputElement.class.php";
+	
 	abstract class Element
 	{
 		protected $name;
@@ -162,10 +164,16 @@
 		{
 			$this->eventHandlers = array();
 		}
-		
-		public function template($escapeChars = true)
+				
+		public function cloneElementContent($elementName = "@@@CLONED_ELEMENT@@@", $escapeChars = true)
 		{
-			$element = new $this("@@@ELEMENT_NAME@@@");
+			// typically used by javascript on the client to (somewhat) easily create copies of an
+			// Element object's content
+			$element = new $this($elementName);
+			
+			if ($element instanceof InputElement)
+				$element->setValue($this->getValue());
+				
 			$content = $element->content();
 			$content = str_replace(array("\r", "\r\n", "\n", "\t"), "", $content);
 			
