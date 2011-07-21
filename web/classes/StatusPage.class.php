@@ -61,9 +61,9 @@ END;
 		{
 			$uptime = RouterStats::getUptime();
 			
-			return <<<END
+			return parent::javascript($parameters) . <<<END
 			
-			$(document).ready(function()
+			$(function()
 			{	
 				$("#uptime").countdown	(	{
 												since: -$uptime,
@@ -73,6 +73,7 @@ END;
 										);
 			});
 END;
+			
 		}
 		
 		// Override

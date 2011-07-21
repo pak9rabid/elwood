@@ -3,9 +3,109 @@
 	require_once "NetworkInterface.class.php";
 	require_once "Service.class.php";
 	require_once "User.class.php";
+	require_once "CheckBox.class.php";
+	require_once "TextField.class.php";
+	require_once "Button.class.php";
+	require_once "SaveButton.class.php";
+	require_once "ComboBox.class.php";
 	
 	class AccessPage extends Page
 	{
+		private $users = array();
+		
+		public function __construct()
+		{
+			$selectHash = new User();
+			$this->users = $selectHash->executeSelect();
+			
+			$this->addElement(new CheckBox("httpwan"));
+			$this->addElement(new CheckBox("httplan"));
+			$this->addElement(new CheckBox("sshwan"));
+			$this->addElement(new CheckBox("sshlan"));
+			$this->addElement(new CheckBox("icmpwan"));
+			$this->addElement(new CheckBox("icmplan"));
+			$this->addElement(new TextField("httpport"));
+			$this->addElement(new TextField("sshport"));
+			$this->addElement(new SaveButton("saveAccessBtn", "Save"));
+			
+			$this->addElement(new Button("addUserBtn", "Add User"));
+			
+			$this->addElement(new TextField("username"));
+			$this->addElement(new TextField("passwd"));
+			$this->addElement(new TextField("confPasswd"));
+			$this->addElement(new ComboBox("groupSelect", array("admins" => "admins", "users" => "users")));
+			$this->addElement(new Button("saveAddEditUserBtn", "Save"));
+			$this->addElement(new Button("cancelAddEditUserBtn", "Cancel"));
+			$this->addElement(new Button("deleteUserBtn", "Delete"));
+			$this->addElement(new Button("rmUserYesBtn", "Yes"));
+			$this->addElement(new Button("rmUserNoBtn", "No"));
+			
+			foreach ($this->users as $user)
+			{
+				$username = $user->getAttribute("username");
+				$editUserButton = new Button("{$username}-edit", "Edit");
+				$editUserButton->setAttribute("title", "Edit settings for $username");
+				$editUserButton->addHandler("click", "editUser");
+				$this->addElement($editUserButton);
+			}
+			
+			$this->getElement("httpport")->setAttribute("size", "7");
+			$this->getElement("httpport")->setAttribute("maxlength", "5");
+			$this->getElement("sshport")->setAttribute("size", "7");
+			$this->getElement("sshport")->setAttribute("maxlength", "5");
+			$this->getElement("httpwan")->addClass("accessInput");
+			$this->getElement("httplan")->addClass("accessInput");
+			$this->getElement("sshwan")->addClass("accessInput");
+			$this->getElement("sshlan")->addClass("accessInput");
+			$this->getElement("icmpwan")->addClass("accessInput");
+			$this->getElement("icmplan")->addClass("accessInput");
+			$this->getElement("httpport")->addClass("accessInput");
+			$this->getElement("sshport")->addClass("accessInput");
+			
+			$this->getElement("saveAccessBtn")->addStyle("display", "none");
+			$this->getElement("saveAccessBtn")->addHandler("click", "saveAccessSettings");
+			$this->getElement("addUserBtn")->addHandler("click", "addUser");
+			
+			$this->getElement("saveAddEditUserBtn")->addHandler("click", "applyUserChange");
+			$this->getElement("cancelAddEditUserBtn")->addHandler("click", "function(){\$('#addEditUserPopup').closeElwoodPopup();}");
+			$this->getElement("deleteUserBtn")->addHandler("click", "deleteUserConfirm");
+			$this->getElement("rmUserYesBtn")->addHandler("click", "deleteUser");
+			$this->getElement("rmUserNoBtn")->addHandler("click", "function(){\$('#deleteUserPopup').closeElwoodPopup();}");
+			
+			$extIf = NetworkInterface::getInstance("WAN")->getPhysicalInterface();
+			$intIf = NetworkInterface::getInstance("LAN")->getPhysicalInterface();
+			
+			$httpService = Service::getInstance("http");
+			$sshService = Service::getInstance("ssh");
+			$icmpService = Service::getInstance("icmp");
+			$httpService->load();
+			$sshService->load();
+			$icmpService->load();
+			
+			foreach ($httpService->getAccessRules() as $rule)
+			{
+				$this->getElement("httpport")->setValue($rule->getAttribute("dport"));
+				$this->getElement("httplan")->setSelected($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf);
+				$this->getElement("httpwan")->setSelected($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf);
+			}
+			
+			foreach ($sshService->getAccessRules() as $rule)
+			{
+				$this->getElement("sshport")->setValue($rule->getAttribute("dport"));
+				$this->getElement("sshlan")->setSelected($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf);
+				$this->getElement("sshwan")->setSelected($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf);
+			}
+			
+			foreach ($icmpService->getAccessRules() as $rule)
+			{
+				$this->getElement("icmplan")->setSelected($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf);
+				$this->getElement("icmpwan")->setSelected($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf);
+			}
+			
+			$this->getElement("passwd")->setAttribute("type", "password");
+			$this->getElement("confPasswd")->setAttribute("type", "password");
+		}
+		
 		// Override
 		public function id()
 		{
@@ -34,9 +134,176 @@
 			$user = User::getUser();
 			$group = !empty($user) ? $user->getGroup() : null;
 			
-			return <<<END
+			return parent::javascript($parameters) . <<<END
 			
-			var showSaveAccessButton = function()
+			var addEditUserAction;
+			var currentUser = "$user";
+			var currentGroup = "$group";
+			
+			$(function()
+			{
+				$.initElwoodPopups();
+				$(".accessInput").change(showSaveAccessButton);
+			});
+			
+			function editUser()
+			{
+				var username = $(this).attr("id").replace(/-edit/, "");
+				addEditUserAction = currentGroup == "admins" ? "edit" : "pw";
+				addEditUserDlg(username);
+			}
+			
+			function saveAccessSettings()
+			{
+				var saveButton = $("#saveAccessBtn");
+				
+				var params =	{
+									handler: "EditAccessMethods",
+									parameters:
+									{
+										httpWan: $("#httpwan:checked").is(":checked") ? 1 : 0,
+										httpLan: $("#httplan:checked").is(":checked") ? 1 : 0,
+										sshWan: $("#sshwan:checked").is(":checked") ? 1 : 0,
+										sshLan: $("#sshlan:checked").is(":checked") ? 1 : 0,
+										icmpWan: $("#icmpwan:checked").is(":checked") ? 1 : 0,
+										icmpLan: $("#icmplan:checked").is(":checked") ? 1 : 0,
+										httpPort: $("#httpport").val(),
+										sshPort: $("#sshport").val()
+									}
+								};
+								
+				$.getJSON("ajax/ajaxRequest.php", params, function(response)
+				{
+					if (response.errors.length > 0)
+					{
+						$("#accessMessages")
+							.css("color", "red")
+							.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
+							.show();
+							
+						saveButton
+							.html("Save")
+							.removeAttr("disabled");
+					}
+					else
+					{
+						saveButton.hide();
+						$("#accessMessages")
+							.css("color", "green")
+							.html("Access settings saved successfully")
+							.show()
+							.fadeOut(3000);
+					}
+				});
+			}
+			
+			function addUser()
+			{
+				addEditUserAction = "add";
+				addEditUserDlg(false);
+			}
+			
+			function applyUserChange()
+			{
+				var params =	{
+									handler: "AddEditUser",
+									parameters:
+									{
+										action: addEditUserAction,
+										username: $("#username").val(),
+										passwd: $("#passwd").val(),
+										confPasswd: $("#confPasswd").val(),
+										groupname: $("#groupSelect").val()
+									}
+								};
+								
+				$.getJSON("ajax/ajaxRequest.php", params, function(response)
+				{
+					if (response.errors.length > 0)
+					{
+						$("#addEditUserMsgs")
+							.css("color", "red")
+							.html	(
+										"The following error(s) occured:" +
+										"<ul><li>" + response.errors.join("</li><li>") + "</li><ul>"
+									);
+					}
+					else
+					{
+						var action = params.parameters.action;
+						var username = params.parameters.username;
+						var groupname = params.parameters.groupname;
+						var editButtonName = username + "-edit";
+						
+						if (action == "add")
+						{
+							// add new user to the UI
+							$("#usersTable tbody").append	(
+																"<tr class='user' id='user-" + username + "'>" +
+																	"<td class='username-cell'>" + username + "</td>" +
+																	"<td class='groupname-cell'>" + groupname + "</td>" +
+																	"<td class='actions-cell'>" + "{$this->getElement("admin-edit")->cloneElementContent()}".replace(/@@@CLONED_ELEMENT@@@/g, editButtonName) + "</td>" +
+																"</tr>"
+															);
+															
+							$("#" + editButtonName).click(editUser);
+						}
+						else
+							// update user group on the UI (in case it changed)
+							$("#" + editButtonName).children(".groupname-cell").html(groupname);
+							
+						$("#addEditUserPopup").closeElwoodPopup();
+						
+						$("#usersMessages")
+							.css("color", "green")
+							.html("Changes to users saved successfully")
+							.show()
+							.fadeOut(3000);
+					}
+				});
+			}
+			
+			function deleteUserConfirm()
+			{
+				$("#removeUserConfirm").html("Are you sure you want to remove user " + $("#username").val() + "?");
+				$("#deleteUserPopup").openElwoodPopup();
+			}
+			
+			function deleteUser()
+			{
+				var params =	{
+									handler: "RemoveUser",
+									parameters:
+									{
+										username: $("#username").val()
+									}
+								};
+								
+				$.getJSON("ajax/ajaxRequest.php", params, function(response)
+				{
+					$("#deleteUserPopup").closeElwoodPopup();
+					
+					if (response.errors.length > 0)
+					{
+						$("#addEditUserMsgs")
+							.css("color", "red")
+							.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
+							.show();
+					}
+					else
+					{
+						$("#addEditUserPopup").closeElwoodPopup();
+						$("#user-" + params.parameters.username).remove();
+						$("#usersMessages")
+							.css("color", "green")
+							.html("Changes to users saved successfully")
+							.show()
+							.fadeOut(3000);
+					}
+				});
+			}
+			
+			function showSaveAccessButton()
 			{
 				if (!$("#saveAccessBtn").is(":visible"))
 				{
@@ -46,199 +313,6 @@
 						.fadeIn();
 				}
 			}
-						
-			var addEditUserAction;
-			var currentUser = "$user";
-			var currentGroup = "$group";
-
-			$(document).ready(function()
-			{
-				// Initialize elements
-				$.initElwoodPopups();
-				makeUsersTableEditable();
-				$("#saveAccessBtn").hide();
-				$("#saveUsersBtn").hide();
-				$("#saveUsersBtn").hide();
-				$("#accessMessages").hide();
-				$("#usersMessages").hide();
-
-				if (currentGroup != "admins")
-				{
-					$(".accessInput").attr("disabled", "disabled");
-					$("#addUserBtn").attr("disabled", "disabled");
-				}
-
-				// Register event handlers
-				$("#addUserBtn").click(function()
-				{
-					addEditUserAction = "add";
-					addEditUserDlg(false);
-				});
-
-				$("#cancelAddEditUserBtn").click(function(e)
-				{
-					$("#addEditUserPopup").closeElwoodPopup();
-				});
-	
-				$(".accessInput").change(showSaveAccessButton);
-
-				$(".usersInput").change(function()
-				{
-					if (!$("#saveUsersBtn").is(":visible"))
-						$("#saveUsersBtn").fadeIn();
-				});
-			
-				$("#saveAccessBtn").click(function()
-				{
-					var saveButton = $(this);
-					
-					saveButton
-						.html("Saving...&nbsp;<img src='images/loading.gif' />")
-						.attr("disabled", "disabled");
-						
-					var params =	{
-										handler: "EditAccessMethods",
-										parameters:
-										{
-											httpWan: $("#httpwan:checked").is(":checked") ? 1 : 0,
-											httpLan: $("#httplan:checked").is(":checked") ? 1 : 0,
-											sshWan: $("#sshwan:checked").is(":checked") ? 1 : 0,
-											sshLan: $("#sshlan:checked").is(":checked") ? 1 : 0,
-											icmpWan: $("#icmpwan:checked").is(":checked") ? 1 : 0,
-											icmpLan: $("#icmplan:checked").is(":checked") ? 1 : 0,
-											httpPort: $("#httpport").val(),
-											sshPort: $("#sshport").val()
-										}
-									};
-			
-					$.getJSON("ajax/ajaxRequest.php", params, function(response)
-					{
-						if (response.errors.length > 0)
-						{
-							$("#accessMessages")
-								.css("color", "red")
-								.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
-								.show();
-								
-							saveButton
-								.html("Save")
-								.removeAttr("disabled");
-						}
-						else
-						{
-							$("#saveAccessBtn").hide();
-							$("#accessMessages")
-								.css("color", "green")
-								.html("Access settings saved successfully")
-								.show()
-								.fadeOut(3000);
-						}
-					});
-				});
-			
-				$("#saveAddEditUserBtn").click(function()
-				{	
-					var params =	{
-										handler: "AddEditUser",
-										parameters:
-										{
-											action: addEditUserAction,
-											username: $("#username").val(),
-											passwd: $("#passwd").val(),
-											confPasswd: $("#confPasswd").val(),
-											groupname: $("#groupSelect").val()
-										}
-									};
-					
-					$.getJSON("ajax/ajaxRequest.php", params, function(response)
-					{
-						if (response.errors.length > 0)
-						{
-							$("#addEditUserMsgs")
-								.css("color", "red")
-								.html	(	"The following error(s) occured:" +
-											"<ul><li>" + response.errors.join("</li><li>") + "</li><ul>"
-										);
-						}
-						else
-						{
-							var action = params.parameters.action;
-							var username = params.parameters.username;
-							var groupname = params.parameters.groupname;
-							
-							if (action == "add")
-							{	
-								//  add new user to the UI
-								$("#usersTable tbody").append	(
-																	"<tr class='user' id='user-" + username + "'>" +
-																		"<td class='username-cell'>" + username + "</td>" +
-																		"<td class='groupname-cell'>" + groupname + "</td>" +
-																		"<td class='actions-cell'>&nbsp;</td>" +
-																	"</tr>"
-																);
-			
-								makeUsersTableEditable();
-							}
-							else
-								// update user group on the UI (in case it changed)
-								$("#user-" + username).children(".groupname-cell").html(groupname);
-			
-							$("#addEditUserPopup").closeElwoodPopup();
-			
-							$("#usersMessages")
-								.css("color", "green")
-								.html("Changes to users saved successfully")
-								.show()
-								.fadeOut(3000);
-						}
-					});
-				});
-			
-				$("#rmUserYesBtn").click(function()
-				{
-					var params =	{
-										handler: "RemoveUser",
-										parameters:
-										{
-											username: $("#username").val()
-										}
-									};
-			
-					$.getJSON("ajax/ajaxRequest.php", params, function(response)
-					{
-						$("#deleteUserPopup").closeElwoodPopup();
-						
-						if (response.errors.length > 0)
-						{
-							$("#addEditUserMsgs")
-								.css("color", "red")
-								.html("<ul><li>" + response.errors.join("</li><li>") + "</li></ul>")
-								.show();
-						}
-						else
-						{
-							$("#addEditUserPopup").closeElwoodPopup();
-							$("#user-" + params.parameters.username).remove();
-							$("#usersMessages")
-								.css("color", "green")
-								.html("Changes to users saved successfully")
-								.show()
-								.fadeOut(3000);
-						}
-					});		
-				});
-			
-				$("#deleteUserBtn").click(function()
-				{
-					$("#removeUserConfirm").html("Are you sure you want to remove user " + $("#username").val() + "?");
-					$("#deleteUserPopup").openElwoodPopup();
-				});
-			
-				$("#rmUserNoBtn").click(function()
-				{
-					$("#deleteUserPopup").closeElwoodPopup();
-				});
-			});
 			
 			function addEditUserDlg(editUser)
 			{
@@ -248,46 +322,22 @@
 				$("#confPasswd").val("");
 				$("#deleteUserBtn").attr("disabled", "disabled");
 				$("#groupSelect").attr("disabled", "disabled");
-			
+				
 				if (editUser)
 				{
 					$("#username").attr("disabled", "disabled");
-			
+					
 					if (editUser != "admin" && currentGroup == "admins")
 						$("#deleteUserBtn").removeAttr("disabled");
 				}
 				else
 					$("#username").removeAttr("disabled");
-			
+					
 				if (!editUser || (currentGroup == "admins" && editUser != "admin"))
 					$("#groupSelect").removeAttr("disabled");
-				
+					
 				$("#groupSelect").val(editUser ? $("#user-" + editUser).children(".groupname-cell").html() : "users");
 				$("#addEditUserPopup").openElwoodPopup();
-			}
-			
-			function makeUsersTableEditable()
-			{
-				$(".user").each(function()
-				{
-					var actionsCell = $(this).children(".actions-cell");
-			
-					if (actionsCell.children("button [id $= -edit]").length == 0)
-					{
-						var username = $(this).children(".username-cell").html();
-						var groupname = $(this).children(".groupname-cell").html();
-						
-						actionsCell.html("<button type='button' id='" + username + "-edit' type='button' title='Edit settings for " + username + "'>Edit</button");
-						$("#" + username + "-edit").click(function()
-						{
-							addEditUserAction = currentGroup == "admins" ? "edit" : "pw";
-							addEditUserDlg(username);
-						});
-			
-						if (currentUser != username && currentGroup != "admins")
-							$("#" + username + "-edit").attr("disabled", "disabled");
-					}
-				});
 			}
 END;
 		}
@@ -295,40 +345,23 @@ END;
 		// Override
 		public function content(array $parameters)
 		{
-			$extIf = NetworkInterface::getInstance("WAN")->getPhysicalInterface();
-			$intIf = NetworkInterface::getInstance("LAN")->getPhysicalInterface();
+			$userRows = "";
 			
-			$httpService = Service::getInstance("http");
-			$sshService = Service::getInstance("ssh");
-			$icmpService = Service::getInstance("icmp");
-			$httpService->load();
-			$sshService->load();
-			$icmpService->load();
-			
-			foreach ($httpService->getAccessRules() as $rule)
+			foreach ($this->users as $user)
 			{
-				$httpPort = $rule->getAttribute("dport");
-				$lanHttpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf) ? "checked" : "";
-				$wanHttpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
+				$editButton = $user . "-edit";
+				
+				if (User::getUser()->getGroup() != "admins" && User::getUser() != $user)
+					$this->getElement($editButton)->setAttribute("disabled", "disabled");
+				
+				$userRows .=	"<tr class=\"user\" id=\"user-{$user}\">" .
+									"<td class=\"username-cell\">$user</td>" .
+									"<td class=\"groupname-cell\">" . $user->getGroup() . "</td>" .
+									"<td class=\"actions-cell\">" . $this->getElement($editButton)->content() . "</td>" .
+								"</tr>";
 			}
 			
-			foreach ($sshService->getAccessRules() as $rule)
-			{
-				$sshPort = $rule->getAttribute("dport");
-				$lanSshEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf) ? "checked" : "";
-				$wanSshEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
-			}
-			
-			foreach ($icmpService->getAccessRules() as $rule)
-			{
-				$lanIcmpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $intIf) ? "checked" : "";
-				$wanIcmpEnabled = ($rule->getAttribute("int_in") == null || $rule->getAttribute("int_in") == $extIf) ? "checked" : "";
-			}
-						
-			$selectHash = new User();
-			$users = $selectHash->executeSelect();
-			
-			$out = <<<END
+			return <<<END
 			
 			<!-- access methods section -->
 			<div class="section-header">Access Methods</div>
@@ -343,34 +376,34 @@ END;
 				<tr>
 					<td>HTTP</td>
 					<td>
-						<input class="accessInput" type="checkbox" id="httpwan" name="httpwan" value="httpwan" $wanHttpEnabled>
+						{$this->getElement("httpwan")->content()}
 					</td>
 					<td>
-						<input class="accessInput" type="checkbox" id="httplan"name="httplan" value="httplan" $lanHttpEnabled>
+						{$this->getElement("httplan")->content()}
 					</td>
 					<td>
-						<input class="textfield accessInput" id="httpport" name="httpport" size="7" maxlength="5" value="$httpPort">
+						{$this->getElement("httpport")->content()}
 					</td>
 				</tr>
 				<tr>
 					<td>SSH</td>
 					<td>
-						<input class="accessInput" type="checkbox" id="sshwan" name="sshwan" value="sshwan" $wanSshEnabled>
+						{$this->getElement("sshwan")->content()}
 					</td>
 					<td>
-						<input class="accessInput" type="checkbox" id="sshlan" name="sshlan" value="sshlan" $lanSshEnabled>
+						{$this->getElement("sshlan")->content()}
 					</td>
 					<td>
-						<input class="textfield accessInput" id="sshport" name="sshport" size="7" maxlength="5" value="$sshPort">
+						{$this->getElement("sshport")->content()}
 					</td>
 				</tr>
 				<tr>
 					<td>ICMP</td>
 					<td>
-						<input class="accessInput" type="checkbox" id="icmpwan" name="icmpwan" value="icmpwan" $wanIcmpEnabled>
+						{$this->getElement("icmpwan")->content()}
 					</td>
 					<td>
-						<input class="accessInput" type="checkbox" id="icmplan" name="icmplan" value="icmplan" $lanIcmpEnabled>
+						{$this->getElement("icmplan")->content()}
 					</td>
 					<td>&nbsp;</td>
 				</tr>
@@ -378,16 +411,16 @@ END;
 			<div style="margin-top: 10px;">
 				<span style="font-size: 12pt; font-weight: bold; color: red;">WARNING:</span>If no access type is checked, the only access is shell access through the console.
 			</div>
-			<button id="saveAccessBtn" type="button" style="margin-top: 5px;">Save</button>
+			{$this->getElement("saveAccessBtn")->content()}
 			<div id="accessMessages"></div>
 			</form>
 			<br>
 
 			<!-- users section -->
 			<div class="section-header">Users</div>
-			<button type="button" id="addUserBtn">Add User</button>
-			<br />
-			<br />
+			{$this->getElement("addUserBtn")->content()}
+			<br>
+			<br>
 			<form name="users">
 				<table id="usersTable" class="access-table">
 					<tr>
@@ -395,26 +428,9 @@ END;
 						<th>Group</th>
 						<th>Actions</th>
 					</tr>
-END;
-			foreach ($users as $user)
-			{
-				$username = $user->getAttribute("username");
-
-				$out .= <<<END
-					
-					<tr class="user" id="user-$username">
-						<td class="username-cell">$username</td>
-						<td class="groupname-cell">{$user->getGroup()}</td>
-						<td class="actions-cell">&nbsp;</td>
-					</tr>
-END;
-			}
-			
-			return $out .= <<<END
-			
+					$userRows
 				</table>
 			</form>
-			<button type="button" id="saveUsersBtn" style="margin-top: 5px;">Save</button>
 			<br />
 			<div id="usersMessages"></div>
 END;
@@ -431,19 +447,19 @@ END;
 					<tr>
 						<td class="tabInputLabel">Username:</td>
 						<td class="tabInputValue">
-							<input type="text" id="username" name="username" size="20" maxlength="32" />
+							{$this->getElement("username")->content()}
 						</td>
 					</tr>
 					<tr>
 						<td class="tabInputLabel">Password:</td>
 						<td class="tabInputValue">
-							<input type="password" id="passwd" name="passwd" size="20" maxlength="32" />
+							{$this->getElement("passwd")->content()}
 						</td>
 					</tr>
 					<tr>
 						<td class="tabInputLabel">Confirm Password:</td>
 						<td class="tabInputValue">
-							<input type="password" id="confPasswd" name="confPasswd" size="20" maxlength="32" />
+							{$this->getElement("confPasswd")->content()}
 						</td>
 					</tr>
 					<tr>
@@ -452,10 +468,7 @@ END;
 					<tr>
 						<td class="tabInputLabel">Group</td>
 						<td class="tabInputValue">
-							<select id="groupSelect">
-								<option value="admins">admins</option>
-								<option value="users">users</option>
-							</select>
+							{$this->getElement("groupSelect")->content()}
 						</td>
 					</tr>
 					<tr>
@@ -463,10 +476,10 @@ END;
 					</tr>
 					<tr>
 						<td colspan="2">
-							<button type="button" id="saveAddEditUserBtn">Save</button>
-							<button type="button" id="cancelAddEditUserBtn">Cancel</button>
+							{$this->getElement("saveAddEditUserBtn")->content()}
+							{$this->getElement("cancelAddEditUserBtn")->content()}
 							&nbsp;&nbsp;
-							<button type="button" id="deleteUserBtn">Delete</button>
+							{$this->getElement("deleteUserBtn")->content()}
 						</td>
 					</tr>
 				</table>
@@ -475,8 +488,8 @@ END;
 			<div id="deleteUserPopup" class="elwoodPopup">
 				<div id="removeUserConfirm"></div>
 				<br />
-				<button type="button" id="rmUserYesBtn">Yes</button>
-				<button type="button" id="rmUserNoBtn">No</button>
+				{$this->getElement("rmUserYesBtn")->content()}
+				{$this->getElement("rmUserNoBtn")->content()}
 			</div>
 END;
 		}
