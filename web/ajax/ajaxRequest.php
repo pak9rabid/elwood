@@ -4,16 +4,7 @@
 	
 	session_start();
 	header("Content-Type: application/json");
-	
-	if (!isset($_SESSION['user']))
-	{
-		// User not logged in
-		$response = new AjaxResponse("", array("User is not logged in"));
 		
-		echo $response->toJson();
-		exit;
-	}
-	
 	$requestHandler = $_REQUEST['handler'];
 	$requestParams = isset($_REQUEST['parameters']) ? $_REQUEST['parameters'] : array();
 	

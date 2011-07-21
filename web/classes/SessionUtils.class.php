@@ -9,7 +9,6 @@
 				return unserialize($_SESSION['user']);
 			else
 				return null;
-				
 		}
 		
 		public static function logout()

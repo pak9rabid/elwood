@@ -2,6 +2,9 @@
 	require_once "classes/Page.class.php";
 	require_once "classes/DefaultPage.class.php";
 	require_once "classes/PageSections.class.php";
+	require_once "classes/LoginPage.class.php";
+	
+	session_start();
 	
 	$page = $_REQUEST['page'];
 	
@@ -20,8 +23,8 @@
 	if (!($pageObj instanceof Page))
 		$pageObj = new DefaultPage();
 		
-	if ($pageObj->isRestricted())
-		require_once "accessControl.php";
+	if ($pageObj->isRestricted() && User::getUser() == null)
+		$pageObj = new LoginPage();
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">

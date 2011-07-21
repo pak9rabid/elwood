@@ -7,30 +7,30 @@
 		public static function title($title)
 		{
 			$user = User::getUser();
-			
 			$out = <<<END
 			
-			<font id="usertxt">
+			<div style="height: 30px; font-size: 12px; color: #6495ED; text-align: right;">
 END;
-			
+
 			if (!empty($user))
 			{
 				$out .= <<<END
-				Logged in: {$user->getAttribute("username")}<br />
-				<a href="accessControl.php?logout=true">Logout</a>
+				
+				User: $user<br>
+				<a style="color: red;" href="elwoodPage.php?page=Login">Logout</a>
 END;
 			}
 				
 			return $out .= <<<END
 			
-			</font>
+			</div>
 				$title
 END;
 		}
 		
 		public static function navigation(Page $selectedPage)
 		{
-			$pages = array("Status", "Access", "WAN", "LAN", "Wireless", "Firewall", "NAT");
+			$pages = array("Status", "Access", "WAN", "LAN", "Wireless", "Firewall", "NAT", "Setup");
 			$out = "";
 			
 			foreach ($pages as $page)

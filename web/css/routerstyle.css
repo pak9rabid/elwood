@@ -121,14 +121,6 @@ fieldset
 	display: none;
 }
 
-#usertxt
-{
-   font-size: 12px;
-   color: #6495ED;
-   display: block;
-   text-align: right;
-}
-
 .ip-table
 {
    background-color: #D0D0D0;
