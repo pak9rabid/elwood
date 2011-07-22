@@ -12,9 +12,12 @@
 	class AccessPage extends Page
 	{
 		private $users = array();
+		private $currentUser;
 		
 		public function __construct()
 		{
+			$this->currentUser = User::getUser();
+			
 			$selectHash = new User();
 			$this->users = $selectHash->executeSelect();
 			
@@ -44,8 +47,13 @@
 			{
 				$username = $user->getAttribute("username");
 				$editUserButton = new Button("{$username}-edit", "Edit");
+				$editUserButton->addClass("editUserButton");
 				$editUserButton->setAttribute("title", "Edit settings for $username");
 				$editUserButton->addHandler("click", "editUser");
+				
+				if ($this->currentUser != null && $this->currentUser->getGroup() != "admins" && $this->currentUser != $user)
+					$editUserButton->setAttribute("disabled", "disabled");
+				
 				$this->addElement($editUserButton);
 			}
 			
@@ -53,22 +61,26 @@
 			$this->getElement("httpport")->setAttribute("maxlength", "5");
 			$this->getElement("sshport")->setAttribute("size", "7");
 			$this->getElement("sshport")->setAttribute("maxlength", "5");
-			$this->getElement("httpwan")->addClass("accessInput");
-			$this->getElement("httplan")->addClass("accessInput");
-			$this->getElement("sshwan")->addClass("accessInput");
-			$this->getElement("sshlan")->addClass("accessInput");
-			$this->getElement("icmpwan")->addClass("accessInput");
-			$this->getElement("icmplan")->addClass("accessInput");
-			$this->getElement("httpport")->addClass("accessInput");
-			$this->getElement("sshport")->addClass("accessInput");
+			$this->getElement("httpwan")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("httplan")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("sshwan")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("sshlan")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("icmpwan")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("icmplan")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("httpport")->addClasses(array("accessInput", "adminInput"));
+			$this->getElement("sshport")->addClasses(array("accessInput", "adminInput"));
 			
 			$this->getElement("saveAccessBtn")->addStyle("display", "none");
 			$this->getElement("saveAccessBtn")->addHandler("click", "saveAccessSettings");
+			$this->getElement("saveAccessBtn")->addClass("adminInput");
 			$this->getElement("addUserBtn")->addHandler("click", "addUser");
+			$this->getElement("addUserBtn")->addClass("adminInput");
 			
+			$this->getElement("groupSelect")->addClass("adminInput");
 			$this->getElement("saveAddEditUserBtn")->addHandler("click", "applyUserChange");
 			$this->getElement("cancelAddEditUserBtn")->addHandler("click", "function(){\$('#addEditUserPopup').closeElwoodPopup();}");
 			$this->getElement("deleteUserBtn")->addHandler("click", "deleteUserConfirm");
+			$this->getElement("deleteUserBtn")->addClass("adminInput");
 			$this->getElement("rmUserYesBtn")->addHandler("click", "deleteUser");
 			$this->getElement("rmUserNoBtn")->addHandler("click", "function(){\$('#deleteUserPopup').closeElwoodPopup();}");
 			
@@ -104,6 +116,12 @@
 			
 			$this->getElement("passwd")->setAttribute("type", "password");
 			$this->getElement("confPasswd")->setAttribute("type", "password");
+			
+			foreach ($this->getElements() as $element)
+			{
+				if ($this->currentUser != null && $this->currentUser->getGroup() != "admins" && in_array("adminInput", $element->getClasses()))
+					$element->setAttribute("disabled", "disabled");
+			}
 		}
 		
 		// Override
@@ -130,15 +148,12 @@
 				
 		// Override
 		public function javascript(array $parameters)
-		{
-			$user = User::getUser();
-			$group = !empty($user) ? $user->getGroup() : null;
-			
+		{			
 			return parent::javascript($parameters) . <<<END
 			
 			var addEditUserAction;
-			var currentUser = "$user";
-			var currentGroup = "$group";
+			var currentUser = "{$this->currentUser}";
+			var currentGroup = "{$this->currentUser->getGroup()}";
 			
 			$(function()
 			{
@@ -250,7 +265,7 @@
 						}
 						else
 							// update user group on the UI (in case it changed)
-							$("#" + editButtonName).children(".groupname-cell").html(groupname);
+							$("#user-" + username).children(".groupname-cell").html(groupname);
 							
 						$("#addEditUserPopup").closeElwoodPopup();
 						
@@ -320,8 +335,9 @@
 				$("#username").val(editUser ? editUser : "");
 				$("#passwd").val("");
 				$("#confPasswd").val("");
-				$("#deleteUserBtn").attr("disabled", "disabled");
-				$("#groupSelect").attr("disabled", "disabled");
+				
+				if (currentGroup == "admins")
+					$("#groupSelect").removeAttr("disabled");
 				
 				if (editUser)
 				{
@@ -329,13 +345,18 @@
 					
 					if (editUser != "admin" && currentGroup == "admins")
 						$("#deleteUserBtn").removeAttr("disabled");
+					else
+					{
+						$("#groupSelect").attr("disabled", "disabled");
+						$("#deleteUserBtn").attr("disabled", "disabled");
+					}
 				}
 				else
+				{
+					$("#deleteUserBtn").attr("disabled", "disabled");
 					$("#username").removeAttr("disabled");
-					
-				if (!editUser || (currentGroup == "admins" && editUser != "admin"))
-					$("#groupSelect").removeAttr("disabled");
-					
+				}
+										
 				$("#groupSelect").val(editUser ? $("#user-" + editUser).children(".groupname-cell").html() : "users");
 				$("#addEditUserPopup").openElwoodPopup();
 			}
@@ -349,11 +370,7 @@ END;
 			
 			foreach ($this->users as $user)
 			{
-				$editButton = $user . "-edit";
-				
-				if (User::getUser()->getGroup() != "admins" && User::getUser() != $user)
-					$this->getElement($editButton)->setAttribute("disabled", "disabled");
-				
+				$editButton = $user . "-edit";				
 				$userRows .=	"<tr class=\"user\" id=\"user-{$user}\">" .
 									"<td class=\"username-cell\">$user</td>" .
 									"<td class=\"groupname-cell\">" . $user->getGroup() . "</td>" .
