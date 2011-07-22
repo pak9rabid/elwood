@@ -131,9 +131,19 @@
 				$this->classes[] = $class;
 		}
 		
+		function addClasses(array $classes)
+		{
+			$this->classes = array_merge($this->classes, $classes);
+		}
+		
 		public function addStyle($attribute, $value)
 		{
 			$this->styles[$attribute] = $value;
+		}
+		
+		public function addStyles(array $styles)
+		{
+			$this->styles = array_merge($this->styles, $styles);
 		}
 		
 		public function removeHandler($event)
