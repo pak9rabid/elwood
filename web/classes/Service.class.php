@@ -143,6 +143,11 @@
 			$this->executeUpdate();
 		}
 		
+		public function isEnabled()
+		{
+			return ($this->getAttribute("is_enabled") == "Y");
+		}
+		
 		abstract public function stop();
 		abstract public function start();
 		abstract public function restart();
