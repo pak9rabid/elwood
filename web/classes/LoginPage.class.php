@@ -104,12 +104,12 @@ END;
 			<br><br>
 			<form action="javascript:submitLogin()">
 			<table>
-				<tr><th>Username:</th><td>{$this->getElement("username")->content()}</td></tr>
-				<tr><th>Password:</th><td>{$this->getElement("password")->content()}</td></tr>
+				<tr><th>Username:</th><td>{$this->getElement("username")}</td></tr>
+				<tr><th>Password:</th><td>{$this->getElement("password")}</td></tr>
 			</table>
 			<div id="loginMessages"></div>
 			<br>
-			{$this->getElement("loginBtn")->content()}
+			{$this->getElement("loginBtn")}
 			</form>
 END;
 		}

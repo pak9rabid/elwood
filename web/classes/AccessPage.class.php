@@ -374,7 +374,7 @@ END;
 				$userRows .=	"<tr class=\"user\" id=\"user-{$user}\">" .
 									"<td class=\"username-cell\">$user</td>" .
 									"<td class=\"groupname-cell\">" . $user->getGroup() . "</td>" .
-									"<td class=\"actions-cell\">" . $this->getElement($editButton)->content() . "</td>" .
+									"<td class=\"actions-cell\">" . $this->getElement($editButton) . "</td>" .
 								"</tr>";
 			}
 			
@@ -393,34 +393,34 @@ END;
 				<tr>
 					<td>HTTP</td>
 					<td>
-						{$this->getElement("httpwan")->content()}
+						{$this->getElement("httpwan")}
 					</td>
 					<td>
-						{$this->getElement("httplan")->content()}
+						{$this->getElement("httplan")}
 					</td>
 					<td>
-						{$this->getElement("httpport")->content()}
+						{$this->getElement("httpport")}
 					</td>
 				</tr>
 				<tr>
 					<td>SSH</td>
 					<td>
-						{$this->getElement("sshwan")->content()}
+						{$this->getElement("sshwan")}
 					</td>
 					<td>
-						{$this->getElement("sshlan")->content()}
+						{$this->getElement("sshlan")}
 					</td>
 					<td>
-						{$this->getElement("sshport")->content()}
+						{$this->getElement("sshport")}
 					</td>
 				</tr>
 				<tr>
 					<td>ICMP</td>
 					<td>
-						{$this->getElement("icmpwan")->content()}
+						{$this->getElement("icmpwan")}
 					</td>
 					<td>
-						{$this->getElement("icmplan")->content()}
+						{$this->getElement("icmplan")}
 					</td>
 					<td>&nbsp;</td>
 				</tr>
@@ -428,14 +428,14 @@ END;
 			<div style="margin-top: 10px;">
 				<span style="font-size: 12pt; font-weight: bold; color: red;">WARNING:</span>If no access type is checked, the only access is shell access through the console.
 			</div>
-			{$this->getElement("saveAccessBtn")->content()}
+			{$this->getElement("saveAccessBtn")}
 			<div id="accessMessages"></div>
 			</form>
 			<br>
 
 			<!-- users section -->
 			<div class="section-header">Users</div>
-			{$this->getElement("addUserBtn")->content()}
+			{$this->getElement("addUserBtn")}
 			<br>
 			<br>
 			<form name="users">
@@ -464,19 +464,19 @@ END;
 					<tr>
 						<td class="tabInputLabel">Username:</td>
 						<td class="tabInputValue">
-							{$this->getElement("username")->content()}
+							{$this->getElement("username")}
 						</td>
 					</tr>
 					<tr>
 						<td class="tabInputLabel">Password:</td>
 						<td class="tabInputValue">
-							{$this->getElement("passwd")->content()}
+							{$this->getElement("passwd")}
 						</td>
 					</tr>
 					<tr>
 						<td class="tabInputLabel">Confirm Password:</td>
 						<td class="tabInputValue">
-							{$this->getElement("confPasswd")->content()}
+							{$this->getElement("confPasswd")}
 						</td>
 					</tr>
 					<tr>
@@ -485,7 +485,7 @@ END;
 					<tr>
 						<td class="tabInputLabel">Group</td>
 						<td class="tabInputValue">
-							{$this->getElement("groupSelect")->content()}
+							{$this->getElement("groupSelect")}
 						</td>
 					</tr>
 					<tr>
@@ -493,10 +493,10 @@ END;
 					</tr>
 					<tr>
 						<td colspan="2">
-							{$this->getElement("saveAddEditUserBtn")->content()}
-							{$this->getElement("cancelAddEditUserBtn")->content()}
+							{$this->getElement("saveAddEditUserBtn")}
+							{$this->getElement("cancelAddEditUserBtn")}
 							&nbsp;&nbsp;
-							{$this->getElement("deleteUserBtn")->content()}
+							{$this->getElement("deleteUserBtn")}
 						</td>
 					</tr>
 				</table>
@@ -505,8 +505,8 @@ END;
 			<div id="deleteUserPopup" class="elwoodPopup">
 				<div id="removeUserConfirm"></div>
 				<br />
-				{$this->getElement("rmUserYesBtn")->content()}
-				{$this->getElement("rmUserNoBtn")->content()}
+				{$this->getElement("rmUserYesBtn")}
+				{$this->getElement("rmUserNoBtn")}
 			</div>
 END;
 		}

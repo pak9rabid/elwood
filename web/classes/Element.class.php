@@ -34,6 +34,12 @@
 				
 			return implode(" ", $out);
 		}
+		
+		// Override
+		public function __toString()
+		{
+			return $this->content();
+		}
 						
 		public function javascript()
 		{
