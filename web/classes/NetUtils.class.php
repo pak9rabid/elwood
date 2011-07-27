@@ -294,25 +294,13 @@
 		}
 		
 		public static function isValidWirelessSecurityMethod($method)
-		{
-			foreach (self::getWirelessSecurityMethods() as $validMethod)
-			{
-				if ($method == eval("return WirelessSecurity::$validMethod;"))
-					return true;
-			}
-			
-			return false;
+		{			
+			return in_array($method, self::getWirelessSecurityMethods());
 		}
 		
 		public static function isValidWirelessAuthMethod($method)
 		{
-			foreach (self::getWirelessAuthMethods() as $validMethod)
-			{
-				if ($method == eval("return WirelessSecurity::$validMethod;"))
-					return true;
-			}
-			
-			return false;
+			return in_array($method, self::getWirelessAuthMethods());
 		}
 		
 		public static function isValidWirelessKey($key, $securityMethod)
@@ -346,22 +334,22 @@
 		}
 		
 		public static function getWirelessSecurityMethods()
-		{			
+		{
 			return array	(
-								"NONE",
-								"WEP",
-								"WPA_PSK",
-								"WPA_EAP",
-								"WPA2_PSK",
-								"WPA2_EAP"
+								WirelessSecurity::NONE,
+								WirelessSecurity::WEP,
+								WirelessSecurity::WPA_PSK,
+								WirelessSecurity::WPA_EAP,
+								WirelessSecurity::WPA2_PSK,
+								WirelessSecurity::WPA2_EAP
 							);
 		}
 		
 		public static function getWirelessAuthMethods()
 		{			
 			return array	(
-								"AUTH_OPEN",
-								"AUTH_SHARED_KEY"
+								WirelessSecurity::AUTH_OPEN,
+								WirelessSecurity::AUTH_SHARED_KEY
 							);
 		}
 		
