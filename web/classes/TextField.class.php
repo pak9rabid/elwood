@@ -11,6 +11,7 @@
 			$this->addClass("elwoodInput");
 			$this->addClass("textfield");
 			$this->setAttribute("type", "text");
+			$this->setAttribute("size", "20");
 		}
 				
 		// Override

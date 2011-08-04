@@ -31,6 +31,31 @@
 		}
 		
 		// Override
+		public function javascript()
+		{
+			if (empty($this->eventHandlers))
+				return "";
+				
+			$out = array("$(function(){");
+			
+			foreach ($this->eventHandlers as $event => $handlers)
+			{
+				foreach ($handlers as $handler)
+				{
+					for ($i=0 ; $i<count($this->getOptions()) ; $i++)
+					{
+						$id = $this->getName() . $i++;
+						$out[] = "$('#$id').bind('$event', $handler);\n";
+					}
+					
+				}
+			}
+			
+			$out[] = "});\n";
+			return implode("\n", $out);
+		}
+		
+		// Override
 		public function content()
 		{
 			$out = "";

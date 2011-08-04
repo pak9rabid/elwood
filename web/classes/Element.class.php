@@ -48,8 +48,11 @@
 				
 			$out = array("$(function(){");
 			
-			foreach ($this->eventHandlers as $event => $handler)
-				$out[] = "$('#" . $this->getName() . "').bind('$event', $handler);\n";
+			foreach ($this->eventHandlers as $event => $handlers)
+			{
+				foreach ($handlers as $handler)
+					$out[] = "$('#" . $this->getName() . "').bind('$event', $handler);\n";
+			}
 			
 			$out[] = "});\n";
 			return implode("\n", $out);
@@ -80,6 +83,11 @@
 			return $this->classes;
 		}
 		
+		public function hasClass($className)
+		{
+			return in_array($className, $this->classes);
+		}
+		
 		public function getStyle($attribute)
 		{
 			return $this->styles[$attribute];
@@ -97,11 +105,6 @@
 				
 			$this->name = $name;
 		}
-				
-		public function setHandlers(array $eventHandlers)
-		{
-			$this->eventHandlers = $eventHandlers;
-		}
 		
 		public function setClasses(array $classes)
 		{
@@ -115,7 +118,10 @@
 		
 		public function addHandler($event, $handler)
 		{
-			$this->eventHandlers[$event] = $handler;
+			if (!isset($this->eventHandlers[$event]))
+				$this->eventHandlers[$event] = array();
+				
+			$this->eventHandlers[$event][] = $handler;
 		}
 		
 		public function setAttribute($attribute, $value)
@@ -152,9 +158,15 @@
 			$this->styles = array_merge($this->styles, $styles);
 		}
 		
-		public function removeHandler($event)
+		public function removeHandler($event, $handler = "")
 		{
-			unset($this->eventHandlers[$event]);
+			if (empty($handler))
+				unset($this->eventHandlers[$event]);
+			else
+			{
+				if ($index = @array_search($handler, $this->eventHandlers[$event]))
+					unset($this->eventHandlers[$event][$index]);
+			}
 		}
 		
 		public function removeAttribute($attribute)

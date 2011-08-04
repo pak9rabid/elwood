@@ -35,5 +35,29 @@
 			
 			return $out;
 		}
+		
+		// Override
+		public function javascript()
+		{
+			if (empty($this->eventHandlers))
+				return "";
+				
+			$out = array("$(function(){");
+			
+			foreach ($this->eventHandlers as $event => $handlers)
+			{
+				foreach ($handlers as $handler)
+				{
+					foreach ($this->getOptions() as $label => $value)
+					{
+						$id = $this->getName() . $value;
+						$out[] = "$('#$id').bind('$event', $handler);\n";
+					}
+				}
+			}
+			
+			$out[] = "});\n";
+			return implode("\n", $out);
+		}
 	}
 ?>
