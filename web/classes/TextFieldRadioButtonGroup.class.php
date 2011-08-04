@@ -71,9 +71,14 @@
 					$attributes = preg_replace("/value=\"([^\"]*)\"/", "value=\"$index\"", $attributes);
 				else
 					$attributes .= " value=\"" . $index . "\"";
+				
+				$value = $this->getValue();
 					
-				if ($this->getValue() == $option->getValue())
-					$attributes .= " checked=\"checked\"";
+				if (!empty($value))
+				{
+					if ($value == $option->getValue())
+						$attributes .= " checked=\"checked\"";
+				}
 					
 				$out .= "<div id=\"$id-container\"><input $attributes>&nbsp;$option</div>";
 				
