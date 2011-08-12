@@ -44,10 +44,9 @@
 				{
 					for ($i=0 ; $i<count($this->getOptions()) ; $i++)
 					{
-						$id = $this->getName() . $i++;
+						$id = $this->getName() . $i;
 						$out[] = "$('#$id').bind('$event', $handler);\n";
 					}
-					
 				}
 			}
 			
