@@ -19,7 +19,7 @@
 				if (is_string($value))
 					$value = trim($value);
 				
-				if (empty($value))
+				if (empty($value) && $value != "0")
 					continue;
 				
 				try
@@ -42,34 +42,54 @@
 							$wlanService->setSecurityMethod($value);
 							break;
 						case "wepKeys":
-							$wlanService->setWepKeys($value);
+							if ($parameters['securityMode'] == WirelessSecurity::WEP)
+								$wlanService->setWepKeys($value);
+								
 							break;
 						case "wepKeyIndex":
-							$wlanService->setDefaultWepKeyIndex($value);
+							if ($parameters['securityMode'] == WirelessSecurity::WEP)
+								$wlanService->setDefaultWepKeyIndex($value);
+								
 							break;
 						case "wepAuthMode":
-							$wlanService->setAuthMethod($value);
+							if ($parameters['securityMode'] == WirelessSecurity::WEP)
+								$wlanService->setAuthMethod($value);
+								
 							break;
 						case "wpaPsk":
-							$wlanService->setWpaPassphrase($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_PSK, WirelessSecurity::WPA2_PSK)))
+								$wlanService->setWpaPassphrase($value);
+								
 							break;
 						case "wpaAuthServerAddr":
-							$wlanService->setAuthServerAddr($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_EAP, WirelessSecurity::WPA2_EAP)))
+								$wlanService->setAuthServerAddr($value);
+								
 							break;
 						case "wpaAuthServerPort":
-							$wlanService->setAuthServerPort($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_EAP, WirelessSecurity::WPA2_EAP)))
+								$wlanService->setAuthServerPort($value);
+								
 							break;
 						case "wpaAuthServerSec":
-							$wlanService->setAuthServerSharedSecret($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_EAP, WirelessSecurity::WPA2_EAP)))
+								$wlanService->setAuthServerSharedSecret($value);
+								
 							break;
 						case "wpaAcctServerAddr":
-							$wlanService->setAcctServerAddr($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_EAP, WirelessSecurity::WPA2_EAP)))
+								$wlanService->setAcctServerAddr($value);
+								
 							break;
 						case "wpaAcctServerPort":
-							$wlanService->setAcctServerPort($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_EAP, WirelessSecurity::WPA2_EAP)))
+								$wlanService->setAcctServerPort($value);
+								
 							break;
 						case "wpaAcctServerSec":
-							$wlanService->setAcctServerSharedSecret($value);
+							if (in_array($parameters['securityMode'], array(WirelessSecurity::WPA_EAP, WirelessSecurity::WPA2_EAP)))
+								$wlanService->setAcctServerSharedSecret($value);
+								
 							break;
 					}
 				}
