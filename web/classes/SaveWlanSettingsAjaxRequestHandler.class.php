@@ -18,10 +18,7 @@
 			{
 				if (is_string($value))
 					$value = trim($value);
-				
-				if (empty($value) && $value != "0")
-					continue;
-				
+								
 				try
 				{
 					switch ($key)
