@@ -52,7 +52,11 @@
 			// hostapd init.d seems to always return an exit status of 0, even if it fails
 			// checking if it failed to start this way
 			if (!$this->isRunning())
+			{
+				$this->setAttribute("is_enabled", "N");
+				$this->save();
 				throw new Exception("The hostapd service failed to start");
+			}
 		}
 		
 		// Override
@@ -63,7 +67,11 @@
 			// hostapd init.d seems to always return an exit status of 0, even if it fails
 			// checking if it failed to start this way
 			if (!$this->isRunning())
+			{
+				$this->setAttribute("is_enabled", "N");
+				$this->save();
 				throw new Exception("The hostapd service failed to restart");
+			}
 		}
 		
 		// Override
@@ -134,7 +142,7 @@
 																WirelessSecurity::WPA2_EAP
 															)))
 				{
-					$config[] = "own_ip_addr=" . NetworkInterface::getInstance("lan")->getIp();
+					$config[] = "own_ip_addr=" . NetworkInterface::getInstance("LAN")->getIp();
 					$config[] = "ieee8021x=1";
 					$config[] = "auth_server_addr=" . $this->authServerAddr;
 					$config[] = "auth_server_port=" . $this->authServerPort;
@@ -245,7 +253,25 @@
 				if (!empty($wpaVersion) && !empty($wpaMethod))
 				{
 					$securityMethod = $wpaVersion . "_" . $wpaMethod;
-					eval("\$this->setSecurityMethod(WirelessSecurity::$securityMethod);");
+					
+					switch ($securityMethod)
+					{
+						case "WPA_PSK":
+							$this->setSecurityMethod(WirelessSecurity::WPA_PSK);
+							break;
+							
+						case "WPA_EAP":
+							$this->setSecurityMethod(WirelessSecurity::WPA_EAP);
+							break;
+							
+						case "WPA2_PSK":
+							$this->setSecurityMethod(WirelessSecurity::WPA2_PSK);
+							break;
+							
+						case "WPA2_EAP":
+							$this->setSecurityMethod(WirelessSecurity::WPA2_EAP);
+							break;
+					}
 				}
 				else
 					$this->setSecurityMethod(WirelessSecurity::NONE);
