@@ -50,6 +50,15 @@
 				}
 			}
 			
+			foreach ($this->options as $textField)
+			{
+				foreach ($textField->getHandlers() as $event => $handlers)
+				{
+					foreach ($handlers as $handler)
+						$out[] = "$('#" . $textField->getName() . "').bind('$event', $handler);\n";
+				}
+			}
+			
 			$out[] = "});\n";
 			return implode("\n", $out);
 		}
