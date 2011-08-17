@@ -17,11 +17,8 @@
 		}
 		
 		protected function attributesOut()
-		{				
-			$out = array	(
-								"name=\"$this->name\"",
-								"id=\"$this->name\""
-							);
+		{
+			$out = (!empty($this->name) ? array("id=\"$this->name\"") : array());
 						
 			if (!empty($this->classes))
 				$out[] = "class=\"" . $this->classesOut() . "\"";

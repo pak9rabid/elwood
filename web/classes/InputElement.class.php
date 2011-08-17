@@ -31,6 +31,9 @@
 		{
 			$out = explode(" ", parent::attributesOut());
 			
+			if (!empty($this->name))
+				array_unshift($out, "name=\"" . $this->getName() . "\"");
+			
 			if (!empty($this->value))
 				$out[] = "value=\"" . $this->getValue() . "\"";
 				
