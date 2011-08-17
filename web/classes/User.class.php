@@ -33,6 +33,11 @@
 			return SessionUtils::getUser();
 		}
 		
+		public static function isLoggedIn()
+		{
+			return (self::getUser() instanceof self);
+		}
+		
 		public static function encryptPassword($password)
 		{
 			return sha1($password);
