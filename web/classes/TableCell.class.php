@@ -4,18 +4,32 @@
 	class TableCell extends Element
 	{
 		protected $content;
+		protected $isHeading = false;
 		
-		public function __construct($name = "", $content = "")
+		public function __construct($name = "", $content = "", $isHeading = false)
 		{
 			$this->name = $name;
 			$this->content = $content;
+			$this->isHeading = (boolean)$isHeading;
 		}
 		
 		// Override
 		public function content()
 		{
 			$attributes = $this->attributesOut();
-			return "<td" . (!empty($attributes) ? " $attributes" : "") . ">" . $this->content . "</td>";
+			$cellTag = $this->isHeading ? "th" : "td";
+			
+			return "<$cellTag" . (!empty($attributes) ? " $attributes" : "") . ">" . $this->content . "</$cellTag>";
+		}
+		
+		public function isHeading()
+		{
+			return $this->isHeading;
+		}
+		
+		public function setIsHeading($isHeading)
+		{
+			$this->isHeading = (boolean)$isHeading;
 		}
 	}
 ?>

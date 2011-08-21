@@ -13,6 +13,22 @@
 		}
 		
 		// Override
+		public function javascript()
+		{
+			$js = parent::javascript();
+			
+			foreach ($this->cells as $cell)
+			{
+				$tempJs = $cell->javascript();
+				
+				if (!empty($tempJs))
+					$js .= $tempJs;
+			}
+			
+			return $js;
+		}
+				
+		// Override
 		public function content()
 		{
 			$out = "<tr " . $this->attributesOut() . ">";

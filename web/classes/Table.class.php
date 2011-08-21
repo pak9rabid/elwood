@@ -13,6 +13,22 @@
 		}
 		
 		// Override
+		public function javascript()
+		{
+			$js = parent::javascript();
+			
+			foreach ($this->getRows() as $row)
+			{
+				$tempJs = $row->javascript();
+				
+				if (!empty($tempJs))
+					$js .= $tempJs;
+			}
+			
+			return $js;
+		}
+		
+		// Override
 		public function content()
 		{
 			$out = "<table " . $this->attributesOut() . "><tbody>";
