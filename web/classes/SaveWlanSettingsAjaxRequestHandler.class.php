@@ -2,6 +2,7 @@
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
 	require_once "Service.class.php";
+	require_once "User.class.php";
 	
 	class SaveWlanSettingsAjaxRequestHandler implements AjaxRequestHandler
 	{
@@ -10,6 +11,12 @@
 		// Override
 		public function processRequest(array $parameters)
 		{
+			if (!User::getUser()->isAdminUser())
+			{
+				$this->response = new AjaxResponse("", array("Only admin users are allowed to make changes to wireless settings"));
+				return;
+			}
+			
 			$wlanService = Service::getInstance("wlan");
 			$wlanService->load();
 			$errors = array();
