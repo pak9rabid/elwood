@@ -1,6 +1,7 @@
 <?php
 	require_once "../classes/AjaxResponse.class.php";
 	require_once "../classes/AjaxRequestHandler.class.php";
+	require_once "../classes/User.class.php";
 	
 	session_start();
 	header("Content-Type: application/json");
@@ -34,13 +35,33 @@
 		if (!($requestHandlerObj instanceof AjaxRequestHandler))
 		{
 			$response = new AjaxResponse("", array("Specified ajax request handler ($requestHandler) does not implement the AjaxRequestHandler interface"));
+			echo $response->toJson();
+			exit;
+		}
 		
+		if ($requestHandlerObj->isRestricted() && User::getUser() == null)
+		{
+			$response = new AjaxResponse("", array("You must be logged-in to access the specified ajax request handler"));
 			echo $response->toJson();
 			exit;
 		}
 	
+		/* OLD
 		$requestHandlerObj->processRequest($requestParams);
 		echo $requestHandlerObj->getResponse()->toJson();
+		*/
+		
+		/* NEW */
+		$response = $requestHandlerObj->processRequest($requestParams);
+		
+		if (!($response instanceof AjaxResponse))
+		{
+			$response = new AjaxResponse("", array("The specified ajax request handler ($requestHandler) did not return a valid ajax response"));
+			echo $response->toJson();
+			exit;
+		}
+		
+		echo $response->toJson();
 	}
 	catch (Exception $ex)
 	{

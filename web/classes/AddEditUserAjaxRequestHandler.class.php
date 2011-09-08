@@ -5,8 +5,6 @@
 	
 	class AddEditUserAjaxRequestHandler implements AjaxRequestHandler
 	{
-		private $response;
-		
 		// Override
 		public function processRequest(array $parameters)
 		{
@@ -27,20 +25,14 @@
 			{
 				// adding a new user
 				if (!$currentUser->isAdminUser())
-				{
-					$this->response = new AjaxResponse("", array("Only admin users can add new users"));
-					return;
-				}
+					return new AjaxResponse("", array("Only admin users can add new users"));
 				
 				$selectUser = new User();
 				$selectUser->setAttribute("username", $username);
 				$selectedUsers = $selectUser->executeSelect();
 				
 				if (!empty($selectedUsers))
-				{
-					$this->response = new AjaxResponse("", array("The specified username is not available"));
-					return;
-				}
+					return new AjaxResponse("", array("The specified username is not available"));
 				
 				if (empty($passwd))
 					$errors[] = "No password specified";
@@ -51,10 +43,7 @@
 					$errors[] = "Invalid group name specified";
 				
 				if (!empty($errors))
-				{
-					$this->response = new AjaxResponse("", $errors);
-					return;
-				}
+					return new AjaxResponse("", $errors);
 				
 				$newUser = new User();
 				$newUser->setAttribute("username", $username);
@@ -66,20 +55,14 @@
 			{
 				// editing an existing user
 				if (!$currentUser->isAdminUser())
-				{
-					$this->response = new AjaxResponse("", array("Only admin users can edit users"));
-					return;
-				}
+					return new AjaxResponse("", array("Only admin users can edit users"));
 				
 				$selectUser = new User();
 				$selectUser->setAttribute("username", $username);
 				$selectedUsers = $selectUser->executeSelect();
 				
 				if (empty($selectedUsers))
-				{
-					$this->response = new AjaxResponse("", array("The specified user to edit does not exist"));
-					return;
-				}
+					return new AjaxResponse("", array("The specified user to edit does not exist"));
 				
 				foreach ($selectedUsers as $editUser)
 				{
@@ -97,10 +80,7 @@
 						$errors[] = "Invalid group name specified";
 						
 					if (!empty($errors))
-					{
-						$this->response = new AjaxResponse("", $errors);
-						return;
-					}
+						return new AjaxResponse("", $errors);
 					
 					if ($groupname != $editUser->getAttribute("usergroup"))
 						$editUser->setAttribute("usergroup", $groupname);
@@ -112,10 +92,7 @@
 			{
 				// changing a password
 				if (!$currentUser->isAdminUser() && $username != $currentUser->getAttribute("username"))
-				{
-					$this->response = new AjaxResponse("", array("Only admin users can change other users' password"));
-					return;
-				}
+					return new AjaxResponse("", array("Only admin users can change other users' password"));
 				
 				if (empty($passwd))
 					$errors[] = "No password specified";
@@ -127,16 +104,10 @@
 				$selectedUsers = $selectUser->executeSelect();
 				
 				if (empty($selectedUsers))
-				{
-					$this->response = new AjaxResponse("", array("The specified user to change the password for does not exist"));
-					return;
-				}
+					return new AjaxResponse("", array("The specified user to change the password for does not exist"));
 				
 				if (!empty($errors))
-				{
-					$this->response = new AjaxResponse("", $errors);
-					return;
-				}
+					return new AjaxResponse("", $errors);
 				
 				foreach ($selectedUsers as $changePwUser)
 				{
@@ -146,17 +117,15 @@
 			}
 			else
 				// invalid action
-				$this->response = new AjaxResponse("", array("Missing or invalid action specified"));
+				return new AjaxResponse("", array("Missing or invalid action specified"));
 				
-			$this->response = new AjaxResponse("Changes to users saved successfully");
+			return new AjaxResponse("Changes to users saved successfully");
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
-		
-		
 	}
 ?>

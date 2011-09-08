@@ -4,9 +4,7 @@
 	require_once "User.class.php";
 	
 	class LoginAjaxRequestHandler implements AjaxRequestHandler
-	{
-		private $response;
-		
+	{		
 		// Override
 		public function processRequest(array $parameters)
 		{
@@ -22,20 +20,19 @@
 			if (empty($userResult))
 			{
 				unset($_SESSION['user']);
-				$this->response = new AjaxResponse("", array("Invalid username and/or password"));
-				return;
+				return new AjaxResponse("", array("Invalid username and/or password"));
 			}
 			
 			foreach ($userResult as $user)
 				$_SESSION['user'] = serialize($user);
 				
-			$this->response = new AjaxResponse();
+			return new AjaxResponse();
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return false;
 		}
 	}
 ?>

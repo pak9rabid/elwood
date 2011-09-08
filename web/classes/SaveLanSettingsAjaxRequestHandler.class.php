@@ -6,17 +6,12 @@
 	require_once "User.class.php";
 	
 	class SaveLanSettingsAjaxRequestHandler implements AjaxRequestHandler
-	{
-		private $response;
-		
+	{		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to change LAN settings"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to change LAN settings"));
 			
 			$lanInt = NetworkInterface::getInstance("LAN");
 			$dhcpService = Service::getInstance("dhcp");
@@ -85,10 +80,7 @@
 			}
 			
 			if (!empty($errors))
-			{
-				$this->response = new AjaxResponse("", $errors);
-				return;
-			}
+				return new AjaxResponse("", $errors);
 			
 			$lanInt->setUsesDhcp(false);
 			$lanInt->save();
@@ -110,13 +102,13 @@
 			
 			$dhcpService->applyAccessRules();
 			
-			$this->response = new AjaxResponse("LAN settings saved successfully");
+			return new AjaxResponse("LAN settings saved successfully");
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

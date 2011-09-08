@@ -7,16 +7,11 @@
 	
 	class SaveWanSettingsAjaxRequestHandler implements AjaxRequestHandler
 	{
-		private $response;
-		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to change WAN settings"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to change WAN settings"));
 			
 			$ipType = trim($parameters['ipType']);
 			$dnsType = trim($parameters['dnsType']);
@@ -97,16 +92,16 @@
 				if ($dnsType == "static")
 					$dns->save();
 				
-				$this->response = new AjaxResponse("WAN settings saved successfully");
+				return new AjaxResponse("WAN settings saved successfully");
 			}
 			else
-				$this->response = new AjaxResponse("", $errors);
+				return new AjaxResponse("", $errors);
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

@@ -7,16 +7,11 @@
 	
 	class AddEditFwFilterRuleAjaxRequestHandler implements AjaxRequestHandler
 	{
-		private $response;
-		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to add or edit firewall rules"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to add or edit firewall rules"));
 			
 			$id			= trim($parameters['id']);
 			$protocol	= trim($parameters['protocol']);
@@ -91,16 +86,16 @@
 			else
 				$errors[] = "Invalid target specified";
 				
-			if (empty($errors))
-				$this->response = new AjaxResponse($rule->toHtml());
-			else
-				$this->response = new AjaxResponse("", $errors);
+			if (!empty($errors))
+				return new AjaxResponse("", $errors);
+			
+			return new AjaxResponse($rule->toHtml());
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

@@ -8,24 +8,16 @@
 	
 	class ApplyFwFilterRulesAjaxRequestHandler implements AjaxRequestHandler
 	{
-		private $response;
-		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to make changes to the firewall"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to make changes to the firewall"));
 			
 			$direction = trim($parameters['direction']);
 			
 			if (!in_array($direction, array("in", "out")))
-			{
-				$this->response = new AjaxResponse("", array("Invalid direction specified"));
-				return;
-			}
+				return new AjaxResponse("", array("Invalid direction specified"));
 			
 			$rulesIn = isset($parameters['rules']) ? $parameters['rules'] : array();
 			$chain = new FirewallChain("filter", "forward_$direction");
@@ -43,11 +35,8 @@
 				
 				$errors = $rule->validate();
 				
-				if (!empty($errors))
-				{
-					$this->response = new AjaxResponse("", array("One or more of the firewall rules contains invalid data"));
-					return;
-				}
+				if (!empty($errors))	
+					return new AjaxResponse("", array("One or more of the firewall rules contains invalid data"));
 				
 				$chain->add($rule);
 			}
@@ -55,13 +44,13 @@
 			$chain->save();
 			$chain->apply();
 			
-			$this->response = new AjaxResponse();
+			return new AjaxResponse();
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

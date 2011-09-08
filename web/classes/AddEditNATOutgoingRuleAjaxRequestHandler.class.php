@@ -5,17 +5,12 @@
 	require_once "NetUtils.class.php";
 	
 	class AddEditNATOutgoingRuleAjaxRequestHandler implements AjaxRequestHandler
-	{
-		private $response;
-		
+	{		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to add or edit firewall rules"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to add or edit firewall rules"));
 			
 			$id = $parameters['id'];
 			$srcAddr = $parameters['srcAddr'];
@@ -39,18 +34,15 @@
 				$errors[] = "Invalid SNAT to address specified";
 				
 			if (!empty($errors))
-			{
-				$this->response = new AjaxResponse("", $errors);
-				return;
-			}
+				return new AjaxResponse("", $errors);
 			
-			$this->response = new AjaxResponse(empty($id) ? "new" . uniqid() : $id, array());
+			return new AjaxResponse(empty($id) ? "new" . uniqid() : $id, array());
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

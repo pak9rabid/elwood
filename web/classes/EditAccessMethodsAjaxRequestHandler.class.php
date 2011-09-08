@@ -8,17 +8,12 @@
 	require_once "User.class.php";
 	
 	class EditAccessMethodsAjaxRequestHandler implements AjaxRequestHandler
-	{
-		private $response;
-		
+	{		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to change access methods"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to change access methods"));
 			
 			$httpWan = (boolean)$parameters['httpWan'];
 			$httpLan = (boolean)$parameters['httpLan'];
@@ -42,11 +37,7 @@
 				$errors[] = "Invalid SSH port number specified";
 				
 			if (!empty($errors))
-			{
-				$this->response = new AjaxResponse("", $errors);
-				
-				return;
-			}
+				return new AjaxResponse("", $errors);
 			
 			$httpService = Service::getInstance("http");
 			$sshService = Service::getInstance("ssh");
@@ -151,13 +142,13 @@
 				$httpService->stop();
 			
 			// Finished, set success response
-			$this->response = new AjaxResponse();
+			return new AjaxResponse();
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

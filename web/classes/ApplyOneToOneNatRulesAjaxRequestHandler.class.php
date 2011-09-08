@@ -7,16 +7,11 @@
 	
 	class ApplyOneToOneNatRulesAjaxRequestHandler implements AjaxRequestHandler
 	{
-		private $response;
-		
 		// Override
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to make changes to the firewall"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to make changes to the firewall"));
 			
 			$oneToOneNatInChain = new FirewallChain("nat", "one2one_in");
 			$oneToOneNatOutChain = new Firewallchain("nat", "one2one_out");
@@ -43,10 +38,7 @@
 				$errors = $rule->validate();
 				
 				if (!empty($errors))
-				{
-					$this->response = new AjaxResponse("", array("One or more of the NAT rules contains invalid data"));
-					return;
-				}
+					return new AjaxResponse("", array("One or more of the NAT rules contains invalid data"));
 										
 				$oneToOneNatInChain->add($rule);
 				
@@ -62,10 +54,7 @@
 				$errors = $rule->validate();
 				
 				if (!empty($errors))
-				{
-					$this->response = new AjaxResponse("", array("One or more of the NAT rules contains invalid data"));
-					return;
-				}
+					return new AjaxResponse("", array("One or more of the NAT rules contains invalid data"));
 				
 				$oneToOneNatOutChain->add($rule);
 			}
@@ -79,13 +68,13 @@
 			
 			$wanInt->apply();
 			
-			$this->response = new AjaxResponse();
+			return new AjaxResponse();
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>

@@ -12,10 +12,7 @@
 		public function processRequest(array $parameters)
 		{
 			if (!User::getUser()->isAdminUser())
-			{
-				$this->response = new AjaxResponse("", array("Only admin users are allowed to make changes to wireless settings"));
-				return;
-			}
+				return new AjaxResponse("", array("Only admin users are allowed to make changes to wireless settings"));
 			
 			$wlanService = Service::getInstance("wlan");
 			$wlanService->load();
@@ -104,10 +101,7 @@
 			}
 			
 			if (!empty($errors))
-			{
-				$this->response = new AjaxResponse("", $errors);
-				return;
-			}
+				return new AjaxResponse("", $errors);
 						
 			if ($parameters['isEnabled'] == "true")
 			{
@@ -122,13 +116,13 @@
 				$wlanService->stop();
 			}
 				
-			$this->response = new AjaxResponse("Wireless settings saved successfully");
+			return new AjaxResponse("Wireless settings saved successfully");
 		}
 		
 		// Override
-		public function getResponse()
+		public function isRestricted()
 		{
-			return $this->response;
+			return true;
 		}
 	}
 ?>
