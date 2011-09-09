@@ -88,7 +88,7 @@ END;
 										}
 									};
 									
-					$.getJSON("ajax/ajaxRequest.php", params, function(response)
+					$.getJSON("ajaxRequest.php", params, function(response)
 					{
 						if (response.errors.length > 0)
 						{
@@ -132,7 +132,7 @@ END;
 										}
 									};
 									
-					$.post("ajax/ajaxRequest.php", params, function(response)
+					$.post("ajaxRequest.php", params, function(response)
 					{
 						if (response.errors.length > 0)
 						{

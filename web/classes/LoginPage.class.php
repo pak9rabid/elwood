@@ -70,7 +70,7 @@ END;
 									}
 								};
 								
-				$.getJSON("ajax/ajaxRequest.php", params, function(response)
+				$.getJSON("ajaxRequest.php", params, function(response)
 				{
 					$("#username").val("");
 					$("#password").val("");

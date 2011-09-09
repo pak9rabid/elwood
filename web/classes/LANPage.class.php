@@ -159,7 +159,7 @@
 										}
 									};
 									
-					$.post("ajax/ajaxRequest.php", params, function(response)
+					$.post("ajaxRequest.php", params, function(response)
 					{
 						if (response.errors.length > 0)
 						{

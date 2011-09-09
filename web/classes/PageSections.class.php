@@ -17,7 +17,7 @@ END;
 				$out .= <<<END
 				
 				User: $user<br>
-				<a style="color: red;" href="elwoodPage.php?page=Login">Logout</a>
+				<a style="color: red;" href="pageRequest.php?page=Login">Logout</a>
 END;
 			}
 				
@@ -38,7 +38,7 @@ END;
 				$cssClass = $page == $selectedPage->id() ? "selected" : "";
 				$out .= <<<END
 				
-				<a class="$cssClass" href="elwoodPage.php?page=$page">$page</a>
+				<a class="$cssClass" href="pageRequest.php?page=$page">$page</a>
 END;
 			}
 
@@ -63,7 +63,7 @@ END;
 					
 				$out .= <<<END
 				
-					<a class="$cssClass" href="elwoodPage.php?page={$parentPage->id()}&tab={$subPage->id()}">{$subPage->name()}</a>
+					<a class="$cssClass" href="pageRequest.php?page={$parentPage->id()}&tab={$subPage->id()}">{$subPage->name()}</a>
 END;
 			}
 			
