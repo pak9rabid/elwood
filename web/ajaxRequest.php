@@ -46,12 +46,6 @@
 			exit;
 		}
 	
-		/* OLD
-		$requestHandlerObj->processRequest($requestParams);
-		echo $requestHandlerObj->getResponse()->toJson();
-		*/
-		
-		/* NEW */
 		$response = $requestHandlerObj->processRequest($requestParams);
 		
 		if (!($response instanceof AjaxResponse))
