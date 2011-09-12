@@ -71,11 +71,13 @@
 			}
 			
 			$this->rows = $rows;
+			return $this;
 		}
 		
 		public function addRow(TableRow $row)
 		{
 			$this->rows[] = $row;
+			return $this;
 		}
 		
 		public function removeRow($index)
@@ -85,11 +87,13 @@
 				
 			unset($this->rows[$index]);
 			$this->rows = array_values($this->rows);
+			return $this;
 		}
 		
 		public function clearRows()
 		{
 			$this->rows = array();
+			return $this;
 		}
 	}
 ?>

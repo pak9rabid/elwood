@@ -15,7 +15,7 @@
 		{
 			return preg_match("/^[0-9]+(px|em|\%)$/", $length);
 		}
-		
+				
 		protected function attributesOut()
 		{
 			$out = (!empty($this->name) ? array("id=\"$this->name\"") : array());
@@ -101,16 +101,19 @@
 				throw new Exception("No name specified");
 				
 			$this->name = $name;
+			return $this;
 		}
 		
 		public function setClasses(array $classes)
 		{
 			$this->classes = $classes;
+			return $this;
 		}
 		
 		public function setStyles(array $styles)
 		{
 			$this->styles = $styles;
+			return $this;
 		}
 		
 		public function addHandler($event, $handler)
@@ -119,6 +122,7 @@
 				$this->eventHandlers[$event] = array();
 				
 			$this->eventHandlers[$event][] = $handler;
+			return $this;
 		}
 		
 		public function setAttribute($attribute, $value)
@@ -132,27 +136,33 @@
 				throw new Exception("The specified attribute cannot be set");
 				
 			$this->attributes[$attribute] = $value;
+			return $this;
 		}
 		
 		public function addClass($class)
 		{
 			if (!in_array($class, $this->classes))
 				$this->classes[] = $class;
+				
+			return $this;
 		}
 		
 		function addClasses(array $classes)
 		{
 			$this->classes = array_merge($this->classes, $classes);
+			return $this;
 		}
 		
 		public function addStyle($attribute, $value)
 		{
 			$this->styles[$attribute] = $value;
+			return $this;
 		}
 		
 		public function addStyles(array $styles)
 		{
 			$this->styles = array_merge($this->styles, $styles);
+			return $this;
 		}
 		
 		public function removeHandler($event, $handler = "")
@@ -164,11 +174,14 @@
 				if ($index = @array_search($handler, $this->eventHandlers[$event]))
 					unset($this->eventHandlers[$event][$index]);
 			}
+			
+			return $this;
 		}
 		
 		public function removeAttribute($attribute)
 		{
 			unset($this->attribute[$attribute]);
+			return $this;
 		}
 		
 		public function removeClass($rmClass)
@@ -178,16 +191,20 @@
 				if ($class == $rmClass)
 					unset($this->classes[$key]);
 			}
+			
+			return $this;
 		}
 		
 		public function removeStyle($attribute)
 		{
 			unset($this->styles[$attribute]);
+			return $this;
 		}
 		
 		public function clearHandlers()
 		{
 			$this->eventHandlers = array();
+			return $this;
 		}
 				
 		public function cloneElementContent($elementName = "@@@CLONED_ELEMENT@@@", $escapeChars = true)

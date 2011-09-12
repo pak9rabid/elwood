@@ -71,11 +71,13 @@
 			}
 			
 			$this->cells = $cells;
+			return $this;
 		}
 		
 		public function addCell(TableCell $cell)
 		{
 			$this->cells[] = $cell;
+			return $this;
 		}
 		
 		public function removeCell($index)
@@ -85,11 +87,13 @@
 				
 			unset($this->cells[$index]);
 			$this->cells = array_values($this->cells);
+			return $this;
 		}
 		
 		public function clearCells()
 		{
 			$this->cells = array();
+			return $this;
 		}
 	}
 ?>

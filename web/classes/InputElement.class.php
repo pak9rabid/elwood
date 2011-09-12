@@ -9,11 +9,13 @@
 		public function setLabel($label)
 		{
 			$this->label = $label;
+			return $this;
 		}
 		
 		public function setValue($value)
 		{
 			$this->value = $value;
+			return $this;
 		}
 		
 		public function getLabel()

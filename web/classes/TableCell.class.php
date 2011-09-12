@@ -30,6 +30,7 @@
 		public function setIsHeading($isHeading)
 		{
 			$this->isHeading = (boolean)$isHeading;
+			return $this;
 		}
 	}
 ?>

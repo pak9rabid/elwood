@@ -22,6 +22,8 @@
 				$this->setAttribute("checked", "checked");
 			else
 				$this->removeAttribute("checked");
+				
+			return $this;
 		}
 		
 		// Override

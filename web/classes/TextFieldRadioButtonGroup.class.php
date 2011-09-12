@@ -22,12 +22,14 @@
 			}
 			
 			$this->options = $options;
+			return $this;
 		}
 		
 		// Override
 		public function addOption(TextField $option)
 		{
 			$this->options[] = $option;
+			return $this;
 		}
 		
 		// Override

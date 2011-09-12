@@ -20,21 +20,25 @@
 		public function setOptions(array $options)
 		{
 			$this->options = $options;
+			return $this;
 		}
 		
 		public function addOption($label, $value)
 		{
 			$this->options[$label] = $value;
+			return $this;
 		}
 		
 		public function removeOption($label)
 		{
 			unset($this->options[$label]);
+			return $this;
 		}
 		
 		public function clearOptions()
 		{
 			$this->options = array();
+			return $this;
 		}
 		
 		// Override

@@ -2,6 +2,7 @@
 	require_once "AjaxRequestHandler.class.php";
 	require_once "AjaxResponse.class.php";
 	require_once "FirewallRule.class.php";
+	require_once "FirewallRulesTable.class.php";
 	require_once "NetUtils.class.php";
 	require_once "User.class.php";
 	
@@ -31,6 +32,8 @@
 			// Rule id
 			if (!empty($id))
 				$rule->setAttribute("id", $id);
+			else
+				$rule->setAttribute("id", "new" . uniqid());
 	
 			// Protocol
 			if (NetUtils::isValidProtocol($protocol))
@@ -89,7 +92,16 @@
 			if (!empty($errors))
 				return new AjaxResponse("", $errors);
 			
-			return new AjaxResponse($rule->toHtml());
+			$firewallTableRow = FirewallRulesTable::firewallRuleToTableRow($rule);
+					
+			return new AjaxResponse	(	(object) array	(
+															"row" =>	$firewallTableRow->content(),
+															"div" =>	"<div id=\"" . $rule->getAttribute("id") . "details\" class=\"fwRuleDetails\">" .
+																			FirewallRulesTable::firewallRuleToTable($rule) .
+																		"</div>",
+															"js" =>		$firewallTableRow->javascript()
+														)
+									);
 		}
 		
 		// Override
