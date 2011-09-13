@@ -170,38 +170,6 @@
 			Firewall::applyRulesInDatabase($this->table);
 		}
 		
-		public function toHtml($title = "")
-		{
-			$out = <<<END
-			
-			<table id="firewall-table">
-				<tr class="nodrag nodrop">
-					<th class="firewall-table-protocol-col">Proto</th>
-					<th class="firewall-table-address-col">Source</th>
-					<th class="firewall-table-port-col">Port</th>
-					<th class="firewall-table-address-col">Destination</th>
-					<th class="firewall-table-port-col">Port</th>
-					<th>&nbsp;</th>
-				</tr>
-END;
-
-			$divs = "";
-						
-			foreach ($this->rules as $rule)
-			{
-				$html = $rule->toHtml();
-				
-				$out .= $html->row;
-				$divs .= $html->div . "\n";
-			}
-			
-			return $out .= <<<END
-			
-			</table>
-			$divs
-END;
-		}
-		
 		protected function isInitialized()
 		{
 			if (empty($this->table))
