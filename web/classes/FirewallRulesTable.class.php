@@ -142,7 +142,7 @@ END;
 														new TableCell("", "&nbsp;", true)
 													));
 													
-			$this->table->addRow($headingRow);
+			$this->table->addRow($headingRow->addClasses(array("nodrag", "nodrop")));
 			
 			foreach ($this->firewallChain->getRules() as $rule)
 			{
