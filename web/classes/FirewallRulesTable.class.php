@@ -10,14 +10,13 @@
 	{
 		protected $firewallChain;
 		protected $table;
-		protected $popups = "";
-		protected $editButtons = array();
+		protected $popups = array();
 		
 		public function __construct($name = "", FirewallChain $chain)
 		{
 			$this->setName($name);
 			$this->firewallChain = $chain;
-			$this->generateContent();
+			$this->updateContent();
 		}
 		
 		public static function firewallRuleToTableRow(FirewallRule $rule)
@@ -76,10 +75,20 @@
 			return $ruleDetailsTable;
 		}
 		
+		public function getTable()
+		{
+			return $this->table;
+		}
+		
+		public function getPopups()
+		{
+			return $this->popups;
+		}
+		
 		// Override
 		public function content()
 		{
-			return $this->table->content() . $this->popups;
+			return $this->table->content() . implode("\n", $this->popups);
 		}
 		
 		// Override
@@ -116,13 +125,13 @@ END;
 		public function setFirewallChain(FirewallChain $chain)
 		{
 			$this->firewallChain = $chain;
-			$this->generateContent();
+			$this->updateContent();
 		}
 		
-		protected function generateContent()
+		public function updateContent()
 		{
 			$this->table = new Table("firewall-table");
-			$this->popups = "";
+			$this->popups = array();
 			
 			$headingRow = new TableRow("", array	(
 														new TableCell("", "Proto", true),
@@ -138,12 +147,12 @@ END;
 			foreach ($this->firewallChain->getRules() as $rule)
 			{
 				$this->table->addRow(self::firewallRuleToTableRow($rule));
-				$this->popups .=	"<div id=\"" . $rule->getAttribute("id") . "details\" class=\"fwRuleDetails\">" .
+				$this->popups[] =	"<div id=\"" . $rule->getAttribute("id") . "details\" class=\"fwRuleDetails\">" .
 										self::firewallRuleToTable($rule)->content() .
-									"</div>\n";
+									"</div>";
 			}
 		}
-		
+				
 		private static function newCell($name = "", $content = "")
 		{
 			$cell = new TableCell($name, $content);

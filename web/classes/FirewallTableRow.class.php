@@ -7,9 +7,12 @@
 	class FirewallTableRow extends TableRow
 	{
 		protected $editButton;
+		protected $rule;
 		
 		public function __construct(FirewallRule $rule)
 		{
+			$this->rule = $rule;
+			
 			if ($rule->getAttribute("id") == null)
 				throw new Exception("FirewallRule must have an id associated with it");
 				
@@ -18,7 +21,7 @@
 			
 			$this->editButton->addHandler("click", "editRule");
 			
-			$this->generateRowContent($rule);
+			$this->updateContent();
 			$this->addHandler("mouseover", "showRuleDetailsPopup");
 			$this->addHandler("mouseout", "hideRuleDetailsPopup");
 		}
@@ -30,27 +33,28 @@
 		
 		public function setFirewallRule(FirewallRule $rule)
 		{
-			$this->generateRowContent($rule);
+			$this->rule = $rule;
+			$this->updateContent();
 			return $this;
 		}
 		
 		// Override
 		public function javascript()
-		{
+		{				
 			return parent::javascript() . $this->editButton->javascript();
 		}
-		
-		protected function generateRowContent(FirewallRule $rule)
+				
+		public function updateContent()
 		{
 			$this->clearCells();
 			$this->setClasses(array());
 			
-			$this->addClass($rule->getAttribute("target") == "ACCEPT" ? "fwRuleAccept" : "fwRuleDrop");
-			$this->addCell(new TableCell("", $rule->getAttributeDisp("protocol")));
-			$this->addCell(new TableCell("", $rule->getAttributeDisp("src_addr")));
-			$this->addCell(new TableCell("", $rule->getAttributeDisp("sport")));
-			$this->addCell(new TableCell("", $rule->getAttributeDisp("dst_addr")));
-			$this->addCell(new TableCell("", $rule->getAttributeDisp("dport")));
+			$this->addClass($this->rule->getAttribute("target") == "ACCEPT" ? "fwRuleAccept" : "fwRuleDrop");
+			$this->addCell(new TableCell("", $this->rule->getAttributeDisp("protocol")));
+			$this->addCell(new TableCell("", $this->rule->getAttributeDisp("src_addr")));
+			$this->addCell(new TableCell("", $this->rule->getAttributeDisp("sport")));
+			$this->addCell(new TableCell("", $this->rule->getAttributeDisp("dst_addr")));
+			$this->addCell(new TableCell("", $this->rule->getAttributeDisp("dport")));
 			$this->addCell(new TableCell("", $this->editButton->content()));
 		}
 	}
