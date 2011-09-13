@@ -67,6 +67,8 @@
 																				)
 											);
 											
+			$ruleDetailsTable->addClass("fwDetailsTable");
+											
 			if ($proto == "icmp")
 				$ruleDetailsTable->addRow(new TableRow("", array(self::newCell("", "ICMP Type:")->addClass("label"), self::newCell($ruleId . "icmp_type", $rule->getAttributeDisp("icmp_type")))));
 				

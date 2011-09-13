@@ -7,11 +7,10 @@
 		{
 			$this->setName($name);
 			$this->setValue($value);
-			
 			$this->setAttribute("type", "hidden");
-			$this->setAttribute("value", $value);
 		}
 		
+		// Override
 		public function content()
 		{			
 			return "<input " . $this->attributesOut() . ">";
