@@ -32,12 +32,12 @@
 <html>
 <head>
 	<title><?=$pageObj->name()?></title>
-	<link rel="StyleSheet" type="text/css" href="css/routerstyle.css" />
-	<link rel="StyleSheet" type="text/css" href="css/elwoodpopup.css" />
+	<link rel="stylesheet" type="text/css" href="css/routerstyle.css">
+	<link rel="stylesheet" type="text/css" href="css/elwoodpopup.css">
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
 	<?=$pageObj->head($_REQUEST)?>
-	<style>
+	<style type="text/css">
 		<?=$pageObj->style($_REQUEST)?>
 	</style>
 	<script type="text/javascript">
