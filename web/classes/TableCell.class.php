@@ -13,6 +13,12 @@
 			$this->isHeading = (boolean)$isHeading;
 		}
 		
+		public static function newCell($name = "", $content = "", $isHeading = false)
+		{
+			// convenience factory method
+			return new self($name, $content, $isHeading);
+		}
+		
 		// Override
 		public function content()
 		{

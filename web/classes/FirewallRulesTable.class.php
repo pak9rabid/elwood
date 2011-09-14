@@ -29,39 +29,39 @@
 			$ruleId = $rule->getAttribute("id");
 			$ruleDetailsTable = new Table	($ruleId . "detailsTable", array	(
 																					new TableRow	("", array	(
-																													self::newCell("", "Protocol:")->addClass("label"),
-																													self::newCell($ruleId . "protocol", $rule->getAttributeDisp("protocol"))
+																													TableCell::newCell("", "Protocol:")->addClass("label"),
+																													TableCell::newCell($ruleId . "protocol", $rule->getAttributeDisp("protocol"))
 																												)
 																									),
 																					
 																					new TableRow	("", array	(
-																													self::newCell("", "Source Address:")->addClass("label"),
-																													self::newCell($ruleId . "src_addr", $rule->getAttributeDisp("src_addr")),
+																													TableCell::newCell("", "Source Address:")->addClass("label"),
+																													TableCell::newCell($ruleId . "src_addr", $rule->getAttributeDisp("src_addr")),
 																												)
 																									),
 																					new TableRow	("", array	(
-																													self::newCell("", "Source Port:")->addClass("label"),
-																													self::newCell($ruleId . "sport", $rule->getAttributeDisp("sport"))
+																													TableCell::newCell("", "Source Port:")->addClass("label"),
+																													TableCell::newCell($ruleId . "sport", $rule->getAttributeDisp("sport"))
 																												)
 																									),
 																					new TableRow	("", array	(
-																													self::newCell("", "Destination Address:")->addClass("label"),
-																													self::newCell($ruleId . "dst_addr", $rule->getAttributeDisp("dst_addr"))
+																													TableCell::newCell("", "Destination Address:")->addClass("label"),
+																													TableCell::newCell($ruleId . "dst_addr", $rule->getAttributeDisp("dst_addr"))
 																												)
 																									),
 																					new TableRow	("", array	(
-																													self::newCell("", "Destination Port:")->addClass("label"),
-																													self::newCell($ruleId . "dport", $rule->getAttributeDisp("dport"))
+																													TableCell::newCell("", "Destination Port:")->addClass("label"),
+																													TableCell::newCell($ruleId . "dport", $rule->getAttributeDisp("dport"))
 																												)
 																									),
 																					new TableRow	("", array	(
-																													self::newCell("", "States:")->addClass("label"),
-																													self::newCell($ruleId . "state", $rule->getAttributeDisp("state"))
+																													TableCell::newCell("", "States:")->addClass("label"),
+																													TableCell::newCell($ruleId . "state", $rule->getAttributeDisp("state"))
 																												)
 																									),
 																					new TableRow	("", array	(
-																													self::newCell("", "Fragmented:")->addClass("label"),
-																													self::newCell($ruleId . "fragmented", $rule->getAttributeDisp("fragmented"))
+																													TableCell::newCell("", "Fragmented:")->addClass("label"),
+																													TableCell::newCell($ruleId . "fragmented", $rule->getAttributeDisp("fragmented"))
 																												)
 																									)
 																				)
@@ -70,9 +70,9 @@
 			$ruleDetailsTable->addClass("fwDetailsTable");
 											
 			if ($rule->getAttribute("protocol") == "icmp")
-				$ruleDetailsTable->addRow(new TableRow("", array(self::newCell("", "ICMP Type:")->addClass("label"), self::newCell($ruleId . "icmp_type", $rule->getAttributeDisp("icmp_type")))));
+				$ruleDetailsTable->addRow(new TableRow("", array(TableCell::newCell("", "ICMP Type:")->addClass("label"), TableCell::newCell($ruleId . "icmp_type", $rule->getAttributeDisp("icmp_type")))));
 				
-			$ruleDetailsTable->addRow(new TableRow("", array(self::newCell("", "Target:")->addClass("label"), self::newCell($ruleId . "target", $rule->getAttributeDisp("target")))));
+			$ruleDetailsTable->addRow(new TableRow("", array(TableCell::newCell("", "Target:")->addClass("label"), TableCell::newCell($ruleId . "target", $rule->getAttributeDisp("target")))));
 			
 			return $ruleDetailsTable;
 		}
@@ -153,12 +153,6 @@ END;
 										self::firewallRuleToTable($rule)->content() .
 									"</div>";
 			}
-		}
-				
-		private static function newCell($name = "", $content = "")
-		{
-			$cell = new TableCell($name, $content);
-			return $cell;
 		}
 	}
 ?>

@@ -12,6 +12,12 @@
 			$this->setCells($cells);
 		}
 		
+		public static function newRow($name = "", array $cells = array())
+		{
+			// convenience factory method
+			return new self($name, $cells);
+		}
+		
 		// Override
 		public function javascript()
 		{
