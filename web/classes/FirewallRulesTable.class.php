@@ -69,7 +69,7 @@
 											
 			$ruleDetailsTable->addClass("fwDetailsTable");
 											
-			if ($proto == "icmp")
+			if ($rule->getAttribute("protocol") == "icmp")
 				$ruleDetailsTable->addRow(new TableRow("", array(self::newCell("", "ICMP Type:")->addClass("label"), self::newCell($ruleId . "icmp_type", $rule->getAttributeDisp("icmp_type")))));
 				
 			$ruleDetailsTable->addRow(new TableRow("", array(self::newCell("", "Target:")->addClass("label"), self::newCell($ruleId . "target", $rule->getAttributeDisp("target")))));
