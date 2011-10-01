@@ -18,7 +18,7 @@
 		
 		public function __construct($parameters)
 		{
-			$this->direction = $parameters['dir'] == "out" ? "out" : "in";
+			$this->direction = isset($parameters['dir']) && $parameters['dir'] == "out" ? "out" : "in";
 			$this->firewallChain = new FirewallChain("filter", "forward_" . $this->direction);
 			$this->firewallChain->load();
 			

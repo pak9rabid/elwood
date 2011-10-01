@@ -70,7 +70,10 @@
 
 		public function getAttribute($key)
 		{
-			return $this->hashMap[$key];
+			if (isset($this->hashMap[$key]))
+				return $this->hashMap[$key];
+				
+			return null;
 		}
 
 		public function getAttributeMap()

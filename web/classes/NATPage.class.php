@@ -19,9 +19,8 @@
 									"NATPortForwarding" => new NATPortForwardingPage(),
 									"NATOneToOne" => new NATOneToOnePage()
 								);
-								
-			$tab = $parameters['tab'];
 			
+			$tab = isset($parameters['tab']) ? $parameters['tab'] : null;
 			$this->activeTab = in_array($tab, array_keys($this->tabs)) ? $this->tabs[$tab] : $this->tabs['NATOutgoing'];
 		}
 		
