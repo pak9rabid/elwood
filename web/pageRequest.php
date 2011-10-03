@@ -6,7 +6,7 @@
 	
 	session_start();
 	
-	$page = $_REQUEST['page'];
+	$page = isset($_REQUEST['page']) ? $_REQUEST['page'] : null;
 	
 	if (empty($page))
 		$pageClass = "DefaultPage";
