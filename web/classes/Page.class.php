@@ -12,7 +12,10 @@
 		
 		public function getElement($elementName)
 		{
-			return $this->elements[$elementName];
+			if (isset($this->elements[$elementName]))
+				return $this->elements[$elementName];
+				
+			return null;
 		}
 		
 		public function getElements()

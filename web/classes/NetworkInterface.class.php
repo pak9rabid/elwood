@@ -32,17 +32,17 @@
 		
 		public static function getAvailableWiredInterfaces()
 		{
-			return Console::execute("ip link show | egrep 'eth[0-9].*' | awk '{print $2}' | sed 's/://'");
+			return Console::execute("ip link show | egrep 'eth[0-9].*' | awk '{print $2}' | sed 's/://'", true);
 		}
 		
 		public static function getAvailableWirelessInterfaces()
 		{
-			return Console::execute("iw dev | grep Interface | awk '{print $2}' | grep -v mon.");
+			return Console::execute("iw dev | grep Interface | awk '{print $2}' | grep -v mon.", true);
 		}
 		
 		public static function getAvailableBridgeInterfaces()
 		{
-			return Console::execute("brctl show | sed '1 d' | egrep '^\b' | awk '{print $1}'");
+			return Console::execute("brctl show | sed '1 d' | egrep '^\b' | awk '{print $1}'", true);
 		}
 		
 		public static function getAvailableInterfaces()
