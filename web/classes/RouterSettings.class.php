@@ -2,6 +2,7 @@
 	require_once "Database.class.php";
 	require_once "DataHash.class.php";
 	require_once "DbQueryPreper.class.php";
+	require_once "SettingNotFoundException.class.php";
 
 	class RouterSettings
 	{
@@ -13,7 +14,7 @@
 			$results = $selectHash->executeSelect();
 			
 			if (count($results) <= 0)
-				throw new Exception("Specified setting does not exist");
+				throw new SettingNotFoundException();
 				
 			return $results[0];
 		}
