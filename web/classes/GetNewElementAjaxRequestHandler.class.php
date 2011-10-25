@@ -56,11 +56,18 @@
 			$attributes = isset($parameters['attributes']) ? json_decode($parameters['attributes'], true) : array();
 			
 			/*	parameter: classes
-				JSON-encoded array, list of classes for the Element to use
+				space-delimited text value, specifies list of classes to associate the Element with, overriding any default classes the Element may contain
 				example:
-					["someClass1", "someClas2", "someClass3"]
+					"someClass1 someClass2 someClass3"
 			*/
-			$classes = isset($parameters['classes']) ? json_decode($parameters['classes'], true) : array();
+			$classes = isset($parameters['classes']) ? explode(" ", $parameters['classes']) : array();
+			
+			/*	parameter: addClasses
+				space-delimited text value, specifies list of classes to add to the Element's default list of classes (if any)
+				example:
+					"someClass1 someClass2 someClass3"
+			*/
+			$addClasses = isset($parameters['addClasses']) ? explode(" ", $parameters['addClasses']) : array();
 			
 			/*	parameter: eventHandlers
 				JSON-encoded object, key-array map specifying a list of events and their associated event handlers
@@ -111,6 +118,9 @@
 				
 			if (!empty($classes))
 				$elementObj->setClasses($classes);
+				
+			if (!empty($addClasses))
+				$elementObj->addClasses($addClasses);
 			
 			foreach ($eventHandlers as $event => $handlers)
 			{
