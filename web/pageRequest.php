@@ -3,6 +3,7 @@
 	require_once "classes/DefaultPage.class.php";
 	require_once "classes/PageSections.class.php";
 	require_once "classes/LoginPage.class.php";
+	require_once "classes/RouterSettings.class.php";
 	
 	session_start();
 	
@@ -10,6 +11,8 @@
 	
 	if (empty($page))
 		$pageClass = "DefaultPage";
+	else if ($page != "Login" && !RouterSettings::getSettingValue("IS_INITIALIZED"))
+		$pageClass = "SetupPage";
 	else
 		$pageClass = $page . "Page";
 		
@@ -22,7 +25,7 @@
 	
 	if (!($pageObj instanceof Page))
 		$pageObj = new DefaultPage();
-		
+				
 	if ($pageObj->isRestricted() && User::getUser() == null)
 		$pageObj = new LoginPage();
 ?>
@@ -34,6 +37,7 @@
 	<title><?=$pageObj->name()?></title>
 	<link rel="stylesheet" type="text/css" href="css/routerstyle.css">
 	<link rel="stylesheet" type="text/css" href="css/elwoodpopup.css">
+	<script src="js/json2.min.js" type="text/javascript"></script>
 	<script src="js/jquery-1.4.2.min.js" type="text/javascript"></script>
 	<script src="js/jquery.elwoodpopup.js" type="text/javascript"></script>
 	<?=$pageObj->head($_REQUEST)?>
