@@ -25,6 +25,47 @@
 			}
 		}
 		
+		public static function getActiveNameservers()
+		{
+			$nameservers = array();
+			
+			foreach (FileUtils::readFileAsArray("/etc/resolv.conf") as $line)
+			{
+				list($option, $value) = explode(" ", $line);
+				
+				if ($option == "nameserver")
+					$nameservers[] = $value;
+			}
+			
+			return $nameservers;
+		}
+		
+		public static function getActiveSearchDomains()
+		{
+			$searchDomains = array();
+			
+			foreach (FileUtils::readFileAsArray("/etc/resolv.conf") as $line)
+			{
+				list($option) = explode(" ", $line);
+				
+				if ($option == "search")
+				{
+					foreach (explode(" ", $line) as $value)
+					{
+						$value = trim($value);
+						
+						if ($value == "search")
+							continue;
+						
+						if (!empty($value))
+							$searchDomains[] = $value;
+					}
+				}
+			}
+			
+			return $searchDomains;
+		}
+		
 		public static function setNameservers(array $nameservers)
 		{
 			foreach ($nameservers as $nameserver)
