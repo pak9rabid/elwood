@@ -61,7 +61,7 @@
 		
 		<div id="content">
 			<?=$pageObj->content($_REQUEST)?>
-			<div id="messages">
+			<div id="messages" style="margin-top: 10px;">
 			</div>
 		</div>
 		<?=$pageObj->popups($_REQUEST)?>

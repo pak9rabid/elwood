@@ -3,6 +3,8 @@
 	require_once "DataHash.class.php";
 	require_once "NetUtils.class.php";
 	require_once "Console.class.php";
+	require_once "NetworkInterfaceNotFoundException.class.php";
+	require_once "NetworkInterfaceAlreadyUsedException.class.php";
 	
 	abstract class NetworkInterface
 	{
@@ -12,6 +14,9 @@
 		
 		public static function getInstance($interfaceName = "")
 		{
+			if (empty($interfaceName))
+				throw new Exception("Interface not specified");
+				
 			$profile = SystemProfile::getProfile();			
 			$className = $profile->ClassMappings->NetworkInterface->class;
 			
@@ -21,11 +26,16 @@
 			
 			if (!$interface instanceof self)
 				throw new Exception("$className is not a subclass of NetworkInterface");
-			
-			if (!empty($interfaceName))
+							
+			try
+			{
 				$interface->load($interfaceName);
-			else
+			}
+			catch (NetworkInterfaceNotFoundException $ex)
+			{
 				$interface->interfaceHash = new DataHash("interfaces");
+				$interface->interfaceHash->setAttribute("name", $interfaceName);
+			}
 							
 			return $interface;
 		}
@@ -55,7 +65,7 @@
 		}
 		
 		public function save()
-		{
+		{				
 			$id = $this->interfaceHash->getAttribute("id");
 			
 			if (!empty($id))
@@ -79,6 +89,7 @@
 				throw new Exception("Interface " . $this->getName() . " cannot be deleted because it doesn't exist");
 				
 			$this->interfaceHash->executeDelete();
+			$this->interfaceHash->removeAttribute("id");
 		}
 		
 		public function load($interfaceName)
@@ -90,7 +101,7 @@
 			$results = $selectHash->executeSelect(true);
 			
 			if (empty($results))
-				throw new Exception("Interface $interfaceName does not exist");
+				throw new NetworkInterfaceNotFoundException("Interface $interfaceName does not exist");
 				
 			foreach ($results as $result)
 				$this->interfaceHash = $result;
@@ -182,7 +193,7 @@
 				throw new Exception("Physical interface name cannot be empty");
 				
 			if (NetUtils::isInterfaceUsed($interface))
-				throw new Exception("The specified physical interface is already being used");
+				throw new NetworkInterfaceAlreadyUsedException("The specified physical interface is already being used");
 			
 			$this->interfaceHash->setAttribute("physical_int", $interface);
 		}
@@ -196,7 +207,7 @@
 				foreach ($interfaces as $interface)
 				{
 					if (NetUtils::isInterfaceUsed($interface))
-						throw new Exception("The specified physical interface is already being used");
+						throw new NetworkInterfaceAlreadyUsedException("The specified physical interface is already being used");
 				}
 				
 				$this->interfaceHash->setAttribute("bridged_ints", implode(",", $interfaces));

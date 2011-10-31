@@ -14,6 +14,11 @@
 			return array_filter(scandir(RouterSettings::getSettingValue("ELWOOD_CFG_DIR") . "/profiles"), array("self", "scandirFilter"));
 		}
 		
+		public static function isValidProfile($profile)
+		{
+			return in_array($profile, self::getAvailableProfiles());
+		}
+		
 		private static function scandirFilter($filename)
 		{
 			return $filename != "." && $filename != "..";

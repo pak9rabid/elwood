@@ -14,9 +14,15 @@
 		
 		public static function getSearchDomains()
 		{
-			$searchDomains = RouterSettings::getSettingValue("DNS_SEARCH_DOMAINS");
-			
-			return (empty($searchDomains) ? array() : explode(",", $searchDomains));
+			try
+			{
+				$searchDomains = RouterSettings::getSettingValue("DNS_SEARCH_DOMAINS");
+				return (empty($searchDomains) ? array() : explode(",", $searchDomains));
+			}
+			catch (SettingNotFoundException $ex)
+			{
+				return array();
+			}
 		}
 		
 		public static function setNameservers(array $nameservers)
@@ -26,10 +32,8 @@
 				if (!NetUtils::isValidIp($nameserver))
 					throw new Exception("Invalid nameserver specified");
 			}
-			
-			$nsSetting = RouterSettings::getSetting("DNS_SERVERS");
-			$nsSetting->setAttribute("value", implode(",", $nameservers));
-			$nsSetting->executeUpdate();
+				
+			RouterSettings::saveSetting("DNS_SERVERS", implode(",", $nameservers));
 		}
 		
 		public static function setSearchDomains(array $domains)

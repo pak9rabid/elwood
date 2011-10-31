@@ -1,7 +1,5 @@
 <?php
-	require_once "Database.class.php";
 	require_once "DataHash.class.php";
-	require_once "DbQueryPreper.class.php";
 	require_once "SettingNotFoundException.class.php";
 
 	class RouterSettings
@@ -39,9 +37,21 @@
 
 		public static function saveSetting($key, $value)
 		{
-			$setting = self::getSetting($key);
-			$setting->setAttribute("value", $value);
-			$setting->executeUpdate();
+			try
+			{
+				// update existing setting
+				$setting = self::getSetting($key);				
+				$setting->setAttribute("value", $value);
+				$setting->executeUpdate();
+			}
+			catch (SettingNotFoundException $ex)
+			{
+				// setting doesn't exist...insert it as new
+				$setting = new DataHash("settings");				
+				$setting->setAttribute("key", $key);
+				$setting->setAttribute("value", $value);
+				$setting->executeInsert();
+			}
 		}
 	}
 ?>
