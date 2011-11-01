@@ -53,5 +53,10 @@
 				$setting->executeInsert();
 			}
 		}
+		
+		public static function deleteSetting($key)
+		{
+			self::getSetting($key)->executeDelete();
+		}
 	}
 ?>
