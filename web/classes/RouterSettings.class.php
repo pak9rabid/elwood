@@ -4,6 +4,8 @@
 
 	class RouterSettings
 	{
+		public static $ELWOOD_CFG_DIR = "/etc/elwood";
+		
 		public static function getSetting($key)
 		{
 			$selectHash = new DataHash("settings");
