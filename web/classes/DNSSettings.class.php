@@ -68,6 +68,15 @@
 		
 		public static function setNameservers(array $nameservers)
 		{
+			// remove any duplicate entries
+			$nameservers = array_unique($nameservers);
+			
+			// remove any blank values
+			$nameservers = array_filter($nameservers, function($nameserver)
+			{
+				return trim($nameserver) != "";
+			});
+			
 			foreach ($nameservers as $nameserver)
 			{
 				if (!NetUtils::isValidIp($nameserver))
