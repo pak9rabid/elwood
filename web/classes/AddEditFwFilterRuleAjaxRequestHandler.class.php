@@ -42,7 +42,7 @@
 				$errors[] = "Invalid network protocol specified";
 	
 			// Source address
-			if (NetUtils::isValidIp($srcAddr) || NetUtils::isValidNetwork($srcAddr))
+			if (empty($srcAddr) || NetUtils::isValidIp($srcAddr) || NetUtils::isValidNetwork($srcAddr))
 				$rule->setAttribute("src_addr", $srcAddr);
 			else if (!empty($srcAddr))
 				$errors[] = "Invalid source address specified";
@@ -54,7 +54,7 @@
 				$errors[] = "Invalid source port specified";
 
 			// Destination address
-			if (NetUtils::isValidIp($dstAddr) || NetUtils::isValidNetwork($dstAddr))
+			if (empty($dstAddr) || NetUtils::isValidIp($dstAddr) || NetUtils::isValidNetwork($dstAddr))
 				$rule->setAttribute("dst_addr", $dstAddr);
 			else if (!empty($dstAddr))
 				$errors[] = "Invalid destination address specified";
