@@ -5,6 +5,7 @@
 	class RemoveableTextField extends TextField
 	{
 		protected $rmButton;
+		protected $mouseoverColor = "#EEE";
 		
 		public function __construct($name = "", $value = "")
 		{
@@ -30,8 +31,9 @@ END;
 		// Override
 		public function javascript()
 		{
-			$container = $this->getName() . "Container";
-			$rmButton = $this->getName() . "RmButton";
+			$name = $this->getName();
+			$container = $name . "Container";
+			$rmButton = $name . "RmButton";
 			
 			return parent::javascript() . $this->rmButton->javascript() . <<<END
 			
@@ -39,12 +41,20 @@ END;
 			{
 				$("#$container").mouseover(function()
 				{
-					$("#$rmButton").show();
+					if (!$("#$name").is(":disabled"))
+					{
+						$("#$container").css("background", "{$this->mouseoverColor}");
+						$("#$rmButton").show();
+					}
 				});
 				
 				$("#$container").mouseout(function()
 				{
-					$("#$rmButton").hide();
+					if (!$("#$name").is(":disabled"))
+					{
+						$("#$container").css("background", "");
+						$("#$rmButton").hide();
+					}
 				});
 				
 				$("#$rmButton").click(function()
@@ -58,6 +68,17 @@ END;
 		public function getRmButton()
 		{
 			return $this->rmButton;
+		}
+		
+		public function getMouseoverColor()
+		{
+			return $this->mouseoverColor;
+		}
+		
+		public function setMouseoverColor($color = "#EEE")
+		{
+			$this->mouseoverColor = $color;
+			return $this;
 		}
 	}
 ?>

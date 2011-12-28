@@ -172,11 +172,6 @@ fieldset
 	text-align: center;
 }
 
-.removeable:hover
-{
-	background: #EEE;
-}
-
 .removeBtn
 {
 	display: none;
