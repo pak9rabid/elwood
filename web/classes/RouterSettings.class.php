@@ -14,7 +14,7 @@
 			$results = $selectHash->executeSelect();
 			
 			if (count($results) <= 0)
-				throw new SettingNotFoundException();
+				throw new SettingNotFoundException("The specified setting (" . $key . ") does not exist");
 				
 			return $results[0];
 		}

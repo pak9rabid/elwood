@@ -42,6 +42,18 @@
 			
 			// remove temp interfaces file
 			unlink($tempFile);
+			
+			if ($this->usesDhcp())
+			{
+				// update IP address and gateway (if applicable) in the database with the address obtained via DHCP
+				foreach (Console::execute("/sbin/ip addr show dev eth0 | grep inet | head -n 1 | awk '{print $2}'") as $address)
+					$this->setAddress($address);
+				
+				foreach (Console::execute("/bin/ip route | egrep 'default.*{$this->getPhysicalInterface()}' | awk '{print $3}'") as $gateway)
+					$this->setGateway($gateway);
+				
+				$this->save();
+			}
 		}
 		
 		private function generateConfig()

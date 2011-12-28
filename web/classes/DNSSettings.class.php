@@ -2,14 +2,21 @@
 	require_once "FileUtils.class.php";
 	require_once "NetUtils.class.php";
 	require_once "RouterSettings.class.php";
+	require_once "SettingNotFoundException.class.php";
 	
 	class DNSSettings
-	{		
+	{
 		public static function getNameservers()
 		{
-			$dnsServers = RouterSettings::getSettingValue("DNS_SERVERS");
-			
-			return (empty($dnsServers) ? array() : explode(",", $dnsServers));
+			try
+			{
+				$dnsServers = RouterSettings::getSettingValue("DNS_SERVERS");
+				return (empty($dnsServers) ? array() : explode(",", $dnsServers));
+			}
+			catch (SettingNotFoundException $ex)
+			{
+				return array();
+			}
 		}
 		
 		public static function getSearchDomains()
@@ -82,15 +89,46 @@
 				if (!NetUtils::isValidIp($nameserver))
 					throw new Exception("Invalid nameserver specified");
 			}
-				
-			RouterSettings::saveSetting("DNS_SERVERS", implode(",", $nameservers));
+			
+			if (!empty($nameservers))
+				RouterSettings::saveSetting("DNS_SERVERS", implode(",", $nameservers));
+			else
+			{
+				try
+				{
+					RouterSettings::deleteSetting("DNS_SERVERS");
+				}
+				catch (SettingNotFoundException $ex)
+				{
+					// setting already doesn't exist...ignore
+				}
+			}
 		}
 		
 		public static function setSearchDomains(array $domains)
 		{
-			$nsSetting = RouterSettings::getSetting("DNS_SEARCH_DOMAINS");
-			$nsSetting->setAttribute("value", implode(",", $domains));
-			$nsSetting->executeUpdate();
+			// remove any duplicate entries
+			$domains = array_unique($domains);
+			
+			// remove any blank values
+			$domains = array_filter($domains, function($domain)
+			{
+				return trim($domain) != "";
+			});
+			
+			if (!empty($domains))
+				RouterSettings::saveSetting("DNS_SEARCH_DOMAINS", implode(",", $domains));
+			else
+			{
+				try
+				{
+					RouterSettings::deleteSetting("DNS_SEARCH_DOMAINS");
+				}
+				catch (SettingNotFoundException $ex)
+				{
+					// setting already doesn't exist...ignore
+				}
+			}
 		}
 		
 		public static function apply()
