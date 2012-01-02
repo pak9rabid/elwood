@@ -76,7 +76,7 @@
 			foreach ($nameservers as $nameserver)
 			{
 				$dnsServerInput = new RemoveableTextField("nameserver" . $i++, $nameserver);
-				$dnsServerInput->addClass("nameserverInput")->setAttribute("size", "15")->setAttribute("maxlength", "15")->getRmButton()->addHandler("click", "showSaveButton");
+				$dnsServerInput->addClass("nameserverInput")->setAttribute("maxlength", "15")->getRmButton()->addHandler("click", "showSaveButton");
 				$this->dnsServerInputs[] = $dnsServerInput;
 				$this->addElement($dnsServerInput);
 			}
@@ -109,6 +109,7 @@
 				{
 					$this->getElement("wanIpType")->setValue("static");
 					$this->getElement("dns")->setValue("static");
+					$this->getElement("dns")->setAttribute("disabled", "disabled");
 				}
 					
 				$this->getElement("wanAddress")->setValue($wanInt->getAddress());
@@ -226,7 +227,7 @@ END;
 									{
 										type: "RemoveableTextField",
 										name: "newNameserver" + ++newNameservers,
-										attributes: JSON.stringify({size: 15, maxlength: 15}),
+										attributes: JSON.stringify({maxlength: 15}),
 										addClasses: "nameserverInput"
 									}
 								};
@@ -257,7 +258,6 @@ END;
 									{
 										type: "RemoveableTextField",
 										name: "newSearchDomain" + ++newSearchDomains,
-										attributes: JSON.stringify({size: 15, maxlength: 15}),
 										addClasses: "searchDomainInput"
 									}
 								};
@@ -447,7 +447,7 @@ END;
 						<fieldset>
 							<legend>Nameservers</legend>
 							{$this->getElement("addNameserverBtn")}
-							<div id="nameserverInputs" style="padding-top: 10px">
+							<div id="nameserverInputs" style="width: 200px; padding-top: 10px; text-align: center; margin-left: auto; margin-right: auto;">
 END;
 			foreach ($this->dnsServerInputs as $nameserverInput)
 			{
@@ -466,7 +466,7 @@ END;
 						<fieldset>
 							<legend>Search Domains</legend>
 							{$this->getElement("addSearchDomainBtn")}
-							<div id="searchDomainInputs" style="padding-top: 10px">
+							<div id="searchDomainInputs" style="width: 200px; padding-top: 10px; text-align: center; margin-left: auto; margin-right: auto;">
 END;
 			foreach ($this->searchDomainInputs as $searchDomainInput)
 			{
