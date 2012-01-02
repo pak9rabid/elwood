@@ -23,7 +23,7 @@
 			return <<<END
 			
 			<div class="removeable" id="{$name}Container">
-				$superOut<div style="width: 30px; display: inline-block;">&nbsp;{$this->rmButton}</div>
+				$superOut<div style="width: 35px; display: inline-block;">&nbsp;{$this->rmButton}</div>
 			</div>
 END;
 		}
